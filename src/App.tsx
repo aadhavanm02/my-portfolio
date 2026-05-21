@@ -9,6 +9,7 @@ import {
   type KeyboardEvent,
   type ReactNode,
 } from "react";
+import { List } from "@phosphor-icons/react";
 
 type ProjectTone = "violet" | "peach";
 
@@ -240,8 +241,7 @@ function Header() {
         onClick={() => setIsMenuOpen((isOpen) => !isOpen)}
         type="button"
       >
-        <span />
-        <span />
+        <List aria-hidden="true" size={32} weight="bold" />
       </button>
 
       <nav className={`mobile-menu${isMenuOpen ? " is-open" : ""}`} id="mobile-menu" aria-label="Mobile navigation">
