@@ -34,6 +34,15 @@ const socialLinks = ["LinkedIn", "X (Twitter)", "Instagram"];
 const ndaPassword = "0511";
 const ndaStoragePrefix = "portfolio-nda-unlocked-until";
 const ndaUnlockDurationMs = 60 * 60 * 1000;
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+function withBasePath(path: string) {
+  return `${basePath}${path}`;
+}
+
+function assetPath(path: string) {
+  return withBasePath(path);
+}
 
 function getNdaStorageKey(projectSlug: string) {
   return `${ndaStoragePrefix}-${projectSlug}`;
@@ -64,7 +73,7 @@ function storeNdaUnlock(projectSlug: string) {
 }
 
 function navHref(link: string) {
-  return link === "Work" ? "/" : `/#${link.toLowerCase()}`;
+  return link === "Work" ? withBasePath("/") : withBasePath(`/#${link.toLowerCase()}`);
 }
 
 const projects: Project[] = [
@@ -73,7 +82,7 @@ const projects: Project[] = [
     title: "Redesign the Superfans Dashboard from 0 to 1",
     summary: "Fast, elegant, and conversion-focused, it’s built to boost bookings & build trust.",
     proof: "Built for Small Businesses to Reduce 30% of Manual Entry Errors.",
-    image: "/assets/superfans-dashboard.png",
+    image: assetPath("/assets/superfans-dashboard.png"),
     tone: "violet",
     imageClass: "project-image--superfans",
   },
@@ -82,7 +91,7 @@ const projects: Project[] = [
     title: "Cart Abandonment Recovery WooCommerce",
     summary: "Fast, elegant, and conversion-focused, it’s built to boost bookings & build trust.",
     proof: "Built for Small Businesses to Reduce 30% of Manual Entry Errors.",
-    image: "/assets/cart-abandonment.png",
+    image: assetPath("/assets/cart-abandonment.png"),
     tone: "peach",
     imageClass: "project-image--cart",
   },
@@ -91,7 +100,7 @@ const projects: Project[] = [
     title: "Modern Cart for WooCommerce",
     summary: "Fast, elegant, and conversion-focused, it’s built to boost bookings & build trust.",
     proof: "Built for Small Businesses to Reduce 30% of Manual Entry Errors.",
-    image: "/assets/modern-cart.png",
+    image: assetPath("/assets/modern-cart.png"),
     tone: "peach",
     imageClass: "project-image--modern",
   },
@@ -100,7 +109,7 @@ const projects: Project[] = [
     title: "Improve CartFlows Funnel Analytics",
     summary: "Fast, elegant, and conversion-focused, it’s built to boost bookings & build trust.",
     proof: "Built for Small Businesses to Reduce 30% of Manual Entry Errors.",
-    image: "/assets/funnel-analytics.png",
+    image: assetPath("/assets/funnel-analytics.png"),
     tone: "peach",
     imageClass: "project-image--funnel",
   },
@@ -109,7 +118,7 @@ const projects: Project[] = [
     title: "Checkout Analytics Experience",
     summary: "Fast, elegant, and conversion-focused, it’s built to boost bookings & build trust.",
     proof: "Designed clearer reporting for teams to catch revenue leaks faster.",
-    image: "/assets/funnel-analytics.png",
+    image: assetPath("/assets/funnel-analytics.png"),
     tone: "peach",
     imageClass: "project-image--funnel",
   },
@@ -118,7 +127,7 @@ const projects: Project[] = [
     title: "Customer Portal Redesign",
     summary: "Fast, elegant, and conversion-focused, it’s built to boost bookings & build trust.",
     proof: "Simplified account management flows for faster customer support.",
-    image: "/assets/superfans-dashboard.png",
+    image: assetPath("/assets/superfans-dashboard.png"),
     tone: "violet",
     imageClass: "project-image--superfans",
   },
@@ -127,7 +136,7 @@ const projects: Project[] = [
     title: "Product Onboarding Flow",
     summary: "Fast, elegant, and conversion-focused, it’s built to boost bookings & build trust.",
     proof: "Reduced setup friction with a guided first-run product experience.",
-    image: "/assets/cart-abandonment.png",
+    image: assetPath("/assets/cart-abandonment.png"),
     tone: "peach",
     imageClass: "project-image--cart",
   },
@@ -136,7 +145,7 @@ const projects: Project[] = [
     title: "Reports Dashboard Refresh",
     summary: "Fast, elegant, and conversion-focused, it’s built to boost bookings & build trust.",
     proof: "Improved scanability for business metrics and recurring decisions.",
-    image: "/assets/modern-cart.png",
+    image: assetPath("/assets/modern-cart.png"),
     tone: "peach",
     imageClass: "project-image--modern",
   },
@@ -194,13 +203,13 @@ const caseTopics = [
 ];
 
 function LogoMark() {
-  return <img className="logo-image" src="/assets/a-logo.svg" alt="" />;
+  return <img className="logo-image" src={assetPath("/assets/a-logo.svg")} alt="" />;
 }
 
 function Header() {
   return (
     <header className="navbar" aria-label="Primary navigation">
-      <a className="logo" href="/" aria-label="Aadhavan M home">
+      <a className="logo" href={withBasePath("/")} aria-label="Aadhavan M home">
         <LogoMark />
       </a>
 
@@ -212,7 +221,7 @@ function Header() {
             </a>
           ))}
         </div>
-        <a className="button button--large" href="/Aadhavan-M-Resume.pdf">
+        <a className="button button--large" href={assetPath("/Aadhavan-M-Resume.pdf")}>
           Download Resume
         </a>
       </nav>
@@ -232,7 +241,7 @@ function SiteFooter() {
       </nav>
       <nav aria-label="Social links">
         {socialLinks.map((link) => (
-          <a href="#work" key={link}>
+          <a href={withBasePath("/#work")} key={link}>
             {link}
           </a>
         ))}
@@ -464,7 +473,7 @@ function HomePage() {
                       <h2>{project.title}</h2>
                       <p>{project.summary}</p>
                     </div>
-                    <a className="button" href={`/work/${project.slug}`}>
+                    <a className="button" href={withBasePath(`/work/${project.slug}`)}>
                       Read More
                     </a>
                   </div>
@@ -573,7 +582,7 @@ function CaseStudyPage({ project }: { project: Project }) {
         </nav>
 
         <section className="case-hero" id="overview">
-          <a className="case-back" href="/#work">
+          <a className="case-back" href={withBasePath("/#work")}>
             ← All case studies
           </a>
           <h1>{project.proof}</h1>
@@ -716,7 +725,10 @@ function CaseStudyPage({ project }: { project: Project }) {
 }
 
 function App() {
-  const slug = window.location.pathname.replace(/^\/work\//, "").replace(/\/$/, "");
+  const pathname = window.location.pathname.startsWith(`${basePath}/`)
+    ? window.location.pathname.slice(basePath.length)
+    : window.location.pathname;
+  const slug = pathname.replace(/^\/work\//, "").replace(/\/$/, "");
   const project = projects.find((item) => item.slug === slug);
 
   return <div className="site-shell">{project ? <CaseStudyPage project={project} /> : <HomePage />}</div>;
