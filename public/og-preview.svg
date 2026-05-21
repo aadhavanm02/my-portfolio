@@ -1,0 +1,47 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <clipPath id="cardClip">
+      <rect x="80" y="440" width="1040" height="245" rx="40" />
+    </clipPath>
+    <clipPath id="imageClip">
+      <rect x="530" y="475" width="590" height="210" rx="20" />
+    </clipPath>
+  </defs>
+
+  <rect width="1200" height="630" fill="#F6F6F6" />
+
+  <image href="./assets/a-logo.svg" x="80" y="44" width="52" height="52" />
+
+  <g fill="#525252" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="600">
+    <text x="706" y="78">Work</text>
+    <text x="804" y="78">Skills</text>
+    <text x="902" y="78">About</text>
+  </g>
+
+  <rect x="1010" y="34" width="150" height="72" rx="36" fill="#101010" />
+  <text x="1085" y="78" fill="#FFFFFF" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700">Resume</text>
+
+  <text x="80" y="205" fill="#101010" font-family="Figtree, Inter, Arial, sans-serif" font-size="56" font-weight="700">
+    <tspan x="80" dy="0">I’m Aadhavan M, A Product</tspan>
+    <tspan x="80" dy="70">Designer </tspan>
+    <tspan fill="#7A7A7A">that cares a great</tspan>
+    <tspan x="80" dy="70" fill="#7A7A7A">deal about positive impact projects</tspan>
+  </text>
+
+  <text x="80" y="405" fill="#101010" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700" letter-spacing="1.5">FEATURED WORK</text>
+
+  <g clip-path="url(#cardClip)">
+    <rect x="80" y="440" width="1040" height="245" rx="40" fill="#FFFFFF" />
+    <rect x="120" y="480" width="360" height="118" rx="18" fill="#F7F4FE" stroke="#EDE6FF" stroke-width="2" />
+    <text x="145" y="524" fill="#101010" font-family="Figtree, Inter, Arial, sans-serif" font-size="24" font-weight="700">
+      <tspan x="145" dy="0">Built for Small Businesses to</tspan>
+      <tspan x="145" dy="32">Reduce 30% of Manual Entry</tspan>
+      <tspan x="145" dy="32">Errors.</tspan>
+    </text>
+
+    <g clip-path="url(#imageClip)">
+      <image href="./assets/superfans-dashboard.png" x="530" y="430" width="640" height="476" preserveAspectRatio="xMidYMin slice" />
+    </g>
+    <rect x="530" y="475" width="590" height="210" rx="20" stroke="#EDEDED" stroke-width="2" />
+  </g>
+</svg>
