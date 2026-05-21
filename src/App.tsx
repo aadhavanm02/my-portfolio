@@ -207,6 +207,12 @@ function LogoMark() {
 }
 
 function Header() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  function closeMenu() {
+    setIsMenuOpen(false);
+  }
+
   return (
     <header className="navbar" aria-label="Primary navigation">
       <a className="logo" href={withBasePath("/")} aria-label="Aadhavan M home">
@@ -222,6 +228,29 @@ function Header() {
           ))}
         </div>
         <a className="button button--large" href={assetPath("/Aadhavan-M-Resume.pdf")}>
+          Download Resume
+        </a>
+      </nav>
+
+      <button
+        aria-controls="mobile-menu"
+        aria-expanded={isMenuOpen}
+        aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+        className="menu-toggle"
+        onClick={() => setIsMenuOpen((isOpen) => !isOpen)}
+        type="button"
+      >
+        <span />
+        <span />
+      </button>
+
+      <nav className={`mobile-menu${isMenuOpen ? " is-open" : ""}`} id="mobile-menu" aria-label="Mobile navigation">
+        {navLinks.map((link) => (
+          <a href={navHref(link)} key={link} onClick={closeMenu}>
+            {link}
+          </a>
+        ))}
+        <a className="button" href={assetPath("/Aadhavan-M-Resume.pdf")} onClick={closeMenu}>
           Download Resume
         </a>
       </nav>
