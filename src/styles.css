@@ -42,6 +42,17 @@ a {
   text-decoration: none;
 }
 
+a,
+button,
+input {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
 .site-shell {
   min-height: 100vh;
   background: var(--color-canvas);
