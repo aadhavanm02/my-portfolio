@@ -92,96 +92,8 @@ function navHref(link: string) {
     return withBasePath("/");
   }
 
-  if (link === "About") {
-    return withBasePath("/about/");
-  }
-
   return withBasePath(`/#${link.toLowerCase()}`);
 }
-
-const workExperience = [
-  {
-    period: "Aug 2025 — Present",
-    role: "Product Designer",
-    company: "Superfans",
-    body: "Redesigning the Superfans dashboard and mobile app experience, while contributing to the design system for improved usability and consistency.",
-  },
-  {
-    period: "Sep 2022 — June 2025",
-    role: "Product Designer",
-    company: "Brainstorm Force",
-    body: "Designed WooCommerce products like CartFlows, Modern Cart, Cart Abandonment Recovery, advanced analytics, and automated recovery features.",
-  },
-  {
-    period: "May 2021 — Oct 2021",
-    role: "UI/UX Designer",
-    company: "Indie Spirit",
-    body: "Interned across interface design, visual problem-solving, and early product design workflows.",
-  },
-  {
-    period: "Nov 2020 — Apr 2021",
-    role: "Graphic Designer",
-    company: "Tactii",
-    body: "Interned on visual design work across brand, marketing, and digital communication assets.",
-  },
-];
-
-const educationItems = [
-  {
-    period: "Nov 2023 — Jan 2025",
-    title: "UX Career Accelerator Program",
-    provider: "GrowthSchool",
-  },
-  {
-    period: "Sep 2022 — Dec 2022",
-    title: "UI UX Design from Scratch",
-    provider: "Designerrs",
-  },
-  {
-    period: "Aug 2018 — Jun 2022",
-    title: "B.E. Computer Science Engineering",
-    provider: "St. Joseph’s College of Engineering",
-  },
-];
-
-const achievementItems = [
-  "Product Design Prodigy",
-  "Team MVP Award",
-  "The Dependable Award",
-];
-
-const capabilityItems = [
-  {
-    title: "Human-centered product design",
-    body: "Designing interfaces around user intent, context, and behavior so the final product feels obvious to use.",
-  },
-  {
-    title: "Complex workflow simplification",
-    body: "Turning dense dashboards, ecommerce flows, and operational tools into calm, scannable experiences.",
-  },
-  {
-    title: "Design systems and UI craft",
-    body: "Creating reusable patterns, visual consistency, and polished interaction details that help teams move faster.",
-  },
-];
-
-const aboutNotes = [
-  {
-    label: "Favorite Design Principle",
-    title: "Simplicity with enough context",
-    body: "I like interfaces that remove noise without hiding the information people need to make confident decisions.",
-  },
-  {
-    label: "Currently Improving",
-    title: "Systems thinking",
-    body: "I’m spending more time connecting product strategy, interaction patterns, and measurable outcomes.",
-  },
-  {
-    label: "Outside Work",
-    title: "Learning, exploring, refining",
-    body: "I enjoy observing how products behave in the wild and turning those notes into better design decisions.",
-  },
-];
 
 const projects: Project[] = [
   {
@@ -1065,136 +977,6 @@ function HomePage() {
   );
 }
 
-function AboutPage() {
-  return (
-    <>
-      <Header />
-
-      <main className="about-page">
-        <section className="about-hero" aria-labelledby="about-title">
-          <div className="about-kicker">
-            <span>About</span>
-            <span>Product Designer</span>
-          </div>
-          <div className="about-hero__content">
-            <h1 id="about-title">Hey, I’m Aadhavan. I design calm, useful products for complex workflows.</h1>
-            <p>
-              I care about simplifying decision-heavy experiences for SaaS and ecommerce teams. My work sits between
-              product clarity, visual craft, and practical systems that make interfaces easier to understand and faster
-              to ship.
-            </p>
-          </div>
-
-          <div className="about-quote-panel" aria-label="Design principle">
-            <blockquote>“Simplicity works best when it still carries the context people need.”</blockquote>
-            <a className="button" href={assetPath("/Aadhavan-M-Resume.pdf")}>
-              Download Resume
-            </a>
-          </div>
-        </section>
-
-        <section className="about-section" aria-labelledby="capabilities-title">
-          <div className="about-section__heading">
-            <p className="section-eyebrow">What I Can Do</p>
-            <h2 id="capabilities-title">I help turn unclear product moments into focused, usable experiences.</h2>
-          </div>
-
-          <div className="capability-grid">
-            {capabilityItems.map((item, index) => (
-              <article className="capability-card" key={item.title}>
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                <h3>{item.title}</h3>
-                <p>{item.body}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="about-section about-section--experience" aria-labelledby="experience-title">
-          <div className="about-section__heading">
-            <p className="section-eyebrow">Work Experience</p>
-            <h2 id="experience-title">Designing product experiences across dashboards, commerce flows, and systems.</h2>
-          </div>
-
-          <div className="about-timeline">
-            {workExperience.map((item) => (
-              <article className="about-timeline__item" key={`${item.company}-${item.period}`}>
-                <p>{item.period}</p>
-                <div>
-                  <h3>
-                    {item.role} <span>— {item.company}</span>
-                  </h3>
-                  <p>{item.body}</p>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="about-section about-section--split" aria-labelledby="education-title">
-          <div>
-            <p className="section-eyebrow">Education & Courses</p>
-            <h2 id="education-title">Learning paths that shaped my product design practice.</h2>
-          </div>
-
-          <div className="about-card-grid">
-            {educationItems.map((item) => (
-              <article className="about-info-card" key={item.title}>
-                <p>{item.period}</p>
-                <h3>{item.title}</h3>
-                <span>{item.provider}</span>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="about-section about-section--achievements" aria-labelledby="achievements-title">
-          <div>
-            <p className="section-eyebrow">Achievements</p>
-            <h2 id="achievements-title">Recognition for craft, consistency, and dependable execution.</h2>
-          </div>
-
-          <div className="achievement-list">
-            {achievementItems.map((item) => (
-              <article key={item}>
-                <span>Issued by GrowthSchool</span>
-                <h3>{item}</h3>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="about-section about-section--notes" aria-labelledby="notes-title">
-          <div>
-            <p className="section-eyebrow">Notes</p>
-            <h2 id="notes-title">A few things that shape how I think and design.</h2>
-          </div>
-
-          <div className="about-note-list">
-            {aboutNotes.map((item) => (
-              <article key={item.title}>
-                <span>{item.label}</span>
-                <h3>{item.title}</h3>
-                <p>{item.body}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="contact-panel" aria-labelledby="about-contact-title">
-          <h2 id="about-contact-title">
-            Let’s transform ideas <br />
-            into impactful designs.
-          </h2>
-          <a href="mailto:aadhavanm.design@email.com">→ aadhavanm.design@email.com</a>
-        </section>
-      </main>
-
-      <SiteFooter />
-    </>
-  );
-}
-
 function CaseStudyPage({ project }: { project: Project }) {
   const [activeTopic, setActiveTopic] = useState("overview");
   const [isNdaUnlocked, setIsNdaUnlocked] = useState(() => getStoredNdaUnlock(project.slug));
@@ -1364,11 +1146,10 @@ function App() {
     : window.location.pathname;
   const slug = pathname.replace(/^\/work\//, "").replace(/\/$/, "");
   const project = projects.find((item) => item.slug === slug);
-  const isAboutPage = pathname.replace(/\/$/, "") === "/about";
 
   return (
     <div className="site-shell bg-portfolio-canvas text-portfolio-ink font-sans">
-      {isAboutPage ? <AboutPage /> : project ? <CaseStudyPage project={project} /> : <HomePage />}
+      {project ? <CaseStudyPage project={project} /> : <HomePage />}
     </div>
   );
 }
