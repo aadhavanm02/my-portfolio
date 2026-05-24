@@ -860,7 +860,54 @@ button {
   place-items: center;
   padding: 32px;
   border-radius: 32px;
-  background: rgba(246, 246, 246, 0.45);
+  background: rgba(246, 246, 246, 0.72);
+}
+
+.protected-section__card {
+  width: min(100%, 760px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 56px 64px;
+  border: 1px solid var(--color-border);
+  border-radius: 32px;
+  background: rgba(255, 255, 255, 0.92);
+  text-align: center;
+  box-shadow: 0 28px 100px rgba(16, 16, 16, 0.08);
+}
+
+.protected-section__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 6px 14px;
+  border: 1px solid rgba(16, 16, 16, 0.22);
+  border-radius: 999px;
+  color: var(--color-ink);
+  font-family: "Figtree", "Inter", system-ui, sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1;
+  box-shadow: 0 14px 32px rgba(16, 16, 16, 0.08);
+}
+
+.protected-section__card h3 {
+  margin: 0;
+  color: var(--color-ink);
+  font-family: "Figtree", "Inter", system-ui, sans-serif;
+  font-size: 36px;
+  font-weight: 600;
+  line-height: 1.22;
+}
+
+.protected-section__card p {
+  max-width: 620px;
+  margin: -8px 0 4px;
+  color: var(--color-muted);
+  font-size: 22px;
+  line-height: 1.45;
 }
 
 .protected-section__button {
@@ -868,7 +915,7 @@ button {
   align-items: center;
   justify-content: center;
   min-height: 56px;
-  padding: 16px 24px;
+  padding: 16px 28px;
   border: 0;
   border-radius: 999px;
   background: var(--color-cta-bg);
@@ -1468,6 +1515,29 @@ button {
   .protected-section__overlay {
     padding: 20px;
     border-radius: 24px;
+  }
+
+  .protected-section__card {
+    gap: 18px;
+    padding: 32px 24px;
+    border-radius: 24px;
+  }
+
+  .protected-section__badge {
+    min-height: 30px;
+    padding: 5px 12px;
+    font-size: 15px;
+  }
+
+  .protected-section__card h3 {
+    font-size: 26px;
+    line-height: 1.18;
+  }
+
+  .protected-section__card p {
+    margin: -4px 0 2px;
+    font-size: 16px;
+    line-height: 1.45;
   }
 
   .protected-section__button {

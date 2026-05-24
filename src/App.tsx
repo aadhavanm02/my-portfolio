@@ -646,9 +646,17 @@ function PasswordProtectedContent({
       </div>
 
       <div className="protected-section__overlay">
-        <button className="protected-section__button" onClick={openPasswordModal} type="button">
-          Password protected because of NDA
-        </button>
+        <div className="protected-section__card">
+          <span className="protected-section__badge">NDA</span>
+          <h3>Some project details are password protected</h3>
+          <p>
+            This section includes private product context. Enter the access code to view the protected case study
+            details.
+          </p>
+          <button className="protected-section__button" onClick={openPasswordModal} type="button">
+            Enter password
+          </button>
+        </div>
       </div>
 
       {isModalOpen ? (
