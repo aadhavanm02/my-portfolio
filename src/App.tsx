@@ -197,8 +197,8 @@ const learnings = [
 const caseTopics = [
   { label: "Overview", target: "overview" },
   { label: "The Problem", target: "the-problem" },
-  { label: "Solution Direction", target: "solution-direction" },
-  { label: "Critical Decisions", target: "critical-decisions" },
+  { label: "Solution", target: "solution-direction" },
+  { label: "Decisions", target: "critical-decisions" },
   { label: "Future Scope", target: "future-scope" },
   { label: "Learnings", target: "learnings" },
 ];
