@@ -3,24 +3,70 @@
 
 @theme {
   /* Color palette */
-  --color-portfolio-canvas: #f6f6f6;
+  --color-neutral-25: #fcfcfc;
+  --color-neutral-50: #f7f7f7;
+  --color-neutral-100: #eeeeee;
+  --color-neutral-200: #e2e2e2;
+  --color-neutral-300: #c9c9c9;
+  --color-neutral-400: #a3a3a3;
+  --color-neutral-500: #7a7a7a;
+  --color-neutral-600: #5f5f5f;
+  --color-neutral-700: #474747;
+  --color-neutral-800: #2d2d2d;
+  --color-neutral-900: #171717;
+  --color-neutral-950: #0b0b0b;
+  --color-violet-25: #fcfaff;
+  --color-violet-50: #f7f2ff;
+  --color-violet-100: #efe6ff;
+  --color-violet-200: #ddccff;
+  --color-violet-300: #c3a6ff;
+  --color-violet-400: #a879ff;
+  --color-violet-500: #8c50ee;
+  --color-violet-600: #7437d1;
+  --color-violet-700: #5c29a8;
+  --color-violet-800: #461f80;
+  --color-violet-900: #30165a;
+  --color-peach-25: #fffaf7;
+  --color-peach-50: #fff3eb;
+  --color-peach-100: #ffe4d3;
+  --color-peach-200: #ffc7a9;
+  --color-peach-300: #ffa476;
+  --color-peach-400: #ff8148;
+  --color-peach-500: #ef5d21;
+  --color-peach-600: #c94716;
+  --color-peach-700: #9f3512;
+  --color-peach-800: #76280f;
+  --color-peach-900: #521c0b;
+  --color-red-50: #fff1f0;
+  --color-red-100: #ffe0dc;
+  --color-red-600: #d83434;
+  --color-red-700: #b42318;
+  --color-portfolio-canvas: var(--color-neutral-50);
   --color-portfolio-surface: #ffffff;
-  --color-portfolio-ink: #101010;
-  --color-portfolio-muted: #757575;
-  --color-portfolio-body-muted: rgb(0 0 0 / 50%);
-  --color-portfolio-border: #ededed;
-  --color-portfolio-violet-bg: #f7f4fe;
-  --color-portfolio-violet-border: #ede6ff;
-  --color-portfolio-peach-bg: #fef4ee;
-  --color-portfolio-peach-border: #ffe8da;
-  --color-portfolio-nav-muted: #525252;
+  --color-portfolio-ink: var(--color-neutral-950);
+  --color-portfolio-muted: var(--color-neutral-500);
+  --color-portfolio-body-muted: rgb(11 11 11 / 54%);
+  --color-portfolio-border: var(--color-neutral-100);
+  --color-portfolio-violet-bg: var(--color-violet-50);
+  --color-portfolio-violet-border: var(--color-violet-100);
+  --color-portfolio-peach-bg: var(--color-peach-50);
+  --color-portfolio-peach-border: var(--color-peach-100);
+  --color-portfolio-nav-muted: var(--color-neutral-600);
   --color-portfolio-on-ink: #ffffff;
-  --color-portfolio-error: #b42318;
-  --color-portfolio-error-border: #d83434;
+  --color-portfolio-error: var(--color-red-700);
+  --color-portfolio-error-border: var(--color-red-600);
 
   /* Typography */
   --font-sans: "Inter", system-ui, sans-serif;
   --font-display: "Figtree", "Inter", system-ui, sans-serif;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --leading-tight: 1.12;
+  --leading-display: 1.18;
+  --leading-title: 1.24;
+  --leading-body: 1.6;
   --text-nav: 18px;
   --text-nav--line-height: 1.25;
   --text-eyebrow: 18px;
@@ -92,6 +138,24 @@
   --color-cta-bg: var(--color-portfolio-ink);
   --color-cta-text: var(--color-portfolio-on-ink);
   --color-topic-surface: var(--color-portfolio-surface);
+  --type-hero-size: var(--text-hero-desktop);
+  --type-hero-line: var(--text-hero-desktop--line-height);
+  --type-hero-weight: var(--font-weight-semibold);
+  --type-case-title-size: var(--text-case-title-desktop);
+  --type-case-title-line: var(--text-case-title-desktop--line-height);
+  --type-case-title-weight: var(--font-weight-semibold);
+  --type-section-title-size: var(--text-section-title-desktop);
+  --type-section-title-line: var(--text-section-title-desktop--line-height);
+  --type-section-title-weight: var(--font-weight-semibold);
+  --type-card-title-size: var(--text-card-title-desktop);
+  --type-card-title-line: var(--text-card-title-desktop--line-height);
+  --type-card-title-weight: var(--font-weight-semibold);
+  --type-body-size: var(--text-body-desktop);
+  --type-body-line: var(--text-body-desktop--line-height);
+  --type-body-weight: var(--font-weight-regular);
+  --type-label-size: var(--text-eyebrow);
+  --type-label-line: var(--text-eyebrow--line-height);
+  --type-label-weight: var(--font-weight-medium);
 }
 
 * {
@@ -197,7 +261,7 @@ button {
 .nav-links a,
 .footer a {
   font-size: 18px;
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   line-height: 1.25;
 }
 
@@ -222,7 +286,7 @@ button {
   background: var(--color-cta-bg);
   color: var(--color-cta-text);
   font-size: var(--text-nav);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   line-height: 1.2;
   white-space: nowrap;
   transition:
@@ -250,9 +314,9 @@ button {
   max-width: 1140px;
   margin: 0;
   font-family: var(--font-display);
-  font-size: var(--text-hero-desktop);
-  font-weight: 600;
-  line-height: var(--text-hero-desktop--line-height);
+  font-size: var(--type-hero-size);
+  font-weight: var(--type-hero-weight);
+  line-height: var(--type-hero-line);
   letter-spacing: 0;
 }
 
@@ -270,9 +334,9 @@ button {
 .section-eyebrow {
   margin: 0;
   font-family: var(--font-display);
-  font-size: var(--text-eyebrow);
-  font-weight: 500;
-  line-height: 1.2;
+  font-size: var(--type-label-size);
+  font-weight: var(--type-label-weight);
+  line-height: var(--type-label-line);
   letter-spacing: 0.36px;
   text-transform: uppercase;
 }
@@ -295,7 +359,7 @@ button {
   cursor: pointer;
   font-family: var(--font-sans);
   font-size: var(--text-nav);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   line-height: 1.2;
   transition:
     color 180ms ease,
@@ -360,7 +424,7 @@ button {
   border-radius: 20px;
   font-family: var(--font-display);
   font-size: var(--text-card-title-mobile);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   line-height: 1.2;
 }
 
@@ -384,9 +448,9 @@ button {
 .project-copy h2 {
   margin: 0 0 12px;
   font-family: var(--font-display);
-  font-size: var(--text-card-title-desktop);
-  font-weight: 600;
-  line-height: 1.2;
+  font-size: var(--type-card-title-size);
+  font-weight: var(--type-card-title-weight);
+  line-height: var(--type-card-title-line);
   letter-spacing: 0;
 }
 
@@ -394,8 +458,8 @@ button {
   margin: 0;
   color: var(--color-body-muted);
   font-size: var(--text-body-tablet);
-  font-weight: 400;
-  line-height: 1.6;
+  font-weight: var(--type-body-weight);
+  line-height: var(--type-body-line);
 }
 
 .project-media {
@@ -468,17 +532,17 @@ button {
 .contact-panel h2 {
   margin: 0;
   font-family: var(--font-display);
-  font-size: var(--text-hero-desktop);
-  font-weight: 600;
-  line-height: 1.2;
+  font-size: var(--type-hero-size);
+  font-weight: var(--type-hero-weight);
+  line-height: var(--type-hero-line);
   letter-spacing: 0;
 }
 
 .contact-panel a {
   font-family: var(--font-display);
-  font-size: var(--text-card-title-desktop);
-  font-weight: 600;
-  line-height: 1.2;
+  font-size: var(--type-card-title-size);
+  font-weight: var(--type-card-title-weight);
+  line-height: var(--type-card-title-line);
   white-space: nowrap;
 }
 
@@ -516,7 +580,7 @@ button {
 .case-topic-nav a {
   color: var(--color-muted);
   font-size: 14px;
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   line-height: 1.2;
 }
 
@@ -543,7 +607,7 @@ button {
   margin-bottom: 60px;
   color: var(--color-body-muted);
   font-size: var(--text-nav);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   line-height: 1;
 }
 
@@ -551,9 +615,9 @@ button {
   max-width: var(--spacing-content);
   margin: 0 0 48px;
   font-family: var(--font-display);
-  font-size: var(--text-case-title-desktop);
-  font-weight: 600;
-  line-height: var(--text-case-title-desktop--line-height);
+  font-size: var(--type-case-title-size);
+  font-weight: var(--type-case-title-weight);
+  line-height: var(--type-case-title-line);
   letter-spacing: 0;
 }
 
@@ -695,7 +759,7 @@ button {
 .case-video__time {
   color: rgb(255 255 255 / 88%);
   font-size: 13px;
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   line-height: 1;
   white-space: nowrap;
 }
@@ -725,7 +789,7 @@ button {
   cursor: pointer;
   font-family: "Inter", system-ui, sans-serif;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 }
 
 .case-video__speed option {
@@ -937,7 +1001,7 @@ button {
   min-width: 52px;
   text-align: center;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 }
 
 .image-lightbox__arrow {
@@ -974,15 +1038,15 @@ button {
   color: var(--color-muted);
   font-family: var(--font-display);
   font-size: var(--text-eyebrow);
-  font-weight: 500;
-  line-height: 1.2;
+  font-weight: var(--type-label-weight);
+  line-height: var(--type-label-line);
 }
 
 .case-meta dd {
   margin: 0;
   font-family: var(--font-display);
   font-size: var(--text-card-title-tablet);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   line-height: 1.3;
 }
 
@@ -1000,8 +1064,8 @@ button {
   color: var(--color-muted);
   font-family: var(--font-display);
   font-size: var(--text-eyebrow);
-  font-weight: 500;
-  line-height: 1.2;
+  font-weight: var(--type-label-weight);
+  line-height: var(--type-label-line);
   text-transform: uppercase;
 }
 
@@ -1009,17 +1073,17 @@ button {
   max-width: 1180px;
   margin: 0 0 24px;
   font-family: var(--font-display);
-  font-size: var(--text-section-title-desktop);
-  font-weight: 600;
-  line-height: 1.24;
+  font-size: var(--type-section-title-size);
+  font-weight: var(--type-section-title-weight);
+  line-height: var(--type-section-title-line);
 }
 
 .case-section-heading span {
   display: block;
   max-width: 1100px;
   color: var(--color-body-muted);
-  font-size: var(--text-body-desktop);
-  line-height: 1.6;
+  font-size: var(--type-body-size);
+  line-height: var(--type-body-line);
 }
 
 .case-wide-media {
@@ -1038,7 +1102,7 @@ button {
   margin: 0 0 24px;
   font-family: var(--font-display);
   font-size: var(--text-card-title-tablet);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   line-height: 1.3;
 }
 
@@ -1058,8 +1122,8 @@ button {
   border-radius: 24px;
   background: var(--color-surface);
   font-family: var(--font-display);
-  font-size: var(--text-body-desktop);
-  font-weight: 600;
+  font-size: var(--type-body-size);
+  font-weight: var(--font-weight-semibold);
   line-height: 1.3;
 }
 
@@ -1188,7 +1252,7 @@ button {
   color: var(--color-ink);
   font-family: var(--font-display);
   font-size: 15px;
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   line-height: 1;
   box-shadow: var(--shadow-elevated);
 }
@@ -1198,7 +1262,7 @@ button {
   color: var(--color-ink);
   font-family: var(--font-display);
   font-size: var(--text-card-title-tablet);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   line-height: 1.18;
 }
 
@@ -1228,7 +1292,7 @@ button {
   cursor: pointer;
   font-family: var(--font-sans);
   font-size: var(--text-nav);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   line-height: 1.2;
   white-space: nowrap;
   box-shadow: var(--shadow-control);
@@ -1278,7 +1342,7 @@ button {
   margin-bottom: 10px;
   color: var(--color-ink);
   font-size: 14px;
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   line-height: 1.2;
 }
 
@@ -1297,7 +1361,7 @@ button {
   color: var(--color-ink);
   font-family: var(--font-sans);
   font-size: 26px;
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   line-height: 1;
   text-align: center;
   outline: none;
@@ -1317,7 +1381,7 @@ button {
   margin: 0;
   color: var(--color-portfolio-error);
   font-size: 15px;
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   line-height: 1.5;
 }
 
@@ -1411,12 +1475,25 @@ button {
 }
 
 @media (max-width: 1199px) {
+  :root {
+    --type-hero-size: var(--text-hero-tablet);
+    --type-hero-line: var(--text-hero-tablet--line-height);
+    --type-case-title-size: var(--text-case-title-tablet);
+    --type-case-title-line: var(--text-case-title-tablet--line-height);
+    --type-section-title-size: var(--text-section-title-tablet);
+    --type-section-title-line: var(--text-section-title-tablet--line-height);
+    --type-card-title-size: var(--text-card-title-tablet);
+    --type-card-title-line: var(--text-card-title-tablet--line-height);
+    --type-body-size: var(--text-body-tablet);
+    --type-body-line: var(--text-body-tablet--line-height);
+  }
+
   .navbar,
   .hero,
   .work-section,
   .contact-panel,
   .footer {
-    width: calc(100% - 80px);
+    width: calc(100% - (var(--spacing-page-x-tablet) * 2));
   }
 
   .navbar {
@@ -1465,7 +1542,7 @@ button {
     border: 1px solid var(--color-border);
     border-radius: 24px;
     background: var(--color-surface);
-    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.12);
+    box-shadow: var(--shadow-control);
   }
 
   .mobile-menu.is-open {
@@ -1476,8 +1553,8 @@ button {
     padding: 14px 16px;
     border-radius: 14px;
     color: var(--color-nav-muted);
-    font-size: 18px;
-    font-weight: 600;
+    font-size: var(--text-nav);
+    font-weight: var(--font-weight-semibold);
     line-height: 1.2;
   }
 
@@ -1493,15 +1570,16 @@ button {
   }
 
   .hero {
-    padding-block: 100px;
+    padding-block: var(--spacing-section-tablet);
   }
 
   .hero h1 {
-    font-size: 54px;
+    font-size: var(--type-hero-size);
+    line-height: var(--type-hero-line);
   }
 
   .work-section {
-    padding-block: 100px;
+    padding-block: var(--spacing-section-tablet);
   }
 
   .project-content {
@@ -1509,9 +1587,9 @@ button {
   }
 
   .contact-panel {
-    width: calc(100% - 80px);
-    margin-block: 100px;
-    padding: 100px 80px;
+    width: calc(100% - (var(--spacing-page-x-tablet) * 2));
+    margin-block: var(--spacing-section-tablet);
+    padding: var(--spacing-section-tablet) var(--spacing-page-x-desktop);
   }
 
   .footer {
@@ -1521,11 +1599,12 @@ button {
   .case-hero,
   .case-section,
   .case-cta {
-    width: calc(100% - 80px);
+    width: calc(100% - (var(--spacing-page-x-tablet) * 2));
   }
 
   .case-hero h1 {
-    font-size: 58px;
+    font-size: var(--type-case-title-size);
+    line-height: var(--type-case-title-line);
   }
 
   .case-hero-media,
@@ -1534,7 +1613,8 @@ button {
   }
 
   .case-section-heading h2 {
-    font-size: 48px;
+    font-size: var(--type-section-title-size);
+    line-height: var(--type-section-title-line);
   }
 
   .future-item {
@@ -1548,11 +1628,24 @@ button {
 }
 
 @media (max-width: 767px) {
+  :root {
+    --type-hero-size: var(--text-hero-mobile);
+    --type-hero-line: var(--text-hero-mobile--line-height);
+    --type-case-title-size: var(--text-case-title-mobile);
+    --type-case-title-line: var(--text-case-title-mobile--line-height);
+    --type-section-title-size: var(--text-section-title-mobile);
+    --type-section-title-line: var(--text-section-title-mobile--line-height);
+    --type-card-title-size: var(--text-card-title-mobile);
+    --type-card-title-line: var(--text-card-title-mobile--line-height);
+    --type-body-size: var(--text-body-mobile);
+    --type-body-line: var(--text-body-mobile--line-height);
+  }
+
   .navbar,
   .hero,
   .work-section,
   .contact-panel {
-    width: calc(100% - 48px);
+    width: calc(100% - (var(--spacing-page-x-mobile) * 2));
   }
 
   .navbar {
@@ -1564,7 +1657,8 @@ button {
   }
 
   .hero h1 {
-    font-size: 36px;
+    font-size: var(--type-hero-size);
+    line-height: var(--type-hero-line);
   }
 
   .work-section {
