@@ -501,21 +501,36 @@ button {
   position: relative;
 }
 
-.case-video iframe {
+.case-video__player {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: auto;
-  min-width: 100%;
+  inset: 0;
+  background: #101010;
+}
+
+.case-video__player video {
+  width: 100%;
   height: 100%;
-  aspect-ratio: 16 / 9;
   display: block;
-  border: 0;
-  transform: translate(-50%, -50%);
+  object-fit: cover;
+  object-position: center center;
+}
+
+.case-video__player--expanded {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 24px;
+}
+
+.case-video__player--expanded video {
+  object-fit: contain;
 }
 
 .case-video__cover {
-  position: relative;
+  position: absolute;
+  inset: 0;
+  z-index: 2;
   width: 100%;
   height: 100%;
   display: block;
@@ -523,6 +538,10 @@ button {
   border: 0;
   background: transparent;
   cursor: pointer;
+}
+
+.case-video__cover img {
+  object-position: left top;
 }
 
 .case-video__play {
@@ -546,6 +565,135 @@ button {
 .case-video__cover:focus-visible .case-video__play {
   opacity: 0.88;
   transform: scale(1.04);
+}
+
+.case-video__controls {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  left: 18px;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: auto auto minmax(160px, 1fr) minmax(112px, 160px) auto auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  background: rgba(16, 16, 16, 0.72);
+  color: #ffffff;
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+.case-video:hover .case-video__controls,
+.case-video:focus-within .case-video__controls,
+.case-video__player--expanded .case-video__controls {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.case-video__controls button {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  cursor: pointer;
+  transition:
+    background 180ms ease,
+    transform 180ms ease;
+}
+
+.case-video__controls button:hover,
+.case-video__controls button:focus-visible {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.case-video__controls button:active {
+  transform: translateY(1px);
+}
+
+.case-video__time {
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.case-video__seek,
+.case-video__volume,
+.case-video__speed {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.case-video__seek input,
+.case-video__volume input {
+  width: 100%;
+  accent-color: #ffffff;
+  cursor: pointer;
+}
+
+.case-video__speed select {
+  min-height: 36px;
+  padding: 0 28px 0 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  cursor: pointer;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.case-video__speed option {
+  color: #101010;
+}
+
+.case-video-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+  background: rgba(16, 16, 16, 0.78);
+}
+
+.case-video-modal__dialog {
+  position: relative;
+  width: min(100%, 1180px);
+  padding: 16px;
+  border-radius: 32px;
+  background: #101010;
+  box-shadow: 0 32px 120px rgba(0, 0, 0, 0.34);
+}
+
+.case-video-modal__close {
+  position: absolute;
+  top: -18px;
+  right: -18px;
+  z-index: 4;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #101010;
+  cursor: pointer;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
 }
 
 .case-hero-media img,
@@ -1419,6 +1567,39 @@ button {
   .case-wide-media {
     height: 300px;
     border-radius: 24px;
+  }
+
+  .case-video__controls {
+    right: 12px;
+    bottom: 12px;
+    left: 12px;
+    grid-template-columns: auto auto minmax(0, 1fr) auto;
+    gap: 8px;
+    padding: 10px;
+    border-radius: 24px;
+  }
+
+  .case-video__volume,
+  .case-video__speed {
+    display: none;
+  }
+
+  .case-video__time {
+    font-size: 12px;
+  }
+
+  .case-video-modal {
+    padding: 16px;
+  }
+
+  .case-video-modal__dialog {
+    padding: 10px;
+    border-radius: 24px;
+  }
+
+  .case-video-modal__close {
+    top: 10px;
+    right: 10px;
   }
 
   .case-meta {

@@ -10,12 +10,16 @@ import {
   type ReactNode,
 } from "react";
 import {
+  ArrowsOutSimple,
   CaretLeft,
   CaretRight,
   List,
   MagnifyingGlassMinus,
   MagnifyingGlassPlus,
+  Pause,
   Play,
+  SpeakerHigh,
+  SpeakerX,
   X,
 } from "@phosphor-icons/react";
 
@@ -44,7 +48,8 @@ const ndaPassword = "0511";
 const ndaStoragePrefix = "portfolio-nda-unlocked-until";
 const ndaUnlockDurationMs = 60 * 60 * 1000;
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
-const caseStudyVideoUrl = "https://www.youtube.com/embed/Qa3Lhbw-PRM?autoplay=1&rel=0&modestbranding=1";
+const caseStudyVideoUrl = assetPath("/assets/videos/expenzo-video-presentation.mp4");
+const videoSpeeds = [0.75, 1, 1.25, 1.5, 2];
 
 function withBasePath(path: string) {
   return `${basePath}${path}`;
@@ -362,26 +367,244 @@ function ImageCarousel({ images }: { images: Array<{ alt: string; src: string }>
 }
 
 function CaseHeroVideo({ coverImage, title }: { coverImage: string; title: string }) {
+  const inlineVideoRef = useRef<HTMLVideoElement | null>(null);
+  const expandedVideoRef = useRef<HTMLVideoElement | null>(null);
+  const [activePlayer, setActivePlayer] = useState<"inline" | "expanded">("inline");
   const [isPlaying, setIsPlaying] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [duration, setDuration] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [volume, setVolume] = useState(0.85);
+  const [playbackRate, setPlaybackRate] = useState(1);
+
+  const activeVideoRef = activePlayer === "expanded" ? expandedVideoRef : inlineVideoRef;
+
+  useEffect(() => {
+    const video = activeVideoRef.current;
+
+    if (!video) {
+      return;
+    }
+
+    video.volume = volume;
+    video.playbackRate = playbackRate;
+  }, [activePlayer, playbackRate, volume]);
+
+  useEffect(() => {
+    const nextVideo = isExpanded ? expandedVideoRef.current : inlineVideoRef.current;
+    const previousVideo = isExpanded ? inlineVideoRef.current : expandedVideoRef.current;
+
+    if (!nextVideo) {
+      return;
+    }
+
+    const shouldResume = isPlaying;
+    previousVideo?.pause();
+    nextVideo.currentTime = currentTime;
+    nextVideo.volume = volume;
+    nextVideo.playbackRate = playbackRate;
+    setActivePlayer(isExpanded ? "expanded" : "inline");
+
+    if (shouldResume) {
+      void nextVideo.play().catch(() => setIsPlaying(false));
+    }
+  }, [isExpanded]);
+
+  useEffect(() => {
+    if (!isExpanded) {
+      return;
+    }
+
+    function handleEscape(event: globalThis.KeyboardEvent) {
+      if (event.key === "Escape") {
+        setIsExpanded(false);
+      }
+    }
+
+    window.addEventListener("keydown", handleEscape);
+
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [isExpanded]);
+
+  function formatVideoTime(time: number) {
+    if (!Number.isFinite(time)) {
+      return "0:00";
+    }
+
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60)
+      .toString()
+      .padStart(2, "0");
+
+    return `${minutes}:${seconds}`;
+  }
+
+  function getVideo() {
+    return activeVideoRef.current;
+  }
+
+  function playVideo(video = getVideo()) {
+    if (!video) {
+      return;
+    }
+
+    setHasStarted(true);
+    void video
+      .play()
+      .then(() => setIsPlaying(true))
+      .catch(() => setIsPlaying(false));
+  }
+
+  function togglePlayback() {
+    const video = getVideo();
+
+    if (!video) {
+      return;
+    }
+
+    if (video.paused) {
+      playVideo(video);
+      return;
+    }
+
+    video.pause();
+    setIsPlaying(false);
+  }
+
+  function handleSeek(event: ChangeEvent<HTMLInputElement>) {
+    const nextTime = Number(event.target.value);
+    const video = getVideo();
+
+    setCurrentTime(nextTime);
+
+    if (video) {
+      video.currentTime = nextTime;
+    }
+  }
+
+  function handleVolumeChange(event: ChangeEvent<HTMLInputElement>) {
+    const nextVolume = Number(event.target.value);
+    const video = getVideo();
+
+    setVolume(nextVolume);
+
+    if (video) {
+      video.volume = nextVolume;
+    }
+  }
+
+  function handleSpeedChange(event: ChangeEvent<HTMLSelectElement>) {
+    const nextRate = Number(event.target.value);
+    const video = getVideo();
+
+    setPlaybackRate(nextRate);
+
+    if (video) {
+      video.playbackRate = nextRate;
+    }
+  }
+
+  function handleLoadedMetadata(video: HTMLVideoElement) {
+    setDuration(video.duration);
+    video.volume = volume;
+    video.playbackRate = playbackRate;
+  }
+
+  function renderVideoPlayer(mode: "inline" | "expanded") {
+    const isActive = activePlayer === mode;
+    const videoRef = mode === "expanded" ? expandedVideoRef : inlineVideoRef;
+    const showCover = mode === "inline" && !hasStarted;
+
+    return (
+      <div className={`case-video__player case-video__player--${mode}`}>
+        <video
+          aria-label={`${title} video walkthrough`}
+          onEnded={() => setIsPlaying(false)}
+          onLoadedMetadata={(event) => handleLoadedMetadata(event.currentTarget)}
+          onPause={() => isActive && setIsPlaying(false)}
+          onPlay={() => {
+            setHasStarted(true);
+            isActive && setIsPlaying(true);
+          }}
+          onTimeUpdate={(event) => isActive && setCurrentTime(event.currentTarget.currentTime)}
+          playsInline
+          poster={coverImage}
+          preload="metadata"
+          ref={videoRef}
+          src={caseStudyVideoUrl}
+        />
+
+        {showCover ? (
+          <button className="case-video__cover" onClick={() => playVideo(videoRef.current)} type="button">
+            <img src={coverImage} alt="" />
+            <span aria-hidden="true" className="case-video__play">
+              <Play size={34} weight="fill" />
+            </span>
+            <span className="sr-only">Play video walkthrough</span>
+          </button>
+        ) : null}
+
+        <div className="case-video__controls">
+          <button aria-label={isPlaying ? "Pause video" : "Play video"} onClick={togglePlayback} type="button">
+            {isPlaying ? <Pause aria-hidden="true" size={22} weight="fill" /> : <Play aria-hidden="true" size={22} weight="fill" />}
+          </button>
+
+          <span className="case-video__time">
+            {formatVideoTime(currentTime)} / {formatVideoTime(duration)}
+          </span>
+
+          <label className="case-video__seek">
+            <span className="sr-only">Seek video</span>
+            <input max={duration || 0} min="0" onChange={handleSeek} step="0.1" type="range" value={currentTime} />
+          </label>
+
+          <label className="case-video__volume">
+            {volume > 0 ? <SpeakerHigh aria-hidden="true" size={20} /> : <SpeakerX aria-hidden="true" size={20} />}
+            <span className="sr-only">Volume</span>
+            <input max="1" min="0" onChange={handleVolumeChange} step="0.05" type="range" value={volume} />
+          </label>
+
+          <label className="case-video__speed">
+            <span className="sr-only">Playback speed</span>
+            <select aria-label="Playback speed" onChange={handleSpeedChange} value={playbackRate}>
+              {videoSpeeds.map((speed) => (
+                <option key={speed} value={speed}>
+                  {speed}x
+                </option>
+              ))}
+            </select>
+          </label>
+
+          {mode === "inline" ? (
+            <button aria-label="Open video in expanded view" onClick={() => setIsExpanded(true)} type="button">
+              <ArrowsOutSimple aria-hidden="true" size={22} />
+            </button>
+          ) : null}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <figure className="case-hero-media case-video">
-      {isPlaying ? (
-        <iframe
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowFullScreen
-          src={caseStudyVideoUrl}
-          title={`${title} video walkthrough`}
-        />
-      ) : (
-        <button className="case-video__cover" onClick={() => setIsPlaying(true)} type="button">
-          <img src={coverImage} alt="" />
-          <span aria-hidden="true" className="case-video__play">
-            <Play size={34} weight="fill" />
-          </span>
-          <span className="sr-only">Play video walkthrough</span>
-        </button>
-      )}
+      {renderVideoPlayer("inline")}
+
+      {isExpanded ? (
+        <div className="case-video-modal" role="presentation">
+          <div aria-label={`${title} expanded video player`} className="case-video-modal__dialog" role="dialog">
+            <button
+              aria-label="Close expanded video"
+              className="case-video-modal__close"
+              onClick={() => setIsExpanded(false)}
+              type="button"
+            >
+              <X aria-hidden="true" size={24} weight="bold" />
+            </button>
+            {renderVideoPlayer("expanded")}
+          </div>
+        </div>
+      ) : null}
     </figure>
   );
 }
