@@ -546,6 +546,172 @@ button {
   white-space: nowrap;
 }
 
+.about-page {
+  padding-bottom: 80px;
+}
+
+.about-hero,
+.about-section {
+  width: min(var(--spacing-content), calc(100% - (var(--spacing-page-x-desktop) * 2)));
+  margin-inline: auto;
+}
+
+.about-hero {
+  padding: 104px 0 96px;
+}
+
+.about-hero__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
+  gap: 80px;
+  align-items: end;
+  margin-top: 28px;
+}
+
+.about-hero h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--type-hero-size);
+  font-weight: var(--type-hero-weight);
+  line-height: var(--type-hero-line);
+  letter-spacing: 0;
+}
+
+.about-hero__intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 28px;
+}
+
+.about-hero__intro p {
+  margin: 0;
+  color: var(--color-body-muted);
+  font-size: var(--type-body-size);
+  font-weight: var(--type-body-weight);
+  line-height: var(--type-body-line);
+}
+
+.about-section {
+  padding: 96px 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.about-section__heading,
+.about-section--split,
+.about-section--achievements {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.45fr) minmax(0, 1fr);
+  gap: 80px;
+}
+
+.about-section__heading {
+  margin-bottom: 48px;
+}
+
+.about-section h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--type-section-title-size);
+  font-weight: var(--type-section-title-weight);
+  line-height: var(--type-section-title-line);
+  letter-spacing: 0;
+}
+
+.about-timeline {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--color-border);
+}
+
+.about-timeline__item {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.45fr) minmax(0, 1fr);
+  gap: 80px;
+  padding: 32px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.about-timeline__item > p,
+.about-info-card > p,
+.achievement-list span {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 15px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.25;
+  text-transform: uppercase;
+}
+
+.about-timeline__item h3,
+.about-info-card h3,
+.achievement-list h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--type-card-title-size);
+  font-weight: var(--type-card-title-weight);
+  line-height: var(--type-card-title-line);
+  letter-spacing: 0;
+}
+
+.about-timeline__item h3 span {
+  color: var(--color-muted);
+}
+
+.about-timeline__item div {
+  display: grid;
+  gap: 14px;
+}
+
+.about-timeline__item div p {
+  max-width: 760px;
+  margin: 0;
+  color: var(--color-body-muted);
+  font-size: var(--text-body-tablet);
+  line-height: var(--text-body-tablet--line-height);
+}
+
+.about-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.about-info-card,
+.achievement-list article {
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 28px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+
+.about-info-card span {
+  color: var(--color-body-muted);
+  font-size: var(--text-body-tablet);
+  line-height: var(--text-body-tablet--line-height);
+}
+
+.achievement-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.achievement-list article {
+  min-height: 180px;
+  background: var(--color-portfolio-ink);
+  color: var(--color-portfolio-on-ink);
+}
+
+.achievement-list span {
+  color: rgb(255 255 255 / 58%);
+}
+
 .footer {
   display: flex;
   justify-content: space-between;
@@ -1592,6 +1758,24 @@ button {
     padding: var(--spacing-section-tablet) var(--spacing-page-x-desktop);
   }
 
+  .about-hero,
+  .about-section {
+    width: calc(100% - (var(--spacing-page-x-tablet) * 2));
+  }
+
+  .about-hero__grid,
+  .about-section__heading,
+  .about-section--split,
+  .about-section--achievements,
+  .about-timeline__item {
+    gap: 48px;
+  }
+
+  .about-card-grid,
+  .achievement-list {
+    grid-template-columns: 1fr;
+  }
+
   .footer {
     padding-bottom: 64px;
   }
@@ -1740,6 +1924,42 @@ button {
     margin-block: 60px;
     padding: 64px 20px;
     border-radius: 24px;
+  }
+
+  .about-page {
+    padding-bottom: 48px;
+  }
+
+  .about-hero,
+  .about-section {
+    width: calc(100% - (var(--spacing-page-x-mobile) * 2));
+  }
+
+  .about-hero {
+    padding: 60px 0 64px;
+  }
+
+  .about-hero__grid,
+  .about-section__heading,
+  .about-section--split,
+  .about-section--achievements,
+  .about-timeline__item {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .about-section {
+    padding: 64px 0;
+  }
+
+  .about-timeline__item {
+    padding: 28px 0;
+  }
+
+  .about-info-card,
+  .achievement-list article {
+    min-height: 180px;
+    padding: 24px;
   }
 
   .contact-panel h2 {

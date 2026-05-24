@@ -88,8 +88,67 @@ function storeNdaUnlock(projectSlug: string) {
 }
 
 function navHref(link: string) {
-  return link === "Work" ? withBasePath("/") : withBasePath(`/#${link.toLowerCase()}`);
+  if (link === "Work") {
+    return withBasePath("/");
+  }
+
+  if (link === "About") {
+    return withBasePath("/about/");
+  }
+
+  return withBasePath(`/#${link.toLowerCase()}`);
 }
+
+const workExperience = [
+  {
+    period: "Aug 2025 — Present",
+    role: "Product Designer",
+    company: "Superfans",
+    body: "Redesigning the Superfans dashboard and mobile app experience, while contributing to the design system for improved usability and consistency.",
+  },
+  {
+    period: "Sep 2022 — June 2025",
+    role: "Product Designer",
+    company: "Brainstorm Force",
+    body: "Designed WooCommerce products like CartFlows, Modern Cart, Cart Abandonment Recovery, advanced analytics, and automated recovery features.",
+  },
+  {
+    period: "May 2021 — Oct 2021",
+    role: "UI/UX Designer",
+    company: "Indie Spirit",
+    body: "Interned across interface design, visual problem-solving, and early product design workflows.",
+  },
+  {
+    period: "Nov 2020 — Apr 2021",
+    role: "Graphic Designer",
+    company: "Tactii",
+    body: "Interned on visual design work across brand, marketing, and digital communication assets.",
+  },
+];
+
+const educationItems = [
+  {
+    period: "Nov 2023 — Jan 2025",
+    title: "UX Career Accelerator Program",
+    provider: "GrowthSchool",
+  },
+  {
+    period: "Sep 2022 — Dec 2022",
+    title: "UI UX Design from Scratch",
+    provider: "Designerrs",
+  },
+  {
+    period: "Aug 2018 — Jun 2022",
+    title: "B.E. Computer Science Engineering",
+    provider: "St. Joseph’s College of Engineering",
+  },
+];
+
+const achievementItems = [
+  "Product Design Prodigy",
+  "Team MVP Award",
+  "The Dependable Award",
+];
 
 const projects: Project[] = [
   {
@@ -973,6 +1032,97 @@ function HomePage() {
   );
 }
 
+function AboutPage() {
+  return (
+    <>
+      <Header />
+
+      <main className="about-page">
+        <section className="about-hero" aria-labelledby="about-title">
+          <p className="section-eyebrow">About</p>
+          <div className="about-hero__grid">
+            <h1 id="about-title">I care deeply about design and equally about solving problems in simple, elegant ways.</h1>
+            <div className="about-hero__intro">
+              <p>
+                I’m Aadhavan M, a product designer focused on building calm, useful interfaces for SaaS and ecommerce
+                teams. My work is shaped by usability, product clarity, and the kind of visual polish that makes complex
+                workflows feel easier to trust.
+              </p>
+              <a className="button" href={assetPath("/Aadhavan-M-Resume.pdf")}>
+                Download Resume
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <section className="about-section about-section--experience" aria-labelledby="experience-title">
+          <div className="about-section__heading">
+            <p className="section-eyebrow">Work Experience</p>
+            <h2 id="experience-title">Designing product experiences across dashboards, commerce flows, and systems.</h2>
+          </div>
+
+          <div className="about-timeline">
+            {workExperience.map((item) => (
+              <article className="about-timeline__item" key={`${item.company}-${item.period}`}>
+                <p>{item.period}</p>
+                <div>
+                  <h3>
+                    {item.role} <span>— {item.company}</span>
+                  </h3>
+                  <p>{item.body}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="about-section about-section--split" aria-labelledby="education-title">
+          <div>
+            <p className="section-eyebrow">Education & Courses</p>
+            <h2 id="education-title">Learning paths that shaped my product design practice.</h2>
+          </div>
+
+          <div className="about-card-grid">
+            {educationItems.map((item) => (
+              <article className="about-info-card" key={item.title}>
+                <p>{item.period}</p>
+                <h3>{item.title}</h3>
+                <span>{item.provider}</span>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="about-section about-section--achievements" aria-labelledby="achievements-title">
+          <div>
+            <p className="section-eyebrow">Achievements</p>
+            <h2 id="achievements-title">Recognition for craft, consistency, and dependable execution.</h2>
+          </div>
+
+          <div className="achievement-list">
+            {achievementItems.map((item) => (
+              <article key={item}>
+                <span>Issued by GrowthSchool</span>
+                <h3>{item}</h3>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="contact-panel" aria-labelledby="about-contact-title">
+          <h2 id="about-contact-title">
+            Let’s transform ideas <br />
+            into impactful designs.
+          </h2>
+          <a href="mailto:aadhavanm.design@email.com">→ aadhavanm.design@email.com</a>
+        </section>
+      </main>
+
+      <SiteFooter />
+    </>
+  );
+}
+
 function CaseStudyPage({ project }: { project: Project }) {
   const [activeTopic, setActiveTopic] = useState("overview");
   const [isNdaUnlocked, setIsNdaUnlocked] = useState(() => getStoredNdaUnlock(project.slug));
@@ -1142,10 +1292,11 @@ function App() {
     : window.location.pathname;
   const slug = pathname.replace(/^\/work\//, "").replace(/\/$/, "");
   const project = projects.find((item) => item.slug === slug);
+  const isAboutPage = pathname.replace(/\/$/, "") === "/about";
 
   return (
     <div className="site-shell bg-portfolio-canvas text-portfolio-ink font-sans">
-      {project ? <CaseStudyPage project={project} /> : <HomePage />}
+      {isAboutPage ? <AboutPage /> : project ? <CaseStudyPage project={project} /> : <HomePage />}
     </div>
   );
 }
