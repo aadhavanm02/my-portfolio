@@ -606,7 +606,7 @@ button {
 }
 
 .protected-section__content {
-  max-height: 220px;
+  max-height: 800px;
   overflow: hidden;
   filter: blur(12px);
   pointer-events: none;
