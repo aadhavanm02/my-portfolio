@@ -606,6 +606,8 @@ button {
 }
 
 .protected-section__content {
+  max-height: 220px;
+  overflow: hidden;
   filter: blur(12px);
   pointer-events: none;
   user-select: none;
@@ -651,6 +653,22 @@ button {
 
 .protected-section__button:active {
   transform: translateY(1px);
+}
+
+.protected-case-section {
+  padding: 48px 0;
+}
+
+.protected-case-section__item {
+  width: 100%;
+}
+
+.protected-case-section__item:first-child {
+  padding-top: 0;
+}
+
+.protected-case-section__item:last-child {
+  padding-bottom: 0;
 }
 
 .password-modal-backdrop {

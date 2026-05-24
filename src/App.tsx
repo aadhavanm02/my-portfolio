@@ -207,6 +207,70 @@ function LogoMark() {
   return <img className="logo-image" src={assetPath("/assets/a-logo.svg")} alt="" />;
 }
 
+function DetailSectionContent({ index, projectIndex, section }: { index: number; projectIndex: number; section: DetailSection }) {
+  return (
+    <>
+      <div className="case-section-heading">
+        <p>{section.eyebrow}</p>
+        <h2>{section.title}</h2>
+        <span>{section.body}</span>
+      </div>
+
+      <figure className="case-wide-media">
+        <img src={projects[(projectIndex + index) % projects.length].image} alt="" />
+      </figure>
+
+      <div className="case-points">
+        <div>
+          <h3>The Main Challenges:</h3>
+          <ul>
+            <li>Repetitive work slows down daily decisions.</li>
+            <li>Important information is scattered across screens.</li>
+            <li>Users need clearer feedback after each action.</li>
+            <li>Dense interfaces make comparison harder.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>The Main Goals:</h3>
+          <ul>
+            <li>Reduce time spent on repeated tasks.</li>
+            <li>Make critical metrics faster to understand.</li>
+            <li>Create a calmer, more predictable flow.</li>
+            <li>Support confident next-step decisions.</li>
+          </ul>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function FutureScopeContent({ project, projectIndex }: { project: Project; projectIndex: number }) {
+  return (
+    <>
+      <div className="case-section-heading">
+        <p>Future Scope</p>
+        <h2>{project.title} can grow with automation, reporting depth, and stronger team workflows.</h2>
+        <span>
+          The next iteration can extend the same product direction: remove manual effort, make insight easier to trust,
+          and support teams as their workflows become more complex.
+        </span>
+      </div>
+
+      <div className="future-list">
+        {futureScopes.map((item, index) => (
+          <article className="future-item" key={item.title}>
+            <img src={projects[(projectIndex + index + 1) % projects.length].image} alt="" />
+            <div>
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </>
+  );
+}
+
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -548,6 +612,8 @@ function CaseStudyPage({ project }: { project: Project }) {
   const [activeTopic, setActiveTopic] = useState("overview");
   const [isNdaUnlocked, setIsNdaUnlocked] = useState(() => getStoredNdaUnlock(project.slug));
   const projectIndex = projects.indexOf(project);
+  const publicDetailSections = detailSections.filter((section) => !section.protected);
+  const protectedDetailSections = detailSections.filter((section) => section.protected);
   const meta = [
     ["Role:", "Product Designer"],
     ["Duration:", "Oct - Nov 2023"],
@@ -628,41 +694,8 @@ function CaseStudyPage({ project }: { project: Project }) {
           </dl>
         </section>
 
-        {detailSections.map((section, index) => {
-          const sectionContent = (
-            <>
-              <div className="case-section-heading">
-                <p>{section.eyebrow}</p>
-                <h2>{section.title}</h2>
-                <span>{section.body}</span>
-              </div>
-
-              <figure className="case-wide-media">
-                <img src={projects[(projectIndex + index) % projects.length].image} alt="" />
-              </figure>
-
-              <div className="case-points">
-                <div>
-                  <h3>The Main Challenges:</h3>
-                  <ul>
-                    <li>Repetitive work slows down daily decisions.</li>
-                    <li>Important information is scattered across screens.</li>
-                    <li>Users need clearer feedback after each action.</li>
-                    <li>Dense interfaces make comparison harder.</li>
-                  </ul>
-                </div>
-                <div>
-                  <h3>The Main Goals:</h3>
-                  <ul>
-                    <li>Reduce time spent on repeated tasks.</li>
-                    <li>Make critical metrics faster to understand.</li>
-                    <li>Create a calmer, more predictable flow.</li>
-                    <li>Support confident next-step decisions.</li>
-                  </ul>
-                </div>
-              </div>
-            </>
-          );
+        {publicDetailSections.map((section) => {
+          const detailIndex = detailSections.indexOf(section);
 
           return (
             <section
@@ -670,47 +703,34 @@ function CaseStudyPage({ project }: { project: Project }) {
               id={section.eyebrow.toLowerCase().replaceAll(" ", "-")}
               key={section.eyebrow}
             >
-              {section.protected ? (
-                <PasswordProtectedContent
-                  isUnlocked={isNdaUnlocked}
-                  onUnlock={() => setIsNdaUnlocked(true)}
-                  projectSlug={project.slug}
-                >
-                  {sectionContent}
-                </PasswordProtectedContent>
-              ) : (
-                sectionContent
-              )}
+              <DetailSectionContent index={detailIndex} projectIndex={projectIndex} section={section} />
             </section>
           );
         })}
 
-        <section className="case-section" id="future-scope">
+        <section className="case-section protected-case-section">
           <PasswordProtectedContent
             isUnlocked={isNdaUnlocked}
             onUnlock={() => setIsNdaUnlocked(true)}
             projectSlug={project.slug}
           >
-            <div className="case-section-heading">
-              <p>Future Scope</p>
-              <h2>{project.title} can grow with automation, reporting depth, and stronger team workflows.</h2>
-              <span>
-                The next iteration can extend the same product direction: remove manual effort, make insight easier to
-                trust, and support teams as their workflows become more complex.
-              </span>
-            </div>
+            {protectedDetailSections.map((section) => (
+              <section
+                className="case-section protected-case-section__item"
+                id={section.eyebrow.toLowerCase().replaceAll(" ", "-")}
+                key={section.eyebrow}
+              >
+                <DetailSectionContent
+                  index={detailSections.indexOf(section)}
+                  projectIndex={projectIndex}
+                  section={section}
+                />
+              </section>
+            ))}
 
-            <div className="future-list">
-              {futureScopes.map((item, index) => (
-                <article className="future-item" key={item.title}>
-                  <img src={projects[(projectIndex + index + 1) % projects.length].image} alt="" />
-                  <div>
-                    <h3>{item.title}</h3>
-                    <p>{item.body}</p>
-                  </div>
-                </article>
-              ))}
-            </div>
+            <section className="case-section protected-case-section__item" id="future-scope">
+              <FutureScopeContent project={project} projectIndex={projectIndex} />
+            </section>
           </PasswordProtectedContent>
         </section>
 
