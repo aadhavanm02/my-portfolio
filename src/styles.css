@@ -848,12 +848,14 @@ button {
 
 .protected-section {
   position: relative;
+  overflow: hidden;
+  border-radius: 32px;
 }
 
 .protected-section__content {
-  max-height: 800px;
+  max-height: 560px;
   overflow: hidden;
-  filter: blur(12px);
+  filter: blur(18px);
   pointer-events: none;
   user-select: none;
 }
@@ -866,34 +868,36 @@ button {
   place-items: center;
   padding: 32px;
   border-radius: 32px;
-  background: rgba(246, 246, 246, 0.72);
+  background:
+    linear-gradient(180deg, rgba(246, 246, 246, 0.84), rgba(246, 246, 246, 0.94)),
+    rgba(246, 246, 246, 0.9);
 }
 
 .protected-section__card {
-  width: min(100%, 760px);
+  width: min(100%, 560px);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 24px;
-  padding: 56px 64px;
+  gap: 18px;
+  padding: 32px;
   border: 1px solid var(--color-border);
-  border-radius: 32px;
-  background: rgba(255, 255, 255, 0.92);
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.88);
   text-align: center;
-  box-shadow: 0 28px 100px rgba(16, 16, 16, 0.08);
+  box-shadow: 0 24px 80px rgba(16, 16, 16, 0.08);
 }
 
 .protected-section__badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 34px;
-  padding: 6px 14px;
+  min-height: 30px;
+  padding: 5px 12px;
   border: 1px solid rgba(16, 16, 16, 0.22);
   border-radius: 999px;
   color: var(--color-ink);
   font-family: "Figtree", "Inter", system-ui, sans-serif;
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 600;
   line-height: 1;
   box-shadow: 0 14px 32px rgba(16, 16, 16, 0.08);
@@ -903,23 +907,28 @@ button {
   margin: 0;
   color: var(--color-ink);
   font-family: "Figtree", "Inter", system-ui, sans-serif;
-  font-size: 36px;
+  font-size: 28px;
   font-weight: 600;
-  line-height: 1.22;
+  line-height: 1.18;
 }
 
 .protected-section__card p {
-  max-width: 620px;
-  margin: -8px 0 4px;
+  max-width: 460px;
+  margin: -4px 0 2px;
   color: var(--color-muted);
-  font-size: 22px;
+  font-size: 17px;
   line-height: 1.45;
+}
+
+.protected-section__form {
+  width: min(100%, 360px);
 }
 
 .protected-section__button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
   min-height: 56px;
   padding: 16px 28px;
   border: 0;
@@ -963,82 +972,10 @@ button {
   padding-bottom: 0;
 }
 
-.password-modal-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 10;
-  display: grid;
-  place-items: center;
-  padding: 24px;
-  background: rgba(16, 16, 16, 0.42);
-}
-
-.password-modal {
-  position: relative;
-  width: min(100%, 460px);
-  padding: 40px;
-  border: 1px solid var(--color-border);
-  border-radius: 32px;
-  background: var(--color-surface);
-  color: var(--color-ink);
-  box-shadow: 0 32px 100px rgba(0, 0, 0, 0.24);
-}
-
-.password-modal__close {
-  position: absolute;
-  top: 18px;
-  right: 18px;
-  width: 40px;
-  height: 40px;
-  display: grid;
-  place-items: center;
-  border: 1px solid var(--color-border);
-  border-radius: 50%;
-  background: var(--color-surface);
-  color: var(--color-ink);
-  cursor: pointer;
-  font-size: 26px;
-  line-height: 1;
-}
-
-.password-modal__header {
-  margin-bottom: 28px;
-  padding-right: 28px;
-}
-
-.password-modal__header p {
-  margin: 0 0 10px;
-  color: var(--color-muted);
-  font-family: "Figtree", "Inter", system-ui, sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.2;
-  text-transform: uppercase;
-}
-
-.password-modal__header h3 {
-  margin: 0 0 12px;
-  font-family: "Figtree", "Inter", system-ui, sans-serif;
-  font-size: 30px;
-  font-weight: 600;
-  line-height: 1.2;
-}
-
-.password-modal__header span {
-  display: block;
-  color: var(--color-body-muted);
-  font-size: 17px;
-  line-height: 1.5;
-}
-
 .password-form {
   display: flex;
   flex-direction: column;
-  gap: 18px;
-}
-
-.password-form .button {
-  width: 100%;
+  gap: 14px;
 }
 
 .password-form fieldset {
@@ -1048,9 +985,9 @@ button {
 }
 
 .password-form legend {
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   color: var(--color-ink);
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   line-height: 1.2;
 }
@@ -1065,11 +1002,11 @@ button {
   width: 100%;
   aspect-ratio: 1;
   border: 1px solid var(--color-border);
-  border-radius: 18px;
+  border-radius: 16px;
   background: var(--color-canvas);
   color: var(--color-ink);
   font-family: "Inter", system-ui, sans-serif;
-  font-size: 30px;
+  font-size: 26px;
   font-weight: 600;
   line-height: 1;
   text-align: center;
@@ -1523,9 +1460,13 @@ button {
     border-radius: 24px;
   }
 
+  .protected-section__content {
+    max-height: 460px;
+  }
+
   .protected-section__card {
-    gap: 18px;
-    padding: 32px 24px;
+    gap: 16px;
+    padding: 28px 20px;
     border-radius: 24px;
   }
 
@@ -1536,7 +1477,7 @@ button {
   }
 
   .protected-section__card h3 {
-    font-size: 26px;
+    font-size: 24px;
     line-height: 1.18;
   }
 
@@ -1547,17 +1488,8 @@ button {
   }
 
   .protected-section__button {
-    width: min(100%, 320px);
+    width: 100%;
     white-space: normal;
-  }
-
-  .password-modal {
-    padding: 28px;
-    border-radius: 24px;
-  }
-
-  .password-modal__header h3 {
-    font-size: 26px;
   }
 
   .otp-inputs {

@@ -531,34 +531,11 @@ function PasswordProtectedContent({
   onUnlock: () => void;
   projectSlug: string;
 }) {
-  const titleId = useId();
   const errorId = useId();
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [digits, setDigits] = useState(["", "", "", ""]);
   const [error, setError] = useState("");
   const digitRefs = useRef<Array<HTMLInputElement | null>>([]);
   const password = digits.join("");
-
-  useEffect(() => {
-    if (!isModalOpen) {
-      return;
-    }
-
-    const timeoutId = window.setTimeout(() => digitRefs.current[0]?.focus(), 0);
-
-    function handleEscape(event: globalThis.KeyboardEvent) {
-      if (event.key === "Escape") {
-        setIsModalOpen(false);
-      }
-    }
-
-    window.addEventListener("keydown", handleEscape);
-
-    return () => {
-      window.clearTimeout(timeoutId);
-      window.removeEventListener("keydown", handleEscape);
-    };
-  }, [isModalOpen]);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -583,7 +560,6 @@ function PasswordProtectedContent({
     storeNdaUnlock(projectSlug);
     onUnlock();
     setError("");
-    setIsModalOpen(false);
   }
 
   function handleDigitChange(index: number, event: ChangeEvent<HTMLInputElement>) {
@@ -630,11 +606,6 @@ function PasswordProtectedContent({
     digitRefs.current[Math.min(pastedDigits.length, 3)]?.focus();
   }
 
-  function openPasswordModal() {
-    setIsModalOpen(true);
-    setError("");
-  }
-
   if (isUnlocked) {
     return <>{children}</>;
   }
@@ -648,73 +619,48 @@ function PasswordProtectedContent({
       <div className="protected-section__overlay">
         <div className="protected-section__card">
           <span className="protected-section__badge">NDA</span>
-          <h3>Some project details are password protected</h3>
+          <h3>Protected case study details</h3>
           <p>
-            This section includes private product context. Enter the access code to view the protected case study
-            details.
+            This section includes private product context covered by NDA. Enter the 4-digit access code to continue.
           </p>
-          <button className="protected-section__button" onClick={openPasswordModal} type="button">
-            Enter password
-          </button>
+
+          <form className="password-form protected-section__form" onSubmit={handleSubmit}>
+            <fieldset>
+              <legend>4-digit password</legend>
+              <div className="otp-inputs">
+                {digits.map((digit, index) => (
+                  <input
+                    aria-describedby={error ? errorId : undefined}
+                    aria-invalid={error ? "true" : "false"}
+                    aria-label={`Password digit ${index + 1}`}
+                    autoComplete="off"
+                    inputMode="numeric"
+                    key={`password-digit-${index}`}
+                    maxLength={1}
+                    onChange={(event) => handleDigitChange(index, event)}
+                    onKeyDown={(event) => handleDigitKeyDown(index, event)}
+                    onPaste={handleDigitPaste}
+                    pattern="[0-9]"
+                    ref={(node) => {
+                      digitRefs.current[index] = node;
+                    }}
+                    type="password"
+                    value={digit}
+                  />
+                ))}
+              </div>
+            </fieldset>
+
+            <p className="password-error" id={errorId} role="alert">
+              {error}
+            </p>
+
+            <button className="protected-section__button" type="submit">
+              Unlock section
+            </button>
+          </form>
         </div>
       </div>
-
-      {isModalOpen ? (
-        <div className="password-modal-backdrop" role="presentation">
-          <div aria-labelledby={titleId} aria-modal="true" className="password-modal" role="dialog">
-            <button
-              aria-label="Close password dialog"
-              className="password-modal__close"
-              onClick={() => setIsModalOpen(false)}
-              type="button"
-            >
-              ×
-            </button>
-
-            <div className="password-modal__header">
-              <p>Protected section</p>
-              <h3 id={titleId}>To view this section, enter the password.</h3>
-              <span>This content is protected because of NDA.</span>
-            </div>
-
-            <form className="password-form" onSubmit={handleSubmit}>
-              <fieldset>
-                <legend>4-digit password</legend>
-                <div className="otp-inputs">
-                  {digits.map((digit, index) => (
-                    <input
-                      aria-describedby={error ? errorId : undefined}
-                      aria-invalid={error ? "true" : "false"}
-                      aria-label={`Password digit ${index + 1}`}
-                      autoComplete="off"
-                      inputMode="numeric"
-                      key={`password-digit-${index}`}
-                      maxLength={1}
-                      onChange={(event) => handleDigitChange(index, event)}
-                      onKeyDown={(event) => handleDigitKeyDown(index, event)}
-                      onPaste={handleDigitPaste}
-                      pattern="[0-9]"
-                      ref={(node) => {
-                        digitRefs.current[index] = node;
-                      }}
-                      type="password"
-                      value={digit}
-                    />
-                  ))}
-                </div>
-              </fieldset>
-
-              <p className="password-error" id={errorId} role="alert">
-                {error}
-              </p>
-
-              <button className="button" type="submit">
-                Unlock section
-              </button>
-            </form>
-          </div>
-        </div>
-      ) : null}
     </div>
   );
 }
