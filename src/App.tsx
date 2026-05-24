@@ -9,7 +9,15 @@ import {
   type KeyboardEvent,
   type ReactNode,
 } from "react";
-import { CaretLeft, CaretRight, List, MagnifyingGlassMinus, MagnifyingGlassPlus, X } from "@phosphor-icons/react";
+import {
+  CaretLeft,
+  CaretRight,
+  List,
+  MagnifyingGlassMinus,
+  MagnifyingGlassPlus,
+  Play,
+  X,
+} from "@phosphor-icons/react";
 
 type ProjectTone = "violet" | "peach";
 
@@ -36,6 +44,7 @@ const ndaPassword = "0511";
 const ndaStoragePrefix = "portfolio-nda-unlocked-until";
 const ndaUnlockDurationMs = 60 * 60 * 1000;
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
+const caseStudyVideoUrl = "https://www.youtube.com/embed/Qa3Lhbw-PRM?autoplay=1&rel=0&modestbranding=1";
 
 function withBasePath(path: string) {
   return `${basePath}${path}`;
@@ -349,6 +358,31 @@ function ImageCarousel({ images }: { images: Array<{ alt: string; src: string }>
         </div>
       ) : null}
     </>
+  );
+}
+
+function CaseHeroVideo({ coverImage, title }: { coverImage: string; title: string }) {
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  return (
+    <figure className="case-hero-media case-video">
+      {isPlaying ? (
+        <iframe
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+          src={caseStudyVideoUrl}
+          title={`${title} video walkthrough`}
+        />
+      ) : (
+        <button className="case-video__cover" onClick={() => setIsPlaying(true)} type="button">
+          <img src={coverImage} alt="" />
+          <span aria-hidden="true" className="case-video__play">
+            <Play size={34} weight="fill" />
+          </span>
+          <span className="sr-only">Play video walkthrough</span>
+        </button>
+      )}
+    </figure>
   );
 }
 
@@ -857,9 +891,7 @@ function CaseStudyPage({ project }: { project: Project }) {
             ← All case studies
           </a>
           <h1>{project.proof}</h1>
-          <figure className="case-hero-media">
-            <img src={project.image} alt="" />
-          </figure>
+          <CaseHeroVideo coverImage={project.image} title={project.title} />
           <dl className="case-meta">
             {meta.map(([label, value]) => (
               <div key={label}>
