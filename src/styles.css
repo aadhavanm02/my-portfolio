@@ -513,7 +513,7 @@ button {
 .image-carousel__track {
   height: 100%;
   display: flex;
-  transition: transform 900ms ease;
+  transition: transform 30000ms linear;
 }
 
 .image-carousel__track img {

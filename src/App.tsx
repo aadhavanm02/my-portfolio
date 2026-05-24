@@ -228,7 +228,7 @@ function ImageCarousel({ images }: { images: Array<{ alt: string; src: string }>
   useEffect(() => {
     const intervalId = window.setInterval(() => {
       setActiveIndex((index) => (index + 1) % images.length);
-    }, 4500);
+    }, 30000);
 
     return () => window.clearInterval(intervalId);
   }, [images.length]);
