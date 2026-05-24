@@ -496,6 +496,189 @@ button {
   object-position: left top;
 }
 
+.image-carousel {
+  position: relative;
+}
+
+.image-carousel__stage {
+  width: 100%;
+  height: 100%;
+  display: block;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: zoom-in;
+}
+
+.image-carousel__track {
+  height: 100%;
+  display: flex;
+  transition: transform 900ms ease;
+}
+
+.image-carousel__track img {
+  flex: 0 0 100%;
+  min-width: 100%;
+}
+
+.image-carousel__arrow,
+.image-lightbox__arrow,
+.image-lightbox__toolbar button {
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: var(--color-cta-bg);
+  color: var(--color-cta-text);
+  cursor: pointer;
+}
+
+.image-carousel__arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  opacity: 0;
+  transform: translateY(-50%);
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+.image-carousel__arrow--prev {
+  left: 20px;
+}
+
+.image-carousel__arrow--next {
+  right: 20px;
+}
+
+.image-carousel__dots {
+  position: absolute;
+  left: 50%;
+  bottom: 20px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  background: rgba(16, 16, 16, 0.42);
+  opacity: 0;
+  transform: translateX(-50%);
+  transition: opacity 180ms ease;
+}
+
+.image-carousel__dots button {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.55);
+  cursor: pointer;
+}
+
+.image-carousel__dots button[aria-current="true"] {
+  width: 22px;
+  border-radius: 999px;
+  background: var(--color-cta-text);
+}
+
+.image-carousel:hover .image-carousel__arrow,
+.image-carousel:focus-within .image-carousel__arrow,
+.image-carousel:hover .image-carousel__dots,
+.image-carousel:focus-within .image-carousel__dots {
+  opacity: 1;
+}
+
+.image-carousel:hover .image-carousel__arrow--prev,
+.image-carousel:focus-within .image-carousel__arrow--prev {
+  transform: translateY(-50%) translateX(0);
+}
+
+.image-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+  background: rgba(16, 16, 16, 0.78);
+}
+
+.image-lightbox__dialog {
+  position: relative;
+  width: min(100%, 1180px);
+  height: min(86vh, 820px);
+  overflow: hidden;
+  border-radius: 32px;
+  background: var(--color-surface);
+}
+
+.image-lightbox__viewport {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  cursor: grab;
+}
+
+.image-lightbox__viewport img {
+  width: 100%;
+  min-height: 100%;
+  display: block;
+  object-fit: contain;
+  object-position: center;
+  transform-origin: center;
+  transition: transform 180ms ease;
+}
+
+.image-lightbox__toolbar {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 999px;
+  background: rgba(16, 16, 16, 0.68);
+  color: var(--color-cta-text);
+}
+
+.image-lightbox__toolbar button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.image-lightbox__toolbar span {
+  min-width: 52px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.image-lightbox__arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  transform: translateY(-50%);
+}
+
+.image-lightbox__arrow--prev {
+  left: 20px;
+}
+
+.image-lightbox__arrow--next {
+  right: 20px;
+}
+
 .case-meta {
   display: grid;
   grid-template-columns: repeat(4, 1fr);

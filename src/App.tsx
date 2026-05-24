@@ -9,7 +9,7 @@ import {
   type KeyboardEvent,
   type ReactNode,
 } from "react";
-import { List } from "@phosphor-icons/react";
+import { CaretLeft, CaretRight, List, MagnifyingGlassMinus, MagnifyingGlassPlus, X } from "@phosphor-icons/react";
 
 type ProjectTone = "violet" | "peach";
 
@@ -207,6 +207,151 @@ function LogoMark() {
   return <img className="logo-image" src={assetPath("/assets/a-logo.svg")} alt="" />;
 }
 
+function getCarouselImages(projectIndex: number, offset: number) {
+  return Array.from({ length: Math.min(projects.length, 4) }, (_, index) => {
+    const project = projects[(projectIndex + offset + index) % projects.length];
+
+    return {
+      alt: project.title,
+      src: project.image,
+    };
+  });
+}
+
+function ImageCarousel({ images }: { images: Array<{ alt: string; src: string }> }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [zoom, setZoom] = useState(1);
+  const activeImage = images[activeIndex];
+  const lightboxImage = lightboxIndex === null ? null : images[lightboxIndex];
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setActiveIndex((index) => (index + 1) % images.length);
+    }, 4500);
+
+    return () => window.clearInterval(intervalId);
+  }, [images.length]);
+
+  useEffect(() => {
+    if (lightboxIndex === null) {
+      return;
+    }
+
+    function handleEscape(event: globalThis.KeyboardEvent) {
+      if (event.key === "Escape") {
+        setLightboxIndex(null);
+      }
+    }
+
+    window.addEventListener("keydown", handleEscape);
+
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [lightboxIndex]);
+
+  function moveCarousel(direction: number) {
+    setActiveIndex((index) => (index + direction + images.length) % images.length);
+  }
+
+  function openLightbox(index: number) {
+    setLightboxIndex(index);
+    setZoom(1);
+  }
+
+  function moveLightbox(direction: number) {
+    setLightboxIndex((index) => {
+      if (index === null) {
+        return index;
+      }
+
+      return (index + direction + images.length) % images.length;
+    });
+    setZoom(1);
+  }
+
+  return (
+    <>
+      <figure className="case-wide-media image-carousel">
+        <button className="image-carousel__stage" onClick={() => openLightbox(activeIndex)} type="button">
+          <div className="image-carousel__track" style={{ transform: `translateX(-${activeIndex * 100}%)` }}>
+            {images.map((image) => (
+              <img alt={image.alt} key={image.src} src={image.src} />
+            ))}
+          </div>
+        </button>
+
+        <button
+          aria-label="Previous image"
+          className="image-carousel__arrow image-carousel__arrow--prev"
+          onClick={() => moveCarousel(-1)}
+          type="button"
+        >
+          <CaretLeft aria-hidden="true" size={24} weight="bold" />
+        </button>
+        <button
+          aria-label="Next image"
+          className="image-carousel__arrow image-carousel__arrow--next"
+          onClick={() => moveCarousel(1)}
+          type="button"
+        >
+          <CaretRight aria-hidden="true" size={24} weight="bold" />
+        </button>
+
+        <div className="image-carousel__dots" aria-label="Carousel image selection">
+          {images.map((image, index) => (
+            <button
+              aria-label={`Show ${image.alt}`}
+              aria-current={index === activeIndex ? "true" : undefined}
+              key={image.src}
+              onClick={() => setActiveIndex(index)}
+              type="button"
+            />
+          ))}
+        </div>
+      </figure>
+
+      {lightboxImage ? (
+        <div className="image-lightbox" role="presentation">
+          <div aria-label={`${lightboxImage.alt} closer view`} aria-modal="true" className="image-lightbox__dialog" role="dialog">
+            <div className="image-lightbox__toolbar">
+              <button aria-label="Zoom out" onClick={() => setZoom((value) => Math.max(1, value - 0.25))} type="button">
+                <MagnifyingGlassMinus aria-hidden="true" size={22} weight="bold" />
+              </button>
+              <span>{Math.round(zoom * 100)}%</span>
+              <button aria-label="Zoom in" onClick={() => setZoom((value) => Math.min(3, value + 0.25))} type="button">
+                <MagnifyingGlassPlus aria-hidden="true" size={22} weight="bold" />
+              </button>
+              <button aria-label="Close image preview" onClick={() => setLightboxIndex(null)} type="button">
+                <X aria-hidden="true" size={22} weight="bold" />
+              </button>
+            </div>
+
+            <button
+              aria-label="Previous image"
+              className="image-lightbox__arrow image-lightbox__arrow--prev"
+              onClick={() => moveLightbox(-1)}
+              type="button"
+            >
+              <CaretLeft aria-hidden="true" size={28} weight="bold" />
+            </button>
+            <div className="image-lightbox__viewport">
+              <img alt={lightboxImage.alt} src={lightboxImage.src} style={{ transform: `scale(${zoom})` }} />
+            </div>
+            <button
+              aria-label="Next image"
+              className="image-lightbox__arrow image-lightbox__arrow--next"
+              onClick={() => moveLightbox(1)}
+              type="button"
+            >
+              <CaretRight aria-hidden="true" size={28} weight="bold" />
+            </button>
+          </div>
+        </div>
+      ) : null}
+    </>
+  );
+}
+
 function DetailSectionContent({ index, projectIndex, section }: { index: number; projectIndex: number; section: DetailSection }) {
   return (
     <>
@@ -216,9 +361,7 @@ function DetailSectionContent({ index, projectIndex, section }: { index: number;
         <span>{section.body}</span>
       </div>
 
-      <figure className="case-wide-media">
-        <img src={projects[(projectIndex + index) % projects.length].image} alt="" />
-      </figure>
+      <ImageCarousel images={getCarouselImages(projectIndex, index)} />
 
       <div className="case-points">
         <div>
