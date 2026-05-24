@@ -439,72 +439,17 @@ button {
   backdrop-filter: blur(16px);
 }
 
-.case-topic-nav a,
-.case-topic-nav button {
+.case-topic-nav a {
   color: var(--color-muted);
-  padding: 0;
-  border: 0;
-  background: transparent;
-  font-family: "Inter", system-ui, sans-serif;
   font-size: 14px;
   font-weight: 500;
   line-height: 1.2;
-  text-align: left;
 }
 
 .case-topic-nav a[aria-current="true"],
 .case-topic-nav a:hover,
 .case-topic-nav a:focus-visible {
   color: var(--color-ink);
-}
-
-.case-topic-nav__disabled {
-  color: rgba(16, 16, 16, 0.28);
-  cursor: not-allowed;
-}
-
-.case-topic-nav__disabled:hover,
-.case-topic-nav__disabled:focus-visible {
-  color: rgba(16, 16, 16, 0.28);
-}
-
-.case-topic-nav__helper {
-  position: absolute;
-  left: -18px;
-  bottom: -44px;
-  width: max-content;
-  max-width: 172px;
-  min-height: 0;
-  margin: 0;
-  padding: 9px 12px;
-  border-radius: 8px;
-  background: #2f2f2f;
-  color: #ffffff;
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 1.35;
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(-4px);
-  transition:
-    opacity 160ms ease,
-    transform 160ms ease;
-}
-
-.case-topic-nav__helper::before {
-  position: absolute;
-  top: 50%;
-  left: -6px;
-  width: 12px;
-  height: 12px;
-  background: #2f2f2f;
-  content: "";
-  transform: translateY(-50%) rotate(45deg);
-}
-
-.case-topic-nav__helper:not(:empty) {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 .case-hero,
