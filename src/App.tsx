@@ -95,6 +95,10 @@ function navHref(link: string) {
   return withBasePath(`/#${link.toLowerCase()}`);
 }
 
+function isActiveNavLink(link: string) {
+  return link === "Work";
+}
+
 const projects: Project[] = [
   {
     slug: "superfans-dashboard",
@@ -691,7 +695,7 @@ function Header() {
       <nav className="nav-menu" aria-label="Portfolio sections">
         <div className="nav-links">
           {navLinks.map((link) => (
-            <a href={navHref(link)} key={link}>
+            <a aria-current={isActiveNavLink(link) ? "page" : undefined} href={navHref(link)} key={link}>
               {link}
             </a>
           ))}
@@ -714,7 +718,7 @@ function Header() {
 
       <nav className={`mobile-menu${isMenuOpen ? " is-open" : ""}`} id="mobile-menu" aria-label="Mobile navigation">
         {navLinks.map((link) => (
-          <a href={navHref(link)} key={link} onClick={closeMenu}>
+          <a aria-current={isActiveNavLink(link) ? "page" : undefined} href={navHref(link)} key={link} onClick={closeMenu}>
             {link}
           </a>
         ))}
