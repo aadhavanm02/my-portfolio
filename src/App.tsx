@@ -863,7 +863,7 @@ function CaseStudyPage({ project }: { project: Project }) {
                   aria-disabled="true"
                   className="case-topic-nav__disabled"
                   key={`${topic.label}-${topic.target}`}
-                  onClick={() => setTopicHelper("This section is password protected due to NDA.")}
+                  onClick={() => setTopicHelper("This section is protected due to NDA.")}
                   type="button"
                 >
                   {topic.label}
