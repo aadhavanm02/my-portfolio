@@ -517,7 +517,7 @@ function CaseHeroVideo({ coverImage, title }: { coverImage: string; title: strin
     const showCover = mode === "inline" && !hasStarted;
 
     return (
-      <div className={`case-video__player case-video__player--${mode}`}>
+      <div className={`case-video__player case-video__player--${mode}${hasStarted ? " case-video__player--started" : ""}`}>
         <video
           aria-label={`${title} video walkthrough`}
           onEnded={() => setIsPlaying(false)}
