@@ -754,6 +754,7 @@ function HomePage() {
 function CaseStudyPage({ project }: { project: Project }) {
   const [activeTopic, setActiveTopic] = useState("overview");
   const [isNdaUnlocked, setIsNdaUnlocked] = useState(() => getStoredNdaUnlock(project.slug));
+  const [topicHelper, setTopicHelper] = useState("");
   const projectIndex = projects.indexOf(project);
   const publicDetailSections = detailSections.filter((section) => !section.protected);
   const protectedDetailSections = detailSections.filter((section) => section.protected);
@@ -802,21 +803,53 @@ function CaseStudyPage({ project }: { project: Project }) {
     return () => window.clearInterval(intervalId);
   }, [isNdaUnlocked, project.slug]);
 
+  useEffect(() => {
+    if (!topicHelper) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => setTopicHelper(""), 3000);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [topicHelper]);
+
   return (
     <>
       <Header />
 
       <main className="case-study">
         <nav className="case-topic-nav" aria-label="Case study topics">
-          {caseTopics.map((topic) => (
-            <a
-              aria-current={activeTopic === topic.target && topic.label !== "Back to Top" ? "true" : undefined}
-              href={`#${topic.target}`}
-              key={`${topic.label}-${topic.target}`}
-            >
-              {topic.label}
-            </a>
-          ))}
+          {caseTopics.map((topic) => {
+            const isProtectedTopic = ["solution-direction", "critical-decisions", "future-scope"].includes(topic.target);
+            const isLockedTopic = isProtectedTopic && !isNdaUnlocked;
+
+            if (isLockedTopic) {
+              return (
+                <button
+                  aria-disabled="true"
+                  className="case-topic-nav__disabled"
+                  key={`${topic.label}-${topic.target}`}
+                  onClick={() => setTopicHelper("This section is password protected due to NDA.")}
+                  type="button"
+                >
+                  {topic.label}
+                </button>
+              );
+            }
+
+            return (
+              <a
+                aria-current={activeTopic === topic.target && topic.label !== "Back to Top" ? "true" : undefined}
+                href={`#${topic.target}`}
+                key={`${topic.label}-${topic.target}`}
+              >
+                {topic.label}
+              </a>
+            );
+          })}
+          <p className="case-topic-nav__helper" role="status">
+            {topicHelper}
+          </p>
         </nav>
 
         <section className="case-hero" id="overview">

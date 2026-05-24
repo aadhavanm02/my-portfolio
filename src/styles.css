@@ -428,17 +428,41 @@ button {
   backdrop-filter: blur(16px);
 }
 
-.case-topic-nav a {
+.case-topic-nav a,
+.case-topic-nav button {
   color: var(--color-muted);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-family: "Inter", system-ui, sans-serif;
   font-size: 14px;
   font-weight: 500;
   line-height: 1.2;
+  text-align: left;
 }
 
 .case-topic-nav a[aria-current="true"],
 .case-topic-nav a:hover,
 .case-topic-nav a:focus-visible {
   color: var(--color-ink);
+}
+
+.case-topic-nav__disabled {
+  cursor: not-allowed;
+}
+
+.case-topic-nav__disabled:hover,
+.case-topic-nav__disabled:focus-visible {
+  color: var(--color-muted);
+}
+
+.case-topic-nav__helper {
+  min-height: 42px;
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.35;
 }
 
 .case-hero,
