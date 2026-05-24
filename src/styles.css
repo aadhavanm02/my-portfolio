@@ -267,13 +267,15 @@ button {
   line-height: 1.25;
 }
 
-.nav-links a {
-  color: var(--color-neutral-300);
+.nav-links a,
+.footer a {
+  color: var(--color-neutral-500);
   padding: 6px 14px;
 }
 
 .nav-links a[aria-current="page"],
-.mobile-menu a[aria-current="page"] {
+.mobile-menu a[aria-current="page"],
+.footer a[aria-current="page"] {
   color: var(--color-ink);
 }
 
@@ -1559,7 +1561,7 @@ button {
   .mobile-menu a:not(.button) {
     padding: 14px 16px;
     border-radius: 14px;
-    color: var(--color-neutral-300);
+    color: var(--color-neutral-500);
     font-size: var(--text-nav);
     font-weight: var(--font-weight-semibold);
     line-height: 1.2;

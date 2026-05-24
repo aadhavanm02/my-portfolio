@@ -735,7 +735,7 @@ function SiteFooter() {
     <footer className="footer">
       <nav aria-label="Footer sections">
         {navLinks.map((link) => (
-          <a href={navHref(link)} key={link}>
+          <a aria-current={isActiveNavLink(link) ? "page" : undefined} href={navHref(link)} key={link}>
             {link}
           </a>
         ))}
