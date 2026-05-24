@@ -1,47 +1,52 @@
 <svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <clipPath id="cardClip">
-      <rect x="80" y="440" width="1040" height="245" rx="40" />
+      <rect x="232" y="462" width="736" height="258" rx="26" />
     </clipPath>
-    <clipPath id="imageClip">
-      <rect x="530" y="475" width="590" height="210" rx="20" />
+    <clipPath id="heroImageClip">
+      <rect x="545" y="488" width="423" height="232" rx="14" />
     </clipPath>
   </defs>
 
   <rect width="1200" height="630" fill="#F6F6F6" />
 
-  <image href="./assets/a-logo.svg" x="80" y="44" width="52" height="52" />
+  <image href="./assets/a-logo.svg" x="232" y="26" width="32" height="32" />
 
-  <g fill="#525252" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="600">
-    <text x="706" y="78">Work</text>
-    <text x="804" y="78">Skills</text>
-    <text x="902" y="78">About</text>
+  <g fill="#3F3F3F" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700">
+    <text x="652" y="54">Work</text>
+    <text x="714" y="54">Skills</text>
+    <text x="777" y="54">About</text>
   </g>
 
-  <rect x="1010" y="34" width="150" height="72" rx="36" fill="#101010" />
-  <text x="1085" y="78" fill="#FFFFFF" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700">Resume</text>
-
-  <text x="80" y="205" fill="#101010" font-family="Figtree, Inter, Arial, sans-serif" font-size="56" font-weight="700">
-    <tspan x="80" dy="0">I’m Aadhavan M, A Product</tspan>
-    <tspan x="80" dy="70">Designer </tspan>
-    <tspan fill="#7A7A7A">that cares a great</tspan>
-    <tspan x="80" dy="70" fill="#7A7A7A">deal about positive impact projects</tspan>
+  <rect x="835" y="21" width="137" height="48" rx="24" fill="#101010" />
+  <text x="904" y="52" fill="#FFFFFF" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="700">
+    Download Resume
   </text>
 
-  <text x="80" y="405" fill="#101010" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700" letter-spacing="1.5">FEATURED WORK</text>
+  <text x="232" y="170" fill="#101010" font-family="Figtree, Inter, Arial, sans-serif" font-size="40" font-weight="700">
+    <tspan x="232" dy="0">I’m Aadhavan M, A Product Designer </tspan>
+    <tspan fill="#7A7A7A">that</tspan>
+    <tspan x="232" dy="47" fill="#7A7A7A">cares a great deal about positive impact</tspan>
+    <tspan x="232" dy="47" fill="#7A7A7A">projects</tspan>
+  </text>
+
+  <text x="232" y="423" fill="#101010" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" letter-spacing="0.5">
+    FEATURED WORK
+  </text>
 
   <g clip-path="url(#cardClip)">
-    <rect x="80" y="440" width="1040" height="245" rx="40" fill="#FFFFFF" />
-    <rect x="120" y="480" width="360" height="118" rx="18" fill="#F7F4FE" stroke="#EDE6FF" stroke-width="2" />
-    <text x="145" y="524" fill="#101010" font-family="Figtree, Inter, Arial, sans-serif" font-size="24" font-weight="700">
-      <tspan x="145" dy="0">Built for Small Businesses to</tspan>
-      <tspan x="145" dy="32">Reduce 30% of Manual Entry</tspan>
-      <tspan x="145" dy="32">Errors.</tspan>
+    <rect x="232" y="462" width="736" height="258" rx="26" fill="#FFFFFF" />
+
+    <rect x="258" y="488" width="258" height="86" rx="14" fill="#F7F4FE" stroke="#EDE6FF" stroke-width="1.5" />
+    <text x="275" y="519" fill="#101010" font-family="Figtree, Inter, Arial, sans-serif" font-size="18" font-weight="700">
+      <tspan x="275" dy="0">Built for Small Businesses to</tspan>
+      <tspan x="275" dy="23">Reduce 30% of Manual Entry</tspan>
+      <tspan x="275" dy="23">Errors.</tspan>
     </text>
 
-    <g clip-path="url(#imageClip)">
-      <image href="./assets/superfans-dashboard.png" x="530" y="430" width="640" height="476" preserveAspectRatio="xMidYMin slice" />
+    <g clip-path="url(#heroImageClip)">
+      <image href="./assets/superfans-dashboard.png" x="545" y="456" width="480" height="357" preserveAspectRatio="xMidYMin slice" />
     </g>
-    <rect x="530" y="475" width="590" height="210" rx="20" stroke="#EDEDED" stroke-width="2" />
+    <rect x="545" y="488" width="423" height="232" rx="14" stroke="#EDEDED" stroke-width="1.5" />
   </g>
 </svg>
