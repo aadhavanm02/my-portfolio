@@ -559,18 +559,26 @@ button {
 }
 
 .about-hero {
+  display: grid;
+  gap: 56px;
   padding: 104px 0 96px;
 }
 
-.about-hero__grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
-  gap: 80px;
-  align-items: end;
-  margin-top: 28px;
+.about-kicker {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--color-muted);
+  font-size: var(--type-label-size);
+  font-weight: var(--type-label-weight);
+  line-height: var(--type-label-line);
 }
 
-.about-hero h1 {
+.about-hero__content {
+  max-width: 980px;
+}
+
+.about-hero__content h1 {
   margin: 0;
   font-family: var(--font-display);
   font-size: var(--type-hero-size);
@@ -579,19 +587,33 @@ button {
   letter-spacing: 0;
 }
 
-.about-hero__intro {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 28px;
-}
-
-.about-hero__intro p {
-  margin: 0;
+.about-hero__content p {
+  max-width: 840px;
+  margin: 32px 0 0;
   color: var(--color-body-muted);
   font-size: var(--type-body-size);
   font-weight: var(--type-body-weight);
   line-height: var(--type-body-line);
+}
+
+.about-quote-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 48px;
+  padding: 40px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-media);
+  background: var(--color-surface);
+}
+
+.about-quote-panel blockquote {
+  max-width: 760px;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--type-section-title-size);
+  font-weight: var(--type-section-title-weight);
+  line-height: var(--type-section-title-line);
 }
 
 .about-section {
@@ -601,7 +623,8 @@ button {
 
 .about-section__heading,
 .about-section--split,
-.about-section--achievements {
+.about-section--achievements,
+.about-section--notes {
   display: grid;
   grid-template-columns: minmax(220px, 0.45fr) minmax(0, 1fr);
   gap: 80px;
@@ -618,6 +641,50 @@ button {
   font-weight: var(--type-section-title-weight);
   line-height: var(--type-section-title-line);
   letter-spacing: 0;
+}
+
+.capability-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.capability-card {
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 28px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+
+.capability-card span,
+.about-note-list span {
+  color: var(--color-muted);
+  font-size: 15px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.25;
+  text-transform: uppercase;
+}
+
+.capability-card h3,
+.about-note-list h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--type-card-title-size);
+  font-weight: var(--type-card-title-weight);
+  line-height: var(--type-card-title-line);
+}
+
+.capability-card p,
+.about-note-list p {
+  margin: 0;
+  color: var(--color-body-muted);
+  font-size: var(--text-body-tablet);
+  line-height: var(--text-body-tablet--line-height);
 }
 
 .about-timeline {
@@ -712,6 +779,20 @@ button {
 
 .achievement-list span {
   color: rgb(255 255 255 / 58%);
+}
+
+.about-note-list {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--color-border);
+}
+
+.about-note-list article {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.3fr) minmax(220px, 0.4fr) minmax(0, 1fr);
+  gap: 32px;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .footer {
@@ -1765,17 +1846,24 @@ button {
     width: calc(100% - (var(--spacing-page-x-tablet) * 2));
   }
 
-  .about-hero__grid,
+  .about-quote-panel,
   .about-section__heading,
   .about-section--split,
   .about-section--achievements,
+  .about-section--notes,
   .about-timeline__item {
     gap: 48px;
   }
 
   .about-card-grid,
+  .capability-grid,
   .achievement-list {
     grid-template-columns: 1fr;
+  }
+
+  .about-note-list article {
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
 
   .footer {
@@ -1941,13 +2029,25 @@ button {
     padding: 60px 0 64px;
   }
 
-  .about-hero__grid,
+  .about-kicker,
+  .about-quote-panel,
   .about-section__heading,
   .about-section--split,
   .about-section--achievements,
+  .about-section--notes,
   .about-timeline__item {
     grid-template-columns: 1fr;
     gap: 28px;
+  }
+
+  .about-kicker {
+    display: grid;
+  }
+
+  .about-quote-panel {
+    align-items: start;
+    padding: 24px;
+    border-radius: var(--radius-media-mobile);
   }
 
   .about-section {
@@ -1959,6 +2059,7 @@ button {
   }
 
   .about-info-card,
+  .capability-card,
   .achievement-list article {
     min-height: 180px;
     padding: 24px;

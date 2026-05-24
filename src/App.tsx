@@ -150,6 +150,39 @@ const achievementItems = [
   "The Dependable Award",
 ];
 
+const capabilityItems = [
+  {
+    title: "Human-centered product design",
+    body: "Designing interfaces around user intent, context, and behavior so the final product feels obvious to use.",
+  },
+  {
+    title: "Complex workflow simplification",
+    body: "Turning dense dashboards, ecommerce flows, and operational tools into calm, scannable experiences.",
+  },
+  {
+    title: "Design systems and UI craft",
+    body: "Creating reusable patterns, visual consistency, and polished interaction details that help teams move faster.",
+  },
+];
+
+const aboutNotes = [
+  {
+    label: "Favorite Design Principle",
+    title: "Simplicity with enough context",
+    body: "I like interfaces that remove noise without hiding the information people need to make confident decisions.",
+  },
+  {
+    label: "Currently Improving",
+    title: "Systems thinking",
+    body: "I’m spending more time connecting product strategy, interaction patterns, and measurable outcomes.",
+  },
+  {
+    label: "Outside Work",
+    title: "Learning, exploring, refining",
+    body: "I enjoy observing how products behave in the wild and turning those notes into better design decisions.",
+  },
+];
+
 const projects: Project[] = [
   {
     slug: "superfans-dashboard",
@@ -1039,19 +1072,41 @@ function AboutPage() {
 
       <main className="about-page">
         <section className="about-hero" aria-labelledby="about-title">
-          <p className="section-eyebrow">About</p>
-          <div className="about-hero__grid">
-            <h1 id="about-title">I care deeply about design and equally about solving problems in simple, elegant ways.</h1>
-            <div className="about-hero__intro">
-              <p>
-                I’m Aadhavan M, a product designer focused on building calm, useful interfaces for SaaS and ecommerce
-                teams. My work is shaped by usability, product clarity, and the kind of visual polish that makes complex
-                workflows feel easier to trust.
-              </p>
-              <a className="button" href={assetPath("/Aadhavan-M-Resume.pdf")}>
-                Download Resume
-              </a>
-            </div>
+          <div className="about-kicker">
+            <span>About</span>
+            <span>Product Designer</span>
+          </div>
+          <div className="about-hero__content">
+            <h1 id="about-title">Hey, I’m Aadhavan. I design calm, useful products for complex workflows.</h1>
+            <p>
+              I care about simplifying decision-heavy experiences for SaaS and ecommerce teams. My work sits between
+              product clarity, visual craft, and practical systems that make interfaces easier to understand and faster
+              to ship.
+            </p>
+          </div>
+
+          <div className="about-quote-panel" aria-label="Design principle">
+            <blockquote>“Simplicity works best when it still carries the context people need.”</blockquote>
+            <a className="button" href={assetPath("/Aadhavan-M-Resume.pdf")}>
+              Download Resume
+            </a>
+          </div>
+        </section>
+
+        <section className="about-section" aria-labelledby="capabilities-title">
+          <div className="about-section__heading">
+            <p className="section-eyebrow">What I Can Do</p>
+            <h2 id="capabilities-title">I help turn unclear product moments into focused, usable experiences.</h2>
+          </div>
+
+          <div className="capability-grid">
+            {capabilityItems.map((item, index) => (
+              <article className="capability-card" key={item.title}>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+              </article>
+            ))}
           </div>
         </section>
 
@@ -1104,6 +1159,23 @@ function AboutPage() {
               <article key={item}>
                 <span>Issued by GrowthSchool</span>
                 <h3>{item}</h3>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="about-section about-section--notes" aria-labelledby="notes-title">
+          <div>
+            <p className="section-eyebrow">Notes</p>
+            <h2 id="notes-title">A few things that shape how I think and design.</h2>
+          </div>
+
+          <div className="about-note-list">
+            {aboutNotes.map((item) => (
+              <article key={item.title}>
+                <span>{item.label}</span>
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
               </article>
             ))}
           </div>
