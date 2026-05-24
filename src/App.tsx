@@ -836,7 +836,18 @@ function PasswordProtectedContent({
   return (
     <div className="protected-section">
       <div aria-hidden="true" className="protected-section__content">
-        {children}
+        <div className="protected-section__preview-heading">
+          <span />
+          <strong />
+          <strong />
+          <span />
+        </div>
+        <div className="protected-section__preview-media" />
+        <div className="protected-section__preview-grid">
+          {Array.from({ length: 8 }).map((_, index) => (
+            <span key={`protected-preview-${index}`} />
+          ))}
+        </div>
       </div>
 
       <div className="protected-section__overlay">
