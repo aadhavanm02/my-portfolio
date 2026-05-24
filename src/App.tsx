@@ -1143,7 +1143,11 @@ function App() {
   const slug = pathname.replace(/^\/work\//, "").replace(/\/$/, "");
   const project = projects.find((item) => item.slug === slug);
 
-  return <div className="site-shell">{project ? <CaseStudyPage project={project} /> : <HomePage />}</div>;
+  return (
+    <div className="site-shell bg-portfolio-canvas text-portfolio-ink font-sans">
+      {project ? <CaseStudyPage project={project} /> : <HomePage />}
+    </div>
+  );
 }
 
 export default App;
