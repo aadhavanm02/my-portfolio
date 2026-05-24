@@ -1387,8 +1387,8 @@ button {
   min-height: 640px;
   padding: 40px 0;
   overflow: hidden;
-  filter: blur(14px);
-  opacity: 0.88;
+  filter: blur(9px);
+  opacity: 1;
   pointer-events: none;
   user-select: none;
 }
@@ -1403,7 +1403,7 @@ button {
 }
 
 .protected-section__content::before {
-  background: rgb(246 246 246 / 6%);
+  background: rgb(246 246 246 / 0%);
 }
 
 .protected-section__content::after {
@@ -1424,8 +1424,8 @@ button {
 .protected-section__preview-grid span {
   display: block;
   border-radius: var(--radius-pill);
-  background: rgb(16 16 16 / 20%);
-  box-shadow: var(--shadow-soft);
+  background: rgb(16 16 16 / 30%);
+  box-shadow: 0 18px 50px rgb(16 16 16 / 14%);
 }
 
 .protected-section__preview-heading span {
@@ -1472,8 +1472,8 @@ button {
   padding: 32px;
   border-radius: var(--radius-media);
   background:
-    linear-gradient(90deg, var(--color-canvas) 0%, rgb(246 246 246 / 46%) 14%, rgb(246 246 246 / 46%) 86%, var(--color-canvas) 100%),
-    linear-gradient(180deg, var(--color-canvas) 0%, rgb(246 246 246 / 50%) 14%, rgb(246 246 246 / 58%) 86%, var(--color-canvas) 100%);
+    linear-gradient(90deg, var(--color-canvas) 0%, rgb(246 246 246 / 28%) 12%, rgb(246 246 246 / 28%) 88%, var(--color-canvas) 100%),
+    linear-gradient(180deg, var(--color-canvas) 0%, rgb(246 246 246 / 32%) 12%, rgb(246 246 246 / 38%) 88%, var(--color-canvas) 100%);
 }
 
 .protected-section__card {
