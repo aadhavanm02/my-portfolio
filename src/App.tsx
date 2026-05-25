@@ -918,9 +918,11 @@ function HomePage() {
       <main>
         <section className="hero" aria-labelledby="hero-title">
           <h1 id="hero-title">
-            I’m Aadhavan M, a Product Designer with 3+ years of experience
-            building AI-powered SaaS experiences{" "}
-            <span>that simplify complex workflows and digital systems</span>
+            I’m Aadhavan M, a Product Designer with 3+ years solving problems{" "}
+            <span>
+              through systems, structure, and AI-assisted workflows for scalable
+              digital products.
+            </span>
           </h1>
         </section>
 
