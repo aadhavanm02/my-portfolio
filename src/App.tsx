@@ -43,13 +43,18 @@ type DetailSection = {
 };
 
 const navLinks = ["Work", "Skills", "About"];
-const socialLinks = ["LinkedIn", "X (Twitter)", "Instagram"];
 const ndaPassword = "0511";
 const ndaStoragePrefix = "portfolio-nda-unlocked-until";
 const ndaUnlockDurationMs = 60 * 60 * 1000;
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 const caseStudyVideoUrl = assetPath("/assets/videos/expenzo-video-presentation.mp4");
 const videoSpeeds = [0.75, 1, 1.25, 1.5, 2];
+const gmailComposeUrl = "https://mail.google.com/mail/?view=cm&fs=1&to=aadhavanm.design@gmail.com";
+const socialLinks = [
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/aadhavan-m/" },
+  { label: "X (Twitter)", href: withBasePath("/#work") },
+  { label: "Instagram", href: withBasePath("/#work") },
+];
 
 function withBasePath(path: string) {
   return `${basePath}${path}`;
@@ -742,8 +747,8 @@ function SiteFooter() {
       </nav>
       <nav aria-label="Social links">
         {socialLinks.map((link) => (
-          <a href={withBasePath("/#work")} key={link}>
-            {link}
+          <a href={link.href} key={link.label} rel={link.href.startsWith("http") ? "noreferrer" : undefined} target={link.href.startsWith("http") ? "_blank" : undefined}>
+            {link.label}
           </a>
         ))}
       </nav>
@@ -975,7 +980,9 @@ function HomePage() {
             <br />
             Drop me an email.
           </h2>
-          <a href="mailto:aadhavanm.design@email.com">→ aadhavanm.design@email.com</a>
+          <a href={gmailComposeUrl} rel="noreferrer" target="_blank">
+            → aadhavanm.design@gmail.com
+          </a>
         </section>
       </main>
 
@@ -1138,7 +1145,9 @@ function CaseStudyPage({ project }: { project: Project }) {
             <br />
             Drop me an email.
           </h2>
-          <a href="mailto:aadhavanm.design@email.com">→ aadhavanm.design@email.com</a>
+          <a href={gmailComposeUrl} rel="noreferrer" target="_blank">
+            → aadhavanm.design@gmail.com
+          </a>
         </section>
       </main>
 
