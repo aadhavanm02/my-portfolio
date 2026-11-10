@@ -156,7 +156,6 @@ const cartAbandonment: CaseStudy = {
       nav: "Walkthrough",
       eyebrow: "Walkthrough",
       title: "The Finished Design, Through One Store Owner and One Shopper",
-      protected: true,
       intro: [
         "Recovery has two sides: the store owner who sets it up and watches the results, and the shopper who leaves and, hopefully, comes back. Here's both, through one store and one shopper.",
         "**Kavya** runs Leaf & Loom, a small home decor store on WooCommerce, with Cart Abandonment Recovery Pro. **Rohan** is browsing her store for a new lamp.",
@@ -205,7 +204,6 @@ const cartAbandonment: CaseStudy = {
       nav: "Solution",
       eyebrow: "Solution",
       title: "What I Designed, and the Problem Each Part Solves",
-      protected: true,
       intro: [
         "Every change traces back to one of four problems: a page doing two jobs, data that was hard to use, no room to grow, and screens that didn't follow the design system.",
       ],
@@ -278,7 +276,6 @@ const cartAbandonment: CaseStudy = {
       nav: "Decisions",
       eyebrow: "Critical Decisions",
       title: "Four Decisions That Shaped the New Admin",
-      protected: true,
       intro: ["Four moments where I weighed one direction against another, and why we landed where we did."],
       blocks: [
         {
@@ -440,7 +437,6 @@ const cartAbandonment: CaseStudy = {
       nav: "Design System",
       eyebrow: "Design System",
       title: "Built on ForceUI, So It Feels Like Part of the Family",
-      protected: true,
       intro: [
         "Cart Abandonment Recovery sits in the CartFlows family, next to ModernCart. Rebuilding it on ForceUI, Brainstorm Force's shared design system, meant a store owner moving between these plugins finds the same layout, the same controls and the same behavior.",
       ],
@@ -464,7 +460,6 @@ const cartAbandonment: CaseStudy = {
       nav: "Process",
       eyebrow: "Process",
       title: "How It Came Together: Planned Up Front, Designed in Phases",
-      protected: true,
       intro: ["Unlike ModernCart, which started with a one-week deadline, this project started with a plan."],
       blocks: [
         h3("Research and a feature list"),
@@ -493,7 +488,6 @@ const cartAbandonment: CaseStudy = {
       nav: "Future Scope",
       eyebrow: "Future Scope",
       title: "Where It Could Go Next",
-      protected: true,
       intro: [
         "The features we planned all shipped, so these are directions I'd explore next, based on what the design now makes visible.",
       ],
@@ -638,7 +632,6 @@ const modernCart: CaseStudy = {
       nav: "Walkthrough",
       eyebrow: "Walkthrough",
       title: "The Finished Design, Through One Store and One Shopper",
-      protected: true,
       intro: [
         "ModernCart has two parts: a dashboard where store owners shape the cart, and the cart shoppers actually use. Every choice in the first shows up in the second. Here's both, through one store and one shopper.",
         "**Meera** runs DNK, a small clothing and footwear store on WooCommerce. **Arjun** is shopping there for a new pair of shoes.",
@@ -694,7 +687,6 @@ const modernCart: CaseStudy = {
       nav: "Solution",
       eyebrow: "Solution",
       title: "What I Designed, and the Problem Each Part Solves",
-      protected: true,
       intro: [
         "Every change traces back to one of the three problems: scattered settings, a cart with dead ends, and screens that didn't follow the design system.",
       ],
@@ -778,7 +770,6 @@ const modernCart: CaseStudy = {
       nav: "Decisions",
       eyebrow: "Critical Decisions",
       title: "Three Decisions That Shaped ModernCart",
-      protected: true,
       intro: ["Three moments where I chose one direction over another, and why."],
       blocks: [
         {
@@ -908,7 +899,6 @@ const modernCart: CaseStudy = {
       nav: "Design System",
       eyebrow: "Design System",
       title: "Built on ForceUI, a Shared System I Helped Create",
-      protected: true,
       intro: [
         "Every screen in ModernCart, the dashboard and the shopper's cart, is assembled from ForceUI. Nothing was drawn from scratch.",
       ],
@@ -963,7 +953,6 @@ const modernCart: CaseStudy = {
       nav: "Process",
       eyebrow: "Process",
       title: "How It Came Together: One Week to Launch, Then Making It Better",
-      protected: true,
       intro: [
         "The work didn't follow a neat research, wireframe, UI order. It started with a deadline, moved into research once the product was live, and ran alongside the team building a new design system.",
       ],
@@ -1012,7 +1001,6 @@ const modernCart: CaseStudy = {
       nav: "Future Scope",
       eyebrow: "Future Scope",
       title: "Where ModernCart Could Go Next",
-      protected: true,
       intro: [
         "Not everything I proposed was built while I was there. These three ideas came out of my competitor review, and the team shipped them after I moved on.",
       ],
