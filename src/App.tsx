@@ -11,19 +11,32 @@ import {
   type ReactNode,
 } from "react";
 import {
+  ArrowRight,
   ArrowsOutSimple,
   CaretLeft,
   CaretRight,
+  Check,
+  GearSix,
   List,
   MagnifyingGlassMinus,
   MagnifyingGlassPlus,
   Pause,
   Play,
   SpeakerHigh,
+  ShoppingCart,
   SpeakerX,
+  Storefront,
   X,
 } from "@phosphor-icons/react";
-import { caseStudies, type Block, type CardItem, type CaseSection, type CaseStudy, type MediaItem } from "./caseStudies";
+import {
+  caseStudies,
+  type CaseSection,
+  type CaseStudy,
+  type DecisionItem,
+  type JourneyLane,
+  type MediaItem,
+  type Stat,
+} from "./caseStudies";
 
 const navLinks = ["Work", "Skills", "About"];
 const ndaPassword = "0511";
@@ -508,9 +521,9 @@ function RichText({ text }: { text: string }) {
   );
 }
 
-function MediaPlaceholder({ item }: { item: MediaItem }) {
+function MediaPlaceholder({ className = "", item }: { className?: string; item: MediaItem }) {
   return (
-    <figure className="case-media-placeholder">
+    <figure className={`case-media-placeholder ${className}`.trim()}>
       <div className="case-media-placeholder__frame">
         <span className="case-media-placeholder__badge">
           {item.kind === "video" ? <Play aria-hidden="true" size={16} weight="fill" /> : null}
@@ -520,6 +533,19 @@ function MediaPlaceholder({ item }: { item: MediaItem }) {
       <figcaption>{item.caption}</figcaption>
     </figure>
   );
+}
+
+function MediaThumb({ item }: { item: MediaItem }) {
+  if (item.src) {
+    return (
+      <figure className="case-media-image case-media--thumb">
+        <img alt={item.caption} src={resolveSrc(item.src)} />
+        <figcaption>{item.caption}</figcaption>
+      </figure>
+    );
+  }
+
+  return <MediaPlaceholder className="case-media--thumb" item={item} />;
 }
 
 function MediaGroup({ items }: { items: MediaItem[] }) {
@@ -545,139 +571,398 @@ function MediaGroup({ items }: { items: MediaItem[] }) {
   );
 }
 
-function CardGrid({ items }: { items: CardItem[] }) {
+function pad(index: number) {
+  return String(index + 1).padStart(2, "0");
+}
+
+function StatStrip({ stats }: { stats: Stat[] }) {
   return (
-    <div className="case-cards">
-      {items.map((item) => (
-        <article key={item.title}>
-          <h4>{item.title}</h4>
-          <p>
-            <RichText text={item.body} />
-          </p>
-        </article>
+    <div className="case-stats">
+      {stats.map((stat) => (
+        <div key={stat.value}>
+          <strong>{stat.value}</strong>
+          <span>
+            <RichText text={stat.label} />
+          </span>
+        </div>
       ))}
     </div>
   );
 }
 
-function DecisionStep({ blocks, children, title }: { blocks: Block[]; children?: ReactNode; title: string }) {
+function ProblemView({ section }: { section: Extract<CaseSection, { kind: "problem" }> }) {
   return (
-    <div className="case-decision__step">
-      <h4>{title}</h4>
-      <div className="case-prose">
-        <Blocks blocks={blocks} />
-        {children}
+    <>
+      <div className="case-pains">
+        {section.pains.map((pain, index) => (
+          <article key={pain.title}>
+            <span className="case-index">{pad(index)}</span>
+            <h3>{pain.title}</h3>
+            <p>{pain.body}</p>
+          </article>
+        ))}
+      </div>
+
+      {section.media ? <MediaGroup items={[section.media]} /> : null}
+
+      <div className="case-mapping">
+        <div className="case-mapping__head" aria-hidden="true">
+          <span>Challenge</span>
+          <span />
+          <span>Goal</span>
+        </div>
+        {section.mapping.map(([challenge, goal]) => (
+          <div className="case-mapping__row" key={challenge}>
+            <p>{challenge}</p>
+            <ArrowRight aria-label="becomes" size={22} weight="bold" />
+            <p>{goal}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="case-chips">
+        <span className="case-chips__label">Constraints</span>
+        {section.constraints.map((constraint) => (
+          <span className="case-chip" key={constraint}>
+            {constraint}
+          </span>
+        ))}
+      </div>
+    </>
+  );
+}
+
+function JourneyLaneView({ lane }: { lane: JourneyLane }) {
+  return (
+    <ol className="case-steps">
+      {lane.steps.map((step, index) => (
+        <li className={step.media ? "" : "case-steps__item--text"} key={step.title}>
+          <span className="case-steps__num">{index + 1}</span>
+          <div className="case-steps__text">
+            <h4>{step.title}</h4>
+            <p>{step.body}</p>
+          </div>
+          {step.media ? <MediaThumb item={step.media} /> : null}
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+function JourneyView({ section }: { section: Extract<CaseSection, { kind: "journey" }> }) {
+  const [activeLane, setActiveLane] = useState(0);
+  const tabsId = useId();
+  const lane = section.lanes[activeLane];
+
+  return (
+    <div className="case-journey">
+      {section.video ? <MediaGroup items={[section.video]} /> : null}
+
+      <div className="case-personas" role="tablist" aria-label="Choose a perspective">
+        {section.lanes.map((item, index) => (
+          <button
+            aria-controls={`${tabsId}-panel`}
+            aria-selected={index === activeLane}
+            className="case-persona"
+            id={`${tabsId}-tab-${index}`}
+            key={item.name}
+            onClick={() => setActiveLane(index)}
+            role="tab"
+            type="button"
+          >
+            <span className="case-persona__avatar" aria-hidden="true">
+              {item.role === "Shopper" ? <ShoppingCart size={22} weight="bold" /> : <Storefront size={22} weight="bold" />}
+            </span>
+            <span className="case-persona__text">
+              <strong>{item.name}</strong>
+              <span>{item.role}</span>
+            </span>
+          </button>
+        ))}
+      </div>
+
+      <div aria-labelledby={`${tabsId}-tab-${activeLane}`} className="case-journey__panel" id={`${tabsId}-panel`} role="tabpanel">
+        <p className="case-journey__about">{lane.about}</p>
+        <JourneyLaneView lane={lane} />
+        {activeLane < section.lanes.length - 1 ? (
+          <button className="case-journey__next" onClick={() => setActiveLane(activeLane + 1)} type="button">
+            Now see {section.lanes[activeLane + 1].name}'s side <ArrowRight aria-hidden="true" size={18} weight="bold" />
+          </button>
+        ) : null}
       </div>
     </div>
   );
 }
 
-function Decision({ block }: { block: Extract<Block, { type: "decision" }> }) {
+function SolutionView({ section }: { section: Extract<CaseSection, { kind: "solution" }> }) {
   return (
-    <article className="case-decision">
-      <h3>{block.title}</h3>
-      <p className="case-decision__hook">{block.hook}</p>
+    <>
+      <div className="case-changes">
+        {section.items.map((item) => (
+          <article className="case-change" key={item.title}>
+            {item.media ? <MediaThumb item={item.media} /> : null}
+            <span className="case-tag">{item.area}</span>
+            <h3>{item.title}</h3>
+            <dl>
+              {item.before ? (
+                <div className="case-change__before">
+                  <dt>
+                    <X aria-hidden="true" size={14} weight="bold" />
+                    <span className="sr-only">Before</span>
+                  </dt>
+                  <dd>{item.before}</dd>
+                </div>
+              ) : null}
+              <div className="case-change__after">
+                <dt>
+                  <Check aria-hidden="true" size={14} weight="bold" />
+                  <span className="sr-only">After</span>
+                </dt>
+                <dd>{item.after}</dd>
+              </div>
+            </dl>
+          </article>
+        ))}
+      </div>
 
-      <DecisionStep blocks={block.before} title="Before the decision" />
-      <DecisionStep blocks={block.turning} title="Turning point">
-        <div className={`case-options case-options--${Math.min(block.options.length, 4)}`}>
-          {block.options.map((option, index) => (
-            <article key={option.title}>
-              <span>Option {index + 1}</span>
-              <h5>{option.title}</h5>
-              <p>
-                <RichText text={option.body} />
-              </p>
-            </article>
-          ))}
-        </div>
-        <Blocks blocks={block.after} />
-      </DecisionStep>
-      <DecisionStep blocks={block.next} title="What I did next" />
-      <DecisionStep blocks={block.result} title="Result" />
-
-      {block.media ? <MediaGroup items={block.media} /> : null}
-    </article>
-  );
-}
-
-function BlockView({ block }: { block: Block }) {
-  switch (block.type) {
-    case "p":
-      return (
-        <p>
-          <RichText text={block.text} />
-        </p>
-      );
-    case "h3":
-      return <h3 className="case-prose__h3">{block.text}</h3>;
-    case "h4":
-      return <h4 className="case-prose__h4">{block.text}</h4>;
-    case "label":
-      return <h4 className="case-prose__label">{block.text}</h4>;
-    case "list":
-      return (
-        <ul>
-          {block.items.map((item) => (
-            <li key={item}>
-              <RichText text={item} />
-            </li>
-          ))}
-        </ul>
-      );
-    case "media":
-      return <MediaGroup items={block.items} />;
-    case "compare":
-      return (
-        <div className="case-points">
-          <div>
-            <h3>{block.left}</h3>
-            <ul>
-              {block.rows.map(([challenge]) => (
-                <li key={challenge}>{challenge}</li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h3>{block.right}</h3>
-            <ul>
-              {block.rows.map(([, goal]) => (
-                <li key={goal}>{goal}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      );
-    case "cards":
-      return <CardGrid items={block.items} />;
-    case "learnings":
-      return (
-        <div className="learning-layout">
-          <h3>Mistakes & Learnings:</h3>
-          <div className="learning-grid">
-            {block.items.map((item) => (
-              <article key={item.title}>
-                <span>✦</span>
-                <h4>{item.title}</h4>
-                <p>{item.body}</p>
+      {section.variants ? (
+        <div className="case-variants">
+          <h3>{section.variants.title}</h3>
+          <p>{section.variants.intro}</p>
+          <div className="case-variants__grid">
+            {section.variants.items.map((variant) => (
+              <article key={variant.name}>
+                <strong>{variant.count}</strong>
+                <h4>{variant.name}</h4>
+                <p>{variant.body}</p>
               </article>
             ))}
           </div>
         </div>
-      );
-    case "decision":
-      return <Decision block={block} />;
-  }
-}
-
-function Blocks({ blocks }: { blocks: Block[] }) {
-  return (
-    <>
-      {blocks.map((block, index) => (
-        <BlockView block={block} key={`${block.type}-${index}`} />
-      ))}
+      ) : null}
     </>
   );
+}
+
+function DecisionCard({ decision, index }: { decision: DecisionItem; index: number }) {
+  return (
+    <article className="case-decision">
+      <header>
+        <span className="case-index">Decision {pad(index)}</span>
+        <h3>{decision.title}</h3>
+        <p className="case-decision__question">{decision.question}</p>
+      </header>
+
+      <div className={`case-options case-options--${Math.min(decision.options.length, 4)}`}>
+        {decision.options.map((option, optionIndex) => (
+          <div className={`case-option${option.chosen ? " is-chosen" : ""}`} key={option.title}>
+            <div className="case-option__top">
+              <span className="case-option__letter">{String.fromCharCode(65 + optionIndex)}</span>
+              {option.badge || option.chosen ? (
+                <span className="case-option__badge">
+                  {option.chosen ? <Check aria-hidden="true" size={12} weight="bold" /> : null}
+                  {option.badge ?? "Chosen"}
+                </span>
+              ) : null}
+            </div>
+            <h4>{option.title}</h4>
+            <p>{option.body}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="case-decision__why">
+        <span>Why</span>
+        <p>
+          <RichText text={decision.why} />
+        </p>
+      </div>
+
+      <p className="case-outcome-pill">
+        <Check aria-hidden="true" size={16} weight="bold" />
+        {decision.outcome}
+      </p>
+
+      {decision.media ? (
+        <details className="case-decision__media">
+          <summary>
+            See the designs <span>({decision.media.length})</span>
+          </summary>
+          <MediaGroup items={decision.media} />
+        </details>
+      ) : null}
+    </article>
+  );
+}
+
+function SystemView({ section }: { section: Extract<CaseSection, { kind: "system" }> }) {
+  return (
+    <>
+      {section.levels ? (
+        <div className="case-levels">
+          {section.levels.map((level, index) => (
+            <div key={level.title} style={{ width: `${46 + index * 18}%` }}>
+              <strong>{level.title}</strong>
+              <span>{level.body}</span>
+            </div>
+          ))}
+        </div>
+      ) : null}
+
+      {section.patterns ? (
+        <div className="case-patterns">
+          {section.patterns.map((pattern) => (
+            <article key={pattern.title}>
+              <h4>{pattern.title}</h4>
+              <p>{pattern.body}</p>
+            </article>
+          ))}
+        </div>
+      ) : null}
+
+      <div className="case-tokens">
+        {section.tokens.map((token) => (
+          <article key={token.label}>
+            <div className={`case-token__sample case-token__sample--${token.sample}`} aria-hidden="true">
+              {token.sample === "type" ? <span>Aa</span> : null}
+              {token.sample === "color" ? (
+                <>
+                  <i />
+                  <i />
+                  <i />
+                  <i />
+                </>
+              ) : null}
+              {token.sample === "icons" ? (
+                <>
+                  <ShoppingCart size={26} />
+                  <Storefront size={26} />
+                  <GearSix size={26} />
+                </>
+              ) : null}
+            </div>
+            <span>{token.label}</span>
+            <strong>{token.value}</strong>
+          </article>
+        ))}
+      </div>
+
+      {section.note ? (
+        <aside className="case-note">
+          <h4>{section.note.title}</h4>
+          <p>{section.note.body}</p>
+        </aside>
+      ) : null}
+    </>
+  );
+}
+
+function ProcessView({ section }: { section: Extract<CaseSection, { kind: "process" }> }) {
+  return (
+    <>
+      <ol className="case-timeline" style={{ ["--steps" as string]: section.steps.length }}>
+        {section.steps.map((step, index) => (
+          <li key={step.label}>
+            <span className="case-timeline__dot">{index + 1}</span>
+            <strong>{step.label}</strong>
+            <p>{step.body}</p>
+          </li>
+        ))}
+      </ol>
+
+      {section.notes ? (
+        <div className="case-notes">
+          {section.notes.map((note) => (
+            <aside className="case-note" key={note.title}>
+              <h4>{note.title}</h4>
+              <p>{note.body}</p>
+            </aside>
+          ))}
+        </div>
+      ) : null}
+
+      {section.media ? <MediaGroup items={[section.media]} /> : null}
+    </>
+  );
+}
+
+function SectionBody({ section }: { section: CaseSection }) {
+  switch (section.kind) {
+    case "problem":
+      return <ProblemView section={section} />;
+    case "journey":
+      return <JourneyView section={section} />;
+    case "solution":
+      return <SolutionView section={section} />;
+    case "decisions":
+      return (
+        <div className="case-decisions">
+          {section.items.map((decision, index) => (
+            <DecisionCard decision={decision} index={index} key={decision.title} />
+          ))}
+        </div>
+      );
+    case "system":
+      return <SystemView section={section} />;
+    case "process":
+      return <ProcessView section={section} />;
+    case "future":
+      return (
+        <div className="case-future">
+          {section.items.map((item, index) => (
+            <article key={item.title}>
+              <div className="case-future__top">
+                <span className="case-index">{pad(index)}</span>
+                <span className="case-tag">{section.tag}</span>
+              </div>
+              <h3>{item.title}</h3>
+              <p>
+                <RichText text={item.body} />
+              </p>
+            </article>
+          ))}
+        </div>
+      );
+    case "learnings":
+      return (
+        <ol className="case-learnings">
+          {section.items.map((item, index) => (
+            <li key={item.title}>
+              <span className="case-index">{pad(index)}</span>
+              <div>
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      );
+    case "outcome":
+      return (
+        <>
+          <div className="case-outcome">
+            <div className="case-outcome__before">
+              <span>Before</span>
+              <p>{section.before}</p>
+            </div>
+            <span className="case-outcome__arrow" aria-hidden="true">
+              <ArrowRight size={28} weight="bold" />
+            </span>
+            <div className="case-outcome__after">
+              <span>After</span>
+              <p>{section.after}</p>
+            </div>
+          </div>
+          <div className="case-outcome__stat">
+            <strong>{section.stat.value}</strong>
+            <span>{section.stat.label}</span>
+          </div>
+          <p className="case-feedback">
+            <RichText text={section.feedback} />
+          </p>
+        </>
+      );
+  }
 }
 
 function CaseSectionContent({ section }: { section: CaseSection }) {
@@ -686,16 +971,14 @@ function CaseSectionContent({ section }: { section: CaseSection }) {
       <div className="case-section-heading">
         <p>{section.eyebrow}</p>
         <h2>{section.title}</h2>
-        {section.intro?.map((paragraph) => (
-          <span key={paragraph}>
-            <RichText text={paragraph} />
+        {section.intro ? (
+          <span>
+            <RichText text={section.intro} />
           </span>
-        ))}
+        ) : null}
       </div>
 
-      <div className="case-prose">
-        <Blocks blocks={section.blocks} />
-      </div>
+      <SectionBody section={section} />
     </>
   );
 }
@@ -1011,6 +1294,8 @@ function HomePage() {
 
 function CaseStudyPage({ project }: { project: CaseStudy }) {
   const [activeTopic, setActiveTopic] = useState("overview");
+  const [isTocOpen, setIsTocOpen] = useState(false);
+  const [showTocButton, setShowTocButton] = useState(false);
   const [isNdaUnlocked, setIsNdaUnlocked] = useState(() => getStoredNdaUnlock(project.slug));
   const firstProtectedIndex = project.sections.findIndex((section) => section.protected);
   const protectedEnd =
@@ -1035,29 +1320,39 @@ function CaseStudyPage({ project }: { project: CaseStudy }) {
   const heroCover = resolveSrc(project.hero.src ?? project.image);
 
   useEffect(() => {
-    const sections = topics
-      .map((topic) => document.getElementById(topic.target))
-      .filter((section, index, list): section is HTMLElement => Boolean(section) && list.indexOf(section) === index);
+    // Highlight the last section whose top has passed a line 30% down the viewport.
+    // A scroll check works for sections of any height, unlike intersection ratios.
+    const targets = [...new Set(topics.map((topic) => topic.target))];
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+    function updateActiveTopic() {
+      const line = window.innerHeight * 0.3;
+      const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+      let current = targets[0];
 
-        if (visible?.target.id) {
-          setActiveTopic(visible.target.id);
+      for (const target of targets) {
+        const section = document.getElementById(target);
+
+        if (section && section.getBoundingClientRect().top - line <= 0) {
+          current = target;
         }
-      },
-      {
-        rootMargin: "-20% 0px -60% 0px",
-        threshold: [0.1, 0.35, 0.6],
-      },
-    );
+      }
 
-    sections.forEach((section) => observer.observe(section));
+      if (atBottom) {
+        current = targets[targets.length - 1];
+      }
 
-    return () => observer.disconnect();
+      setActiveTopic(current);
+      setShowTocButton(window.scrollY > 320);
+    }
+
+    updateActiveTopic();
+    window.addEventListener("scroll", updateActiveTopic, { passive: true });
+    window.addEventListener("resize", updateActiveTopic);
+
+    return () => {
+      window.removeEventListener("scroll", updateActiveTopic);
+      window.removeEventListener("resize", updateActiveTopic);
+    };
   }, [isNdaUnlocked, project.slug]);
 
   useEffect(() => {
@@ -1071,6 +1366,24 @@ function CaseStudyPage({ project }: { project: CaseStudy }) {
 
     return () => window.clearInterval(intervalId);
   }, [isNdaUnlocked, project.slug]);
+
+  useEffect(() => {
+    if (!isTocOpen) {
+      return;
+    }
+
+    function handleEscape(event: globalThis.KeyboardEvent) {
+      if (event.key === "Escape") {
+        setIsTocOpen(false);
+      }
+    }
+
+    window.addEventListener("keydown", handleEscape);
+
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [isTocOpen]);
+
+  const activeTopicLabel = topics.find((topic) => topic.target === activeTopic)?.label ?? "Overview";
 
   function renderSection(section: CaseSection, className = "case-section") {
     return (
@@ -1101,17 +1414,60 @@ function CaseStudyPage({ project }: { project: CaseStudy }) {
           })}
         </nav>
 
+        <button
+          aria-controls="mobile-toc"
+          aria-expanded={isTocOpen}
+          className={`mobile-toc-button${showTocButton || isTocOpen ? " is-visible" : ""}`}
+          onClick={() => setIsTocOpen((open) => !open)}
+          type="button"
+        >
+          <List aria-hidden="true" size={18} weight="bold" />
+          <span className="mobile-toc-button__label">
+            <span className="sr-only">Contents, current section: </span>
+            {activeTopicLabel}
+          </span>
+          <span className="mobile-toc-button__count" aria-hidden="true">
+            {Math.max(1, topics.findIndex((topic) => topic.target === activeTopic) + 1)}/{topics.length}
+          </span>
+        </button>
+
+        {isTocOpen ? (
+          <div className="mobile-toc" role="presentation">
+            <button aria-label="Close contents" className="mobile-toc__backdrop" onClick={() => setIsTocOpen(false)} type="button" />
+            <nav aria-label="Case study contents" className="mobile-toc__sheet" id="mobile-toc">
+              <div className="mobile-toc__header">
+                <strong>Contents</strong>
+                <button aria-label="Close contents" onClick={() => setIsTocOpen(false)} type="button">
+                  <X aria-hidden="true" size={18} weight="bold" />
+                </button>
+              </div>
+              <ol>
+                {topics.map((topic, index) => {
+                  const isFirstForTarget = topics.findIndex((item) => item.target === topic.target) === index;
+                  const isActive = activeTopic === topic.target && isFirstForTarget;
+
+                  return (
+                    <li key={`mobile-${topic.label}-${topic.target}`}>
+                      <a aria-current={isActive ? "true" : undefined} href={`#${topic.target}`} onClick={() => setIsTocOpen(false)}>
+                        <span>{String(index + 1).padStart(2, "0")}</span>
+                        {topic.label}
+                      </a>
+                    </li>
+                  );
+                })}
+              </ol>
+            </nav>
+          </div>
+        ) : null}
+
         <section className="case-hero" id="overview">
           <a className="case-back" href={withBasePath("/#work")}>
             ← All case studies
           </a>
           <h1>{project.headline}</h1>
           <div className="case-lead">
-            {project.lead.map((paragraph) => (
-              <p key={paragraph}>
-                <RichText text={paragraph} />
-              </p>
-            ))}
+            <p>{project.hook}</p>
+            <p>{project.summary}</p>
           </div>
           {project.hero.kind === "video" && project.hero.src ? (
             <CaseHeroVideo coverImage={resolveSrc(project.image)} title={project.cardTitle} videoSrc={resolveSrc(project.hero.src)} />
@@ -1120,6 +1476,7 @@ function CaseStudyPage({ project }: { project: CaseStudy }) {
               <img alt={project.hero.caption} src={heroCover} />
             </figure>
           )}
+          <StatStrip stats={project.stats} />
           <dl className="case-meta">
             {project.meta.map(([label, value]) => (
               <div key={label}>
