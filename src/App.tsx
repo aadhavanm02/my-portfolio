@@ -1,4 +1,5 @@
 import {
+  Fragment,
   useEffect,
   useId,
   useRef,
@@ -22,32 +23,13 @@ import {
   SpeakerX,
   X,
 } from "@phosphor-icons/react";
-
-type ProjectTone = "violet" | "peach";
-
-type Project = {
-  slug: string;
-  title: string;
-  summary: string;
-  proof: string;
-  image: string;
-  tone: ProjectTone;
-  imageClass?: string;
-};
-
-type DetailSection = {
-  eyebrow: string;
-  title: string;
-  body: string;
-  protected?: boolean;
-};
+import { caseStudies, type Block, type CardItem, type CaseSection, type CaseStudy, type MediaItem } from "./caseStudies";
 
 const navLinks = ["Work", "Skills", "About"];
 const ndaPassword = "0511";
 const ndaStoragePrefix = "portfolio-nda-unlocked-until";
 const ndaUnlockDurationMs = 60 * 60 * 1000;
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
-const caseStudyVideoUrl = assetPath("/assets/videos/expenzo-video-presentation.mp4");
 const videoSpeeds = [0.75, 1, 1.25, 1.5, 2];
 const gmailComposeUrl = "https://mail.google.com/mail/?view=cm&fs=1&to=aadhavanm.design@gmail.com";
 const socialLinks = [
@@ -104,145 +86,14 @@ function isActiveNavLink(link: string) {
   return link === "Work";
 }
 
-const projects: Project[] = [
-  {
-    slug: "superfans-dashboard",
-    title: "Redesign the Superfans Dashboard from 0 to 1",
-    summary: "Fast, elegant, and conversion-focused, it’s built to boost bookings & build trust.",
-    proof: "Built for Small Businesses to Reduce 30% of Manual Entry Errors.",
-    image: assetPath("/assets/superfans-dashboard.png"),
-    tone: "violet",
-    imageClass: "project-image--superfans",
-  },
-  {
-    slug: "cart-abandonment-recovery",
-    title: "Cart Abandonment Recovery WooCommerce",
-    summary: "Fast, elegant, and conversion-focused, it’s built to boost bookings & build trust.",
-    proof: "Built for Small Businesses to Reduce 30% of Manual Entry Errors.",
-    image: assetPath("/assets/cart-abandonment.png"),
-    tone: "peach",
-    imageClass: "project-image--cart",
-  },
-  {
-    slug: "modern-cart",
-    title: "Modern Cart for WooCommerce",
-    summary: "Fast, elegant, and conversion-focused, it’s built to boost bookings & build trust.",
-    proof: "Built for Small Businesses to Reduce 30% of Manual Entry Errors.",
-    image: assetPath("/assets/modern-cart.png"),
-    tone: "peach",
-    imageClass: "project-image--modern",
-  },
-  {
-    slug: "funnel-analytics",
-    title: "Improve CartFlows Funnel Analytics",
-    summary: "Fast, elegant, and conversion-focused, it’s built to boost bookings & build trust.",
-    proof: "Built for Small Businesses to Reduce 30% of Manual Entry Errors.",
-    image: assetPath("/assets/funnel-analytics.png"),
-    tone: "peach",
-    imageClass: "project-image--funnel",
-  },
-  {
-    slug: "checkout-analytics",
-    title: "Checkout Analytics Experience",
-    summary: "Fast, elegant, and conversion-focused, it’s built to boost bookings & build trust.",
-    proof: "Designed clearer reporting for teams to catch revenue leaks faster.",
-    image: assetPath("/assets/funnel-analytics.png"),
-    tone: "peach",
-    imageClass: "project-image--funnel",
-  },
-  {
-    slug: "customer-portal",
-    title: "Customer Portal Redesign",
-    summary: "Fast, elegant, and conversion-focused, it’s built to boost bookings & build trust.",
-    proof: "Simplified account management flows for faster customer support.",
-    image: assetPath("/assets/superfans-dashboard.png"),
-    tone: "violet",
-    imageClass: "project-image--superfans",
-  },
-  {
-    slug: "onboarding-flow",
-    title: "Product Onboarding Flow",
-    summary: "Fast, elegant, and conversion-focused, it’s built to boost bookings & build trust.",
-    proof: "Reduced setup friction with a guided first-run product experience.",
-    image: assetPath("/assets/cart-abandonment.png"),
-    tone: "peach",
-    imageClass: "project-image--cart",
-  },
-  {
-    slug: "reports-dashboard",
-    title: "Reports Dashboard Refresh",
-    summary: "Fast, elegant, and conversion-focused, it’s built to boost bookings & build trust.",
-    proof: "Improved scanability for business metrics and recurring decisions.",
-    image: assetPath("/assets/modern-cart.png"),
-    tone: "peach",
-    imageClass: "project-image--modern",
-  },
-];
-
-const detailSections: DetailSection[] = [
-  {
-    eyebrow: "The Problem",
-    title: "Manual workflows slow teams down and make reporting harder to trust.",
-    body: "Teams spend too much time repeating the same checks, copying information between screens, and validating work by hand. The result is slower decisions, missed signals, and avoidable mistakes in moments where clarity matters most.",
-  },
-  {
-    eyebrow: "Solution Direction",
-    title: "Create a focused experience that reduces effort and makes the next action obvious.",
-    body: "The redesigned flow prioritizes the most frequent tasks, keeps supporting details close to the action, and uses a cleaner information hierarchy so users can scan, decide, and move forward with confidence.",
-    protected: true,
-  },
-  {
-    eyebrow: "Critical Decisions",
-    title: "Balance simplicity and control without hiding important product context.",
-    body: "I kept the interface calm while preserving the operational details users need. Each screen is organized around the primary decision first, then supporting information, actions, and status feedback.",
-    protected: true,
-  },
-];
-
-const futureScopes = [
-  {
-    title: "Smarter automation for repeated work",
-    body: "Add automation for common checks, recurring setup, and repetitive updates so users spend less time maintaining the system and more time acting on useful information.",
-  },
-  {
-    title: "Deeper reporting for confident decisions",
-    body: "Improve reporting views with clearer comparisons, better filters, and faster access to the metrics that explain what changed and why it matters.",
-  },
-  {
-    title: "Collaboration-ready workflows",
-    body: "Support handoffs, shared context, and lightweight review states so teams can work together without losing track of ownership or next steps.",
-  },
-];
-
-const learnings = [
-  "Focus on the few workflows that create the most user value.",
-  "Use real product constraints to keep visual decisions practical.",
-  "Make dense information easier to scan before adding more features.",
-  "Iterate quickly when feedback exposes confusion in the flow.",
-];
-
-const caseTopics = [
-  { label: "Overview", target: "overview" },
-  { label: "The Problem", target: "the-problem" },
-  { label: "Solution", target: "solution-direction" },
-  { label: "Decisions", target: "critical-decisions" },
-  { label: "Future Scope", target: "future-scope" },
-  { label: "Learnings", target: "learnings" },
-];
+const projects = caseStudies;
 
 function LogoMark() {
   return <img className="logo-image" src={assetPath("/assets/a-logo.svg")} alt="" />;
 }
 
-function getCarouselImages(projectIndex: number, offset: number) {
-  return Array.from({ length: Math.min(projects.length, 4) }, (_, index) => {
-    const project = projects[(projectIndex + offset + index) % projects.length];
-
-    return {
-      alt: project.title,
-      src: project.image,
-    };
-  });
+function resolveSrc(src: string) {
+  return src.startsWith("/") ? assetPath(src) : src;
 }
 
 function ImageCarousel({ images }: { images: Array<{ alt: string; src: string }> }) {
@@ -379,7 +230,7 @@ function ImageCarousel({ images }: { images: Array<{ alt: string; src: string }>
   );
 }
 
-function CaseHeroVideo({ coverImage, title }: { coverImage: string; title: string }) {
+function CaseHeroVideo({ coverImage, title, videoSrc }: { coverImage: string; title: string; videoSrc: string }) {
   const inlineVideoRef = useRef<HTMLVideoElement | null>(null);
   const expandedVideoRef = useRef<HTMLVideoElement | null>(null);
   const [activePlayer, setActivePlayer] = useState<"inline" | "expanded">("inline");
@@ -545,7 +396,7 @@ function CaseHeroVideo({ coverImage, title }: { coverImage: string; title: strin
           poster={coverImage}
           preload="metadata"
           ref={videoRef}
-          src={caseStudyVideoUrl}
+          src={videoSrc}
         />
 
         {showCover ? (
@@ -622,63 +473,228 @@ function CaseHeroVideo({ coverImage, title }: { coverImage: string; title: strin
   );
 }
 
-function DetailSectionContent({ index, projectIndex, section }: { index: number; projectIndex: number; section: DetailSection }) {
+const inlinePattern = /(\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\))/g;
+
+function RichText({ text }: { text: string }) {
+  const parts = text.split(inlinePattern).filter(Boolean);
+
+  return (
+    <>
+      {parts.map((part, index) => {
+        if (part.startsWith("**") && part.endsWith("**")) {
+          return <strong key={index}>{part.slice(2, -2)}</strong>;
+        }
+
+        const link = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+
+        if (link) {
+          const isExternal = link[2].startsWith("http");
+
+          return (
+            <a
+              href={link[2]}
+              key={index}
+              rel={isExternal ? "noreferrer" : undefined}
+              target={isExternal ? "_blank" : undefined}
+            >
+              {link[1]}
+            </a>
+          );
+        }
+
+        return <Fragment key={index}>{part}</Fragment>;
+      })}
+    </>
+  );
+}
+
+function MediaPlaceholder({ item }: { item: MediaItem }) {
+  return (
+    <figure className="case-media-placeholder">
+      <div className="case-media-placeholder__frame">
+        <span className="case-media-placeholder__badge">
+          {item.kind === "video" ? <Play aria-hidden="true" size={16} weight="fill" /> : null}
+          {item.kind === "video" ? "Video placeholder" : "Image placeholder"}
+        </span>
+      </div>
+      <figcaption>{item.caption}</figcaption>
+    </figure>
+  );
+}
+
+function MediaGroup({ items }: { items: MediaItem[] }) {
+  const withImages = items.filter((item): item is MediaItem & { src: string } => Boolean(item.src));
+
+  if (withImages.length === items.length && items.length > 1) {
+    return <ImageCarousel images={withImages.map((item) => ({ alt: item.caption, src: resolveSrc(item.src) }))} />;
+  }
+
+  return (
+    <div className={`case-media-group case-media-group--${Math.min(items.length, 3)}`}>
+      {items.map((item) =>
+        item.src ? (
+          <figure className="case-media-image" key={item.caption}>
+            <img alt={item.caption} src={resolveSrc(item.src)} />
+            <figcaption>{item.caption}</figcaption>
+          </figure>
+        ) : (
+          <MediaPlaceholder item={item} key={item.caption} />
+        ),
+      )}
+    </div>
+  );
+}
+
+function CardGrid({ items }: { items: CardItem[] }) {
+  return (
+    <div className="case-cards">
+      {items.map((item) => (
+        <article key={item.title}>
+          <h4>{item.title}</h4>
+          <p>
+            <RichText text={item.body} />
+          </p>
+        </article>
+      ))}
+    </div>
+  );
+}
+
+function DecisionStep({ blocks, children, title }: { blocks: Block[]; children?: ReactNode; title: string }) {
+  return (
+    <div className="case-decision__step">
+      <h4>{title}</h4>
+      <div className="case-prose">
+        <Blocks blocks={blocks} />
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function Decision({ block }: { block: Extract<Block, { type: "decision" }> }) {
+  return (
+    <article className="case-decision">
+      <h3>{block.title}</h3>
+      <p className="case-decision__hook">{block.hook}</p>
+
+      <DecisionStep blocks={block.before} title="Before the decision" />
+      <DecisionStep blocks={block.turning} title="Turning point">
+        <div className={`case-options case-options--${Math.min(block.options.length, 4)}`}>
+          {block.options.map((option, index) => (
+            <article key={option.title}>
+              <span>Option {index + 1}</span>
+              <h5>{option.title}</h5>
+              <p>
+                <RichText text={option.body} />
+              </p>
+            </article>
+          ))}
+        </div>
+        <Blocks blocks={block.after} />
+      </DecisionStep>
+      <DecisionStep blocks={block.next} title="What I did next" />
+      <DecisionStep blocks={block.result} title="Result" />
+
+      {block.media ? <MediaGroup items={block.media} /> : null}
+    </article>
+  );
+}
+
+function BlockView({ block }: { block: Block }) {
+  switch (block.type) {
+    case "p":
+      return (
+        <p>
+          <RichText text={block.text} />
+        </p>
+      );
+    case "h3":
+      return <h3 className="case-prose__h3">{block.text}</h3>;
+    case "h4":
+      return <h4 className="case-prose__h4">{block.text}</h4>;
+    case "label":
+      return <h4 className="case-prose__label">{block.text}</h4>;
+    case "list":
+      return (
+        <ul>
+          {block.items.map((item) => (
+            <li key={item}>
+              <RichText text={item} />
+            </li>
+          ))}
+        </ul>
+      );
+    case "media":
+      return <MediaGroup items={block.items} />;
+    case "compare":
+      return (
+        <div className="case-points">
+          <div>
+            <h3>{block.left}</h3>
+            <ul>
+              {block.rows.map(([challenge]) => (
+                <li key={challenge}>{challenge}</li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h3>{block.right}</h3>
+            <ul>
+              {block.rows.map(([, goal]) => (
+                <li key={goal}>{goal}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      );
+    case "cards":
+      return <CardGrid items={block.items} />;
+    case "learnings":
+      return (
+        <div className="learning-layout">
+          <h3>Mistakes & Learnings:</h3>
+          <div className="learning-grid">
+            {block.items.map((item) => (
+              <article key={item.title}>
+                <span>✦</span>
+                <h4>{item.title}</h4>
+                <p>{item.body}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      );
+    case "decision":
+      return <Decision block={block} />;
+  }
+}
+
+function Blocks({ blocks }: { blocks: Block[] }) {
+  return (
+    <>
+      {blocks.map((block, index) => (
+        <BlockView block={block} key={`${block.type}-${index}`} />
+      ))}
+    </>
+  );
+}
+
+function CaseSectionContent({ section }: { section: CaseSection }) {
   return (
     <>
       <div className="case-section-heading">
         <p>{section.eyebrow}</p>
         <h2>{section.title}</h2>
-        <span>{section.body}</span>
-      </div>
-
-      <ImageCarousel images={getCarouselImages(projectIndex, index)} />
-
-      <div className="case-points">
-        <div>
-          <h3>The Main Challenges:</h3>
-          <ul>
-            <li>Repetitive work slows down daily decisions.</li>
-            <li>Important information is scattered across screens.</li>
-            <li>Users need clearer feedback after each action.</li>
-            <li>Dense interfaces make comparison harder.</li>
-          </ul>
-        </div>
-        <div>
-          <h3>The Main Goals:</h3>
-          <ul>
-            <li>Reduce time spent on repeated tasks.</li>
-            <li>Make critical metrics faster to understand.</li>
-            <li>Create a calmer, more predictable flow.</li>
-            <li>Support confident next-step decisions.</li>
-          </ul>
-        </div>
-      </div>
-    </>
-  );
-}
-
-function FutureScopeContent({ project, projectIndex }: { project: Project; projectIndex: number }) {
-  return (
-    <>
-      <div className="case-section-heading">
-        <p>Future Scope</p>
-        <h2>{project.title} can grow with automation, reporting depth, and stronger team workflows.</h2>
-        <span>
-          The next iteration can extend the same product direction: remove manual effort, make insight easier to trust,
-          and support teams as their workflows become more complex.
-        </span>
-      </div>
-
-      <div className="future-list">
-        {futureScopes.map((item, index) => (
-          <article className="future-item" key={item.title}>
-            <img src={projects[(projectIndex + index + 1) % projects.length].image} alt="" />
-            <div>
-              <h3>{item.title}</h3>
-              <p>{item.body}</p>
-            </div>
-          </article>
+        {section.intro?.map((paragraph) => (
+          <span key={paragraph}>
+            <RichText text={paragraph} />
+          </span>
         ))}
+      </div>
+
+      <div className="case-prose">
+        <Blocks blocks={section.blocks} />
       </div>
     </>
   );
@@ -938,14 +954,14 @@ function HomePage() {
 
           <div className="project-list">
             {visibleProjects.map((project) => (
-              <article className="project-card" key={project.title}>
+              <article className="project-card" key={project.slug}>
                 <div className="project-content">
                   <p className={`proof-card proof-card--${project.tone}`}>{project.proof}</p>
 
                   <div className="project-copy">
                     <div>
-                      <h2>{project.title}</h2>
-                      <p>{project.summary}</p>
+                      <h2>{project.cardTitle}</h2>
+                      <p>{project.cardSummary}</p>
                     </div>
                     <a className="button" href={withBasePath(`/work/${project.slug}`)}>
                       Read More
@@ -954,12 +970,13 @@ function HomePage() {
                 </div>
 
                 <div className="project-media" aria-hidden="true">
-                  <img className={project.imageClass} src={project.image} alt="" />
+                  <img className={project.imageClass} src={resolveSrc(project.image)} alt="" />
                 </div>
               </article>
             ))}
           </div>
 
+{projects.length > 4 ? (
           <button
             aria-expanded={showMoreProjects}
             className="view-more-button"
@@ -971,6 +988,7 @@ function HomePage() {
               <path d="M5 7.5L10 12.5L15 7.5" />
             </svg>
           </button>
+          ) : null}
         </section>
 
         <section className="contact-panel" aria-labelledby="contact-title">
@@ -991,21 +1009,33 @@ function HomePage() {
   );
 }
 
-function CaseStudyPage({ project }: { project: Project }) {
+function CaseStudyPage({ project }: { project: CaseStudy }) {
   const [activeTopic, setActiveTopic] = useState("overview");
   const [isNdaUnlocked, setIsNdaUnlocked] = useState(() => getStoredNdaUnlock(project.slug));
-  const projectIndex = projects.indexOf(project);
-  const publicDetailSections = detailSections.filter((section) => !section.protected);
-  const protectedDetailSections = detailSections.filter((section) => section.protected);
-  const meta = [
-    ["Role:", "Product Designer"],
-    ["Duration:", "Oct - Nov 2023"],
-    ["Industry:", project.title.includes("WooCommerce") ? "Ecommerce" : "SaaS"],
-    ["Platform:", "Web App"],
+  const firstProtectedIndex = project.sections.findIndex((section) => section.protected);
+  const protectedEnd =
+    firstProtectedIndex === -1
+      ? -1
+      : project.sections.findIndex((section, index) => index > firstProtectedIndex && !section.protected);
+  const beforeSections = firstProtectedIndex === -1 ? project.sections : project.sections.slice(0, firstProtectedIndex);
+  const protectedSections =
+    firstProtectedIndex === -1
+      ? []
+      : project.sections.slice(firstProtectedIndex, protectedEnd === -1 ? undefined : protectedEnd);
+  const afterSections =
+    firstProtectedIndex === -1 || protectedEnd === -1 ? [] : project.sections.slice(protectedEnd);
+  const protectedIds = new Set(protectedSections.map((section) => section.id));
+  const topics = [
+    { label: "Overview", target: "overview" },
+    ...project.sections.map((section) => ({
+      label: section.nav,
+      target: !isNdaUnlocked && protectedIds.has(section.id) ? "protected-content" : section.id,
+    })),
   ];
+  const heroCover = resolveSrc(project.hero.src ?? project.image);
 
   useEffect(() => {
-    const sections = caseTopics
+    const sections = topics
       .map((topic) => document.getElementById(topic.target))
       .filter((section, index, list): section is HTMLElement => Boolean(section) && list.indexOf(section) === index);
 
@@ -1028,7 +1058,7 @@ function CaseStudyPage({ project }: { project: Project }) {
     sections.forEach((section) => observer.observe(section));
 
     return () => observer.disconnect();
-  }, []);
+  }, [isNdaUnlocked, project.slug]);
 
   useEffect(() => {
     if (!isNdaUnlocked) {
@@ -1042,31 +1072,56 @@ function CaseStudyPage({ project }: { project: Project }) {
     return () => window.clearInterval(intervalId);
   }, [isNdaUnlocked, project.slug]);
 
+  function renderSection(section: CaseSection, className = "case-section") {
+    return (
+      <section className={className} id={section.id} key={section.id}>
+        <CaseSectionContent section={section} />
+      </section>
+    );
+  }
+
   return (
     <>
       <Header />
 
       <main className="case-study">
         <nav className="case-topic-nav" aria-label="Case study topics">
-          {caseTopics.map((topic) => (
-            <a
-              aria-current={activeTopic === topic.target && topic.label !== "Back to Top" ? "true" : undefined}
-              href={`#${topic.target}`}
-              key={`${topic.label}-${topic.target}`}
-            >
-              {topic.label}
-            </a>
-          ))}
+          {topics.map((topic, index) => {
+            const isFirstForTarget = topics.findIndex((item) => item.target === topic.target) === index;
+
+            return (
+              <a
+                aria-current={activeTopic === topic.target && isFirstForTarget ? "true" : undefined}
+                href={`#${topic.target}`}
+                key={`${topic.label}-${topic.target}`}
+              >
+                {topic.label}
+              </a>
+            );
+          })}
         </nav>
 
         <section className="case-hero" id="overview">
           <a className="case-back" href={withBasePath("/#work")}>
             ← All case studies
           </a>
-          <h1>{project.proof}</h1>
-          <CaseHeroVideo coverImage={project.image} title={project.title} />
+          <h1>{project.headline}</h1>
+          <div className="case-lead">
+            {project.lead.map((paragraph) => (
+              <p key={paragraph}>
+                <RichText text={paragraph} />
+              </p>
+            ))}
+          </div>
+          {project.hero.kind === "video" && project.hero.src ? (
+            <CaseHeroVideo coverImage={resolveSrc(project.image)} title={project.cardTitle} videoSrc={resolveSrc(project.hero.src)} />
+          ) : (
+            <figure className="case-hero-media case-hero-image">
+              <img alt={project.hero.caption} src={heroCover} />
+            </figure>
+          )}
           <dl className="case-meta">
-            {meta.map(([label, value]) => (
+            {project.meta.map(([label, value]) => (
               <div key={label}>
                 <dt>{label}</dt>
                 <dd>{value}</dd>
@@ -1075,68 +1130,21 @@ function CaseStudyPage({ project }: { project: Project }) {
           </dl>
         </section>
 
-        {publicDetailSections.map((section) => {
-          const detailIndex = detailSections.indexOf(section);
+        {beforeSections.map((section) => renderSection(section))}
 
-          return (
-            <section
-              className="case-section"
-              id={section.eyebrow.toLowerCase().replaceAll(" ", "-")}
-              key={section.eyebrow}
+        {protectedSections.length > 0 ? (
+          <section className="case-section protected-case-section" id={isNdaUnlocked ? undefined : "protected-content"}>
+            <PasswordProtectedContent
+              isUnlocked={isNdaUnlocked}
+              onUnlock={() => setIsNdaUnlocked(true)}
+              projectSlug={project.slug}
             >
-              <DetailSectionContent index={detailIndex} projectIndex={projectIndex} section={section} />
-            </section>
-          );
-        })}
+              {protectedSections.map((section) => renderSection(section, "case-section protected-case-section__item"))}
+            </PasswordProtectedContent>
+          </section>
+        ) : null}
 
-        <section className="case-section protected-case-section">
-          <PasswordProtectedContent
-            isUnlocked={isNdaUnlocked}
-            onUnlock={() => setIsNdaUnlocked(true)}
-            projectSlug={project.slug}
-          >
-            {protectedDetailSections.map((section) => (
-              <section
-                className="case-section protected-case-section__item"
-                id={section.eyebrow.toLowerCase().replaceAll(" ", "-")}
-                key={section.eyebrow}
-              >
-                <DetailSectionContent
-                  index={detailSections.indexOf(section)}
-                  projectIndex={projectIndex}
-                  section={section}
-                />
-              </section>
-            ))}
-
-            <section className="case-section protected-case-section__item" id="future-scope">
-              <FutureScopeContent project={project} projectIndex={projectIndex} />
-            </section>
-          </PasswordProtectedContent>
-        </section>
-
-        <section className="case-section" id="learnings">
-          <div className="case-section-heading">
-            <p>Learnings & Feedback</p>
-            <h2>Key learnings from this project, and feedback is welcome to help refine the work.</h2>
-            <span>
-              Each project sharpened the same lesson: better product design comes from narrowing the problem, testing
-              real workflows, and improving clarity before adding more complexity.
-            </span>
-          </div>
-
-          <div className="learning-layout">
-            <h3>Mistakes & Learnings:</h3>
-            <div className="learning-grid">
-              {learnings.map((learning) => (
-                <article key={learning}>
-                  <span>✦</span>
-                  <p>{learning}</p>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
+        {afterSections.map((section) => renderSection(section))}
 
         <section className="contact-panel" id="contact" aria-labelledby="case-contact-title">
           <h2 id="case-contact-title">
