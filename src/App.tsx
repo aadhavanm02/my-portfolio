@@ -9,12 +9,16 @@ import {
   type ClipboardEvent,
   type FormEvent,
   type KeyboardEvent,
+  type MouseEvent,
+  type PointerEvent,
   type ReactNode,
 } from "react";
 import {
   ArrowRight,
   ArrowSquareOut,
   ChatCircleDots,
+  CheckCircle,
+  EnvelopeSimple,
   Cube,
   Exam,
   Notebook,
@@ -35,6 +39,7 @@ import {
   MagnifyingGlassPlus,
   Pause,
   PencilSimpleLine,
+  Phone,
   Play,
   SpeakerHigh,
   ShoppingCart,
@@ -51,7 +56,7 @@ import {
   type MediaItem,
   type Stat,
 } from "./caseStudies";
-import { skillGroups, skills, tools, type Skill, type SkillGroup, type SkillVisual } from "./skills";
+import { skillGroups, skills, type Skill, type SkillGroup, type SkillVisual } from "./skills";
 import { about } from "./about";
 import { playgroundItems, type PlaygroundIcon, type PlaygroundItem } from "./playground";
 
@@ -61,7 +66,11 @@ const ndaStoragePrefix = "portfolio-nda-unlocked-until";
 const ndaUnlockDurationMs = 60 * 60 * 1000;
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 const videoSpeeds = [0.75, 1, 1.25, 1.5, 2];
-const gmailComposeUrl = "https://mail.google.com/mail/?view=cm&fs=1&to=aadhavanm.design@gmail.com";
+const contactEmail = "aadhavanm.design@gmail.com";
+const gmailComposeUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${contactEmail}`;
+// Add your number to show the Call button, for example:
+// { display: "+91 98765 43210", tel: "+919876543210" }
+const contactPhone: { display: string; tel: string } | null = { display: "+91 94861 39376", tel: "+919486139376" };
 const socialLinks = [
   { label: "LinkedIn", href: "https://www.linkedin.com/in/aadhavan-m/" },
   { label: "X (Twitter)", href: withBasePath("/#work") },
@@ -1362,17 +1371,7 @@ function HomePage() {
           ) : null}
         </section>
 
-        <section className="contact-panel" aria-labelledby="contact-title">
-          <h2 id="contact-title">
-            Want to create <br />
-            something awesome?
-            <br />
-            Drop me an email.
-          </h2>
-          <a href={gmailComposeUrl} rel="noreferrer" target="_blank">
-            → aadhavanm.design@gmail.com
-          </a>
-        </section>
+        <ContactPanel id="contact-title" />
       </main>
 
       <SiteFooter />
@@ -1600,17 +1599,7 @@ function CaseStudyPage({ project }: { project: CaseStudy }) {
 
         {afterSections.map((section) => renderSection(section))}
 
-        <section className="contact-panel" id="contact" aria-labelledby="case-contact-title">
-          <h2 id="case-contact-title">
-            Want to create <br />
-            something awesome?
-            <br />
-            Drop me an email.
-          </h2>
-          <a href={gmailComposeUrl} rel="noreferrer" target="_blank">
-            → aadhavanm.design@gmail.com
-          </a>
-        </section>
+        <ContactPanel id="case-contact-title" />
       </main>
 
       <SiteFooter />
@@ -1622,18 +1611,99 @@ function studyName(slug: string) {
   return projects.find((item) => item.slug === slug)?.cardTitle.replace(/ for WooCommerce$/, "") ?? slug;
 }
 
+function isTouchPhone() {
+  return window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+}
+
+async function copyText(text: string) {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    // Older browsers, or a page without clipboard permission.
+    const field = document.createElement("textarea");
+    field.value = text;
+    field.setAttribute("readonly", "");
+    field.style.position = "fixed";
+    field.style.opacity = "0";
+    document.body.append(field);
+    field.select();
+    const copied = document.execCommand("copy");
+    field.remove();
+    return copied;
+  }
+}
+
 function ContactPanel({ id }: { id: string }) {
+  const [toast, setToast] = useState("");
+
+  useEffect(() => {
+    if (!toast) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => setToast(""), 2600);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [toast]);
+
+  function handleEmail(event: MouseEvent<HTMLAnchorElement>) {
+    // Phones open their mail app from the mailto: link. On desktop, open Gmail's compose
+    // window instead, since many computers have no mail app set up for mailto: links.
+    if (!isTouchPhone()) {
+      event.preventDefault();
+      window.open(gmailComposeUrl, "_blank", "noopener,noreferrer");
+    }
+  }
+
+  async function handlePhone(event: MouseEvent<HTMLAnchorElement>) {
+    // Phones follow the tel: link into the dialer. Desktops copy the number instead.
+    if (isTouchPhone() || !contactPhone) {
+      return;
+    }
+
+    event.preventDefault();
+    const copied = await copyText(contactPhone.display);
+    setToast(copied ? "Mobile number copied" : `Couldn't copy. The number is ${contactPhone.display}`);
+  }
+
   return (
     <section className="contact-panel" aria-labelledby={id}>
       <h2 id={id}>
         Want to create <br />
         something awesome?
         <br />
-        Drop me an email.
+        Let's talk.
       </h2>
-      <a href={gmailComposeUrl} rel="noreferrer" target="_blank">
-        → aadhavanm.design@gmail.com
-      </a>
+
+      <div className="contact-actions">
+        <a className="contact-button contact-button--primary" href={`mailto:${contactEmail}`} onClick={handleEmail}>
+          <EnvelopeSimple aria-hidden="true" size={22} weight="bold" />
+          <span>
+            <strong>Email me</strong>
+            <small>{contactEmail}</small>
+          </span>
+        </a>
+
+        {contactPhone ? (
+          <a className="contact-button" href={`tel:${contactPhone.tel}`} onClick={handlePhone}>
+            <Phone aria-hidden="true" size={22} weight="bold" />
+            <span>
+              <strong>Call me</strong>
+              <small>{contactPhone.display}</small>
+            </span>
+          </a>
+        ) : null}
+      </div>
+
+      <div aria-live="polite" className={`site-toast${toast ? " is-visible" : ""}`} role="status">
+        {toast ? (
+          <>
+            <CheckCircle aria-hidden="true" size={20} weight="fill" />
+            {toast}
+          </>
+        ) : null}
+      </div>
     </section>
   );
 }
@@ -1831,17 +1901,6 @@ function SkillsPage() {
             <SkillCard key={skill.id} skill={skill} />
           ))}
         </div>
-
-        <section className="page-band">
-          <h2>Tools I work with</h2>
-          <div className="case-chips">
-            {tools.map((tool) => (
-              <span className="case-chip" key={tool}>
-                {tool}
-              </span>
-            ))}
-          </div>
-        </section>
 
         <ContactPanel id="skills-contact-title" />
       </main>
@@ -2059,29 +2118,127 @@ function PlaygroundPlayer({ item, onClose }: { item: PlaygroundItem; onClose: ()
   );
 }
 
+function PlaygroundMock({ type }: { type: "chat" | "quiz" }) {
+  if (type === "chat") {
+    return (
+      <div className="pg-mock pg-mock--chat" aria-hidden="true">
+        <div className="pg-mock__bubble pg-mock__bubble--user">Subtitle out of sync?</div>
+        <div className="pg-mock__typing">
+          <i />
+          <i />
+          <i />
+        </div>
+        <div className="pg-mock__answer">
+          <strong>Summary</strong>
+          <span className="pg-mock__line" />
+          <span className="pg-mock__line pg-mock__line--short" />
+          <div className="pg-mock__chips">
+            <span>CTI · Subtitles</span>
+            <span>3 sources</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="pg-mock pg-mock--quiz" aria-hidden="true">
+      <div className="pg-mock__quiz-top">
+        <span>Q3 of 25 · Intermediate</span>
+        <span className="pg-mock__progress">
+          <i />
+        </span>
+      </div>
+      <strong>Which pattern suits a detailed report?</strong>
+      <div className="pg-mock__options">
+        <span>A side drawer</span>
+        <span className="is-correct">
+          A full page <Check size={12} weight="bold" />
+        </span>
+        <span>A tooltip</span>
+      </div>
+    </div>
+  );
+}
+
+function PlaygroundPreview({ item, onPlay }: { item: PlaygroundItem; onPlay: (item: PlaygroundItem) => void }) {
+  const frameRef = useRef<HTMLDivElement | null>(null);
+  const isLive = item.status === "live";
+
+  function handlePointerMove(event: PointerEvent<HTMLElement>) {
+    // A small tilt that follows the pointer, so the preview feels like an object you can pick up.
+    if (event.pointerType !== "mouse" || !frameRef.current) {
+      return;
+    }
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width - 0.5;
+    const y = (event.clientY - rect.top) / rect.height - 0.5;
+    frameRef.current.style.setProperty("--tilt-x", `${(-y * 6).toFixed(2)}deg`);
+    frameRef.current.style.setProperty("--tilt-y", `${(x * 8).toFixed(2)}deg`);
+  }
+
+  function resetTilt() {
+    frameRef.current?.style.setProperty("--tilt-x", "0deg");
+    frameRef.current?.style.setProperty("--tilt-y", "0deg");
+  }
+
+  const frame = (
+    <div className="pg-preview__frame" ref={frameRef}>
+      <div className="pg-preview__chrome" aria-hidden="true">
+        <i />
+        <i />
+        <i />
+        <span>{item.title}</span>
+      </div>
+      <div className="pg-preview__screen">
+        {item.preview ? (
+          <img alt="" loading="lazy" src={resolveSrc(item.preview)} />
+        ) : item.mock ? (
+          <PlaygroundMock type={item.mock} />
+        ) : (
+          <span className="pg-card__icon" aria-hidden="true">
+            {playgroundIcons[item.icon]}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+
+  if (!isLive) {
+    return (
+      <div className="pg-preview pg-preview--template" onPointerLeave={resetTilt} onPointerMove={handlePointerMove}>
+        {frame}
+        <span className="pg-card__soon">Preview of the idea · Coming soon</span>
+      </div>
+    );
+  }
+
+  return (
+    <button
+      className="pg-preview"
+      onBlur={resetTilt}
+      onClick={() => onPlay(item)}
+      onPointerLeave={resetTilt}
+      onPointerMove={handlePointerMove}
+      type="button"
+    >
+      {frame}
+      <span className="pg-preview__play" aria-hidden="true">
+        <Play size={26} weight="fill" />
+      </span>
+      <span className="sr-only">Play {item.title}</span>
+    </button>
+  );
+}
+
 function PlaygroundCard({ item, onPlay }: { item: PlaygroundItem; onPlay: (item: PlaygroundItem) => void }) {
   const isLive = item.status === "live";
 
   return (
     <article className={`pg-card pg-card--${item.status}`} id={item.id}>
       <div className="pg-card__cover">
-        {isLive ? (
-          <button className="pg-card__cover-button" onClick={() => onPlay(item)} type="button">
-            <span className="pg-card__icon" aria-hidden="true">
-              {playgroundIcons[item.icon]}
-            </span>
-            <span className="pg-card__play">
-              <Play aria-hidden="true" size={18} weight="fill" />
-              Play
-              <span className="sr-only"> {item.title}</span>
-            </span>
-          </button>
-        ) : (
-          <div className="pg-card__cover-template" aria-hidden="true">
-            <span className="pg-card__icon">{playgroundIcons[item.icon]}</span>
-            <span className="pg-card__soon">Preview coming soon</span>
-          </div>
-        )}
+        <PlaygroundPreview item={item} onPlay={onPlay} />
       </div>
 
       <div className="pg-card__body">
@@ -2106,6 +2263,7 @@ function PlaygroundCard({ item, onPlay }: { item: PlaygroundItem; onPlay: (item:
         {isLive ? (
           <div className="pg-card__footer">
             <button className="button" onClick={() => onPlay(item)} type="button">
+              <Play aria-hidden="true" size={16} weight="fill" />
               Play in browser
             </button>
             {item.note ? <small>{item.note}</small> : null}

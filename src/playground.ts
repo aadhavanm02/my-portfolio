@@ -14,6 +14,10 @@ export type PlaygroundItem = {
   icon: PlaygroundIcon;
   tags: string[];
   src?: string;
+  // Screenshot shown as the animated preview (public/assets/playground/...).
+  preview?: string;
+  // Animated mock used for template items that have no playable build yet.
+  mock?: "chat" | "quiz";
   note?: string;
   pending?: string;
 };
@@ -29,6 +33,7 @@ export const playgroundItems: PlaygroundItem[] = [
     icon: "cube",
     tags: ["3D", "Computer vision", "Ecommerce"],
     src: "/playground/photos-to-3d/index.html",
+    preview: "/assets/playground/photos-to-3d.jpg",
     note: "Loads an image model on first use, so it can take a moment.",
   },
   {
@@ -41,6 +46,7 @@ export const playgroundItems: PlaygroundItem[] = [
     icon: "sneaker",
     tags: ["3D", "Mobile", "Product page"],
     src: "/playground/pdp-3d-viewer/index.html",
+    preview: "/assets/playground/pdp-3d-viewer.jpg",
     note: "Loads a 10MB 3D model.",
   },
   {
@@ -53,6 +59,7 @@ export const playgroundItems: PlaygroundItem[] = [
     icon: "notebook",
     tags: ["Productivity", "Responsive", "Local-first"],
     src: "/playground/weave-notebook/index.html",
+    preview: "/assets/playground/weave-notebook.jpg",
     note: "Saves only in your browser.",
   },
   {
@@ -63,6 +70,7 @@ export const playgroundItems: PlaygroundItem[] = [
       "An in-page assistant for a video QC team. It searches a long operating procedure with hybrid keyword and semantic ranking, then has an AI write a short summary from only the matching sections.",
     status: "template",
     icon: "chat",
+    mock: "chat",
     tags: ["AI", "Search", "Internal tool"],
     pending: "Runs inside an internal tool with private content. A demo with sample content is on the way.",
   },
@@ -74,6 +82,7 @@ export const playgroundItems: PlaygroundItem[] = [
       "Generates multiple-choice or open-ended interview questions for any topic and difficulty, evaluates typed answers, and writes a hiring-manager style report.",
     status: "template",
     icon: "exam",
+    mock: "quiz",
     tags: ["AI", "Learning", "Full stack"],
     pending: "Needs its own server and AI key, so it can't run inside this site yet.",
   },
