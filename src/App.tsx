@@ -23,7 +23,7 @@ import {
   Cube,
   Exam,
   Notebook,
-  Sneaker,
+  TShirt,
   Camera,
   Horse,
   PencilLine,
@@ -632,6 +632,24 @@ function StatStrip({ stats }: { stats: Stat[] }) {
 function ProblemView({ section }: { section: Extract<CaseSection, { kind: "problem" }> }) {
   return (
     <>
+      {section.goals ? (
+        <div className="case-goals">
+          <span className="case-goals__label">The business goal</span>
+          {section.goalsIntro ? <p className="case-goals__intro">{section.goalsIntro}</p> : null}
+          <ol>
+            {section.goals.map((goal, index) => (
+              <li key={goal.title}>
+                <span className="case-goals__num">{index + 1}</span>
+                <div>
+                  <strong>{goal.title}</strong>
+                  <p>{goal.body}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      ) : null}
+
       <div className="case-pains">
         {section.pains.map((pain, index) => (
           <article key={pain.title}>
@@ -643,6 +661,13 @@ function ProblemView({ section }: { section: Extract<CaseSection, { kind: "probl
       </div>
 
       {section.media ? <MediaGroup items={[section.media]} /> : null}
+
+      {section.note ? (
+        <aside className="case-note case-problem-note">
+          <h4>{section.note.title}</h4>
+          <p>{section.note.body}</p>
+        </aside>
+      ) : null}
 
       <div className="case-mapping">
         <div className="case-mapping__head" aria-hidden="true">
@@ -2038,6 +2063,64 @@ function SkillArt({ type }: { type: SkillVisual }) {
           <span className="art-device art-device--phone" />
         </div>
       );
+    case "feed":
+      return (
+        <div className="art art--feed">
+          <div className="art-feed__phone">
+            <div className="art-feed__video">
+              <span className="art-feed__actions">
+                <i>♥</i>
+                <i>💬</i>
+              </span>
+              <span className="art-feed__tag">Shop ›</span>
+            </div>
+          </div>
+          <div className="art-feed__comment">
+            <b>Karan</b>
+            <span>Does it run true to size?</span>
+          </div>
+        </div>
+      );
+    case "moderation":
+      return (
+        <div className="art art--moderation">
+          <div className="art-mod__row">
+            <span className="art-mod__reason">Reported · Spam</span>
+            <span className="art-mod__status">Hidden ▾</span>
+          </div>
+          <div className="art-mod__menu">
+            <span>Visible</span>
+            <span className="is-active">Hidden</span>
+          </div>
+        </div>
+      );
+    case "onboarding":
+      return (
+        <div className="art art--onboarding">
+          <div className="art-onb__sheet">
+            <strong>Introducing Social Feed</strong>
+            <div>
+              <span>Explore</span>
+              <span>Engage</span>
+              <span>Shop</span>
+              <span>Share</span>
+            </div>
+          </div>
+        </div>
+      );
+    case "qa":
+      return (
+        <div className="art art--qa">
+          {["Spacing", "Alignment", "States"].map((item) => (
+            <div className="art-qa__row" key={item}>
+              <span>{item}</span>
+              <b>
+                <Check aria-hidden="true" size={12} weight="bold" /> Fixed
+              </b>
+            </div>
+          ))}
+        </div>
+      );
     case "writing":
       return (
         <div className="art art--writing">
@@ -2271,7 +2354,7 @@ function AboutPage() {
 
 const playgroundIcons: Record<PlaygroundIcon, ReactNode> = {
   cube: <Cube size={40} weight="duotone" />,
-  sneaker: <Sneaker size={40} weight="duotone" />,
+  shirt: <TShirt size={40} weight="duotone" />,
   notebook: <Notebook size={40} weight="duotone" />,
   chat: <ChatCircleDots size={40} weight="duotone" />,
   exam: <Exam size={40} weight="duotone" />,
@@ -2517,9 +2600,11 @@ function PlaygroundPage() {
             <span>
               <strong>{liveCount}</strong> playable now
             </span>
-            <span>
-              <strong>{playgroundItems.length - liveCount}</strong> on the way
-            </span>
+            {playgroundItems.length > liveCount ? (
+              <span>
+                <strong>{playgroundItems.length - liveCount}</strong> on the way
+              </span>
+            ) : null}
           </div>
         </section>
 

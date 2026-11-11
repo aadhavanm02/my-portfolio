@@ -14,7 +14,11 @@ export type SkillVisual =
   | "options"
   | "timeline"
   | "devices"
-  | "writing";
+  | "writing"
+  | "feed"
+  | "moderation"
+  | "onboarding"
+  | "qa";
 
 export type SkillProof = {
   study: string;
@@ -58,6 +62,12 @@ export const skills: Skill[] = [
         section: "solution",
         sectionLabel: "Solution",
         text: "Regrouped scattered settings into five tabs, each with one job.",
+      },
+      {
+        study: "superfans-social-feed",
+        section: "critical-decisions",
+        sectionLabel: "Decision 01",
+        text: "Moved the post dashboard from a builder layout and a table to a visual grid, letting the content decide the layout.",
       },
     ],
   },
@@ -143,6 +153,12 @@ export const skills: Skill[] = [
         sectionLabel: "Process",
         text: "Studied competing recovery plugins on a Figma References board before turning ideas into a feature list.",
       },
+      {
+        study: "superfans-social-feed",
+        section: "the-problem",
+        sectionLabel: "The Problem",
+        text: "Compared Tapcart's integration-based shoppable video with a native feed where shoppers post and comment.",
+      },
     ],
   },
   {
@@ -163,6 +179,12 @@ export const skills: Skill[] = [
         section: "solution",
         sectionLabel: "Solution",
         text: "Designed how Pro features appear to free users in five places, all of which shipped.",
+      },
+      {
+        study: "superfans-social-feed",
+        section: "the-problem",
+        sectionLabel: "The Problem",
+        text: "Designed around the spec's goals: bring shoppers back daily, collect first hand data, and connect videos to sales.",
       },
     ],
   },
@@ -185,6 +207,12 @@ export const skills: Skill[] = [
         sectionLabel: "Process",
         text: "Worked through most decisions with the PM and developers, sharing versions and talking through trade-offs.",
       },
+      {
+        study: "superfans-social-feed",
+        section: "critical-decisions",
+        sectionLabel: "Decision 03",
+        text: "Argued for tick and cross buttons, then designed the PM's labelled dropdown once it was clearly the better call.",
+      },
     ],
   },
   {
@@ -205,6 +233,12 @@ export const skills: Skill[] = [
         section: "process",
         sectionLabel: "Process",
         text: "Wrote about 15 Jira tickets after launch, each matched to its own section in Figma.",
+      },
+      {
+        study: "superfans-social-feed",
+        section: "critical-decisions",
+        sectionLabel: "Decision 02",
+        text: "Chose to improve the post view instead of a redesign the team liked, so the feature could ship on time.",
       },
     ],
   },
@@ -241,6 +275,90 @@ export const skills: Skill[] = [
         section: "critical-decisions",
         sectionLabel: "Decision 02",
         text: "Rewrote the empty cart from a dead-end message into “Your Cart Is Empty, Let's Fix That.”",
+      },
+    ],
+  },
+  {
+    id: "social-community-design",
+    name: "Social & community design",
+    group: "UX & Interaction",
+    definition: "Designing spaces where people watch, talk and create, not just buy.",
+    visual: "feed",
+    proofs: [
+      {
+        study: "superfans-social-feed",
+        section: "solution",
+        sectionLabel: "Solution",
+        text: "Designed a shoppable short video feed inside brand apps, with comments, replies and shoppers posting their own videos.",
+      },
+      {
+        study: "superfans-social-feed",
+        section: "solution",
+        sectionLabel: "Solution",
+        text: "Added interactive blocks, a poll and a this or that question, that sit in the feed like a video and collect first hand data.",
+      },
+    ],
+  },
+  {
+    id: "trust-safety",
+    name: "Moderation & trust design",
+    group: "UX & Interaction",
+    definition: "Giving people safe controls the moment a product lets others post and comment.",
+    visual: "moderation",
+    proofs: [
+      {
+        study: "superfans-social-feed",
+        section: "critical-decisions",
+        sectionLabel: "Decision 03",
+        text: "Designed a review queue where reported content is hidden automatically and a labelled status dropdown decides what comes back.",
+      },
+      {
+        study: "superfans-social-feed",
+        section: "solution",
+        sectionLabel: "Solution",
+        text: "Designed Feed Access Controls so brands choose who can view, post and comment, with clear restricted states in the app.",
+      },
+    ],
+  },
+  {
+    id: "feature-onboarding",
+    name: "Feature onboarding",
+    group: "Research & Strategy",
+    definition: "Helping people discover something new, right where they already are.",
+    visual: "onboarding",
+    proofs: [
+      {
+        study: "superfans-social-feed",
+        section: "solution",
+        sectionLabel: "Solution",
+        text: "Introduced the feed with a swipe up hint, an “Introducing Social Feed” sheet, a product page section and a feature banner.",
+      },
+      {
+        study: "superfans-social-feed",
+        section: "solution",
+        sectionLabel: "Solution",
+        text: "Put a feed icon on the product page, so shoppers can post at the moment they're looking at a product, already tagged.",
+      },
+    ],
+  },
+  {
+    id: "design-qa",
+    name: "Design QA",
+    group: "Delivery & Collaboration",
+    definition: "Checking the built product against the designs until the details match.",
+    visual: "qa",
+    proofs: [
+      {
+        study: "superfans-social-feed",
+        section: "solution",
+        sectionLabel: "Solution",
+        text: "Led design QA across the app, dashboard, posting, moderation and feed settings, working with developers until issues were fixed.",
+      },
+      {
+        study: "superfans-social-feed",
+        section: "process",
+        sectionLabel: "Process",
+        text: "Logged every issue with a screenshot and the matching design; most were spacing, alignment and states that didn't match.",
       },
     ],
   },

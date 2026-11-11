@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>[hidden]{display:none!important}html,body{margin:0}img{max-width:100%}body{font:14px system-ui,sans-serif}</style>
+</head>
+<body>
+<title>Virtual Try-On Demo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600;700&family=Schibsted+Grotesk:wght@400;500;600&display=swap">
+<script src="assets/garment.js"></script>
+<style>
+/* Layout: presenter panel on the left (what the model is doing right now), phone mockup on the right running the shopper's try-on flow. Stacks on narrow screens. */
+:root{
+  --bg:#e9edf1; --surface:#ffffff; --tile:#e3e8ee; --ink:#12161b; --muted:#5d6874; --line:#d3dae2;
+  --accent:#2747e8; --accent-ink:#ffffff; --accent-soft:#e6eaff; --ok:#1f7a4d; --ok-soft:#e2f3ea; --warn:#a15c07; --warn-soft:#fdf0dc; --bad:#b42318; --frame:#15191e;
+  --display:"Familjen Grotesk","Helvetica Neue",Arial,sans-serif;
+  --body:"Schibsted Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0b0e12; --surface:#141920; --tile:#1b222b; --ink:#eef2f6; --muted:#97a3b0; --line:#28313c;
+  --accent:#7d93ff; --accent-ink:#0b0e12; --accent-soft:#1d2550; --ok:#5fcf97; --ok-soft:#14301f; --warn:#f0b35a; --warn-soft:#33260f; --bad:#ff8a80; --frame:#000000; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0b0e12; --surface:#141920; --tile:#1b222b; --ink:#eef2f6; --muted:#97a3b0; --line:#28313c;
+  --accent:#7d93ff; --accent-ink:#0b0e12; --accent-soft:#1d2550; --ok:#5fcf97; --ok-soft:#14301f; --warn:#f0b35a; --warn-soft:#33260f; --bad:#ff8a80; --frame:#000000; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:14px;line-height:1.5}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance}
+
+.wrap{max-width:1120px;margin:0 auto;padding-block:28px 40px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));display:grid;gap:28px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:960px){.wrap{grid-template-columns:minmax(0,1fr) 392px;align-items:start}}
+
+/* presenter panel */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:24px 22px;display:grid;gap:22px;min-width:0}
+.panel h1{font-size:26px}
+.panel .lede{margin:6px 0 0;color:var(--muted);max-width:58ch}
+.sec{display:grid;gap:10px}
+.sec h2{font-size:15px}
+.flow{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.flow li{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:10px;align-items:start;color:var(--muted)}
+.flow .dot{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;margin-top:1px}
+.flow li.on{color:var(--ink);font-weight:500}
+.flow li.on .dot{border-color:var(--accent);border-top-color:transparent;animation:spin .8s linear infinite}
+.flow li.done{color:var(--ink)}
+.flow li.done .dot{background:var(--ok);border-color:var(--ok)}
+.flow li.done .dot::after{content:"";width:8px;height:4px;border:2px solid var(--surface);border-top:0;border-right:0;transform:rotate(-45deg) translate(1px,-1px)}
+.flow li.fail .dot{background:var(--bad);border-color:var(--bad)}
+.flow small{display:block;color:var(--muted);font-weight:400;font-size:12px}
+.flow .t{font-variant-numeric:tabular-nums;font-size:12px;color:var(--muted)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pair{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.fig{display:grid;gap:6px;font-size:12px;color:var(--muted)}
+.fig .box{aspect-ratio:3/4;border-radius:12px;border:1px solid var(--line);background:var(--tile);overflow:hidden;display:grid;place-items:center;text-align:center;padding:0 8px}
+.fig .box:has(img){padding:0}
+.fig img{width:100%;height:100%;object-fit:cover;display:block}
+.fig .box.white{background:#fff}
+.fig .box.white img{object-fit:contain}
+.notice{border-radius:12px;padding:12px 14px;font-size:13px}
+.notice.warn{background:var(--warn-soft);color:var(--ink)}
+.notice.bad{background:#fde8e6;color:#5c1410}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .notice.bad{background:#3a1512;color:#ffd7d2}}
+:root[data-theme="dark"] .notice.bad{background:#3a1512;color:#ffd7d2}
+.notice b{display:block;margin-bottom:2px}
+.field label{display:block;font-size:12px;font-weight:600;margin-bottom:6px}
+.field input{width:100%;max-width:420px;height:40px;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:0 12px;font:inherit;color:inherit}
+.field p{margin:6px 0 0;font-size:12px;color:var(--muted);max-width:60ch}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{height:40px;border-radius:10px;border:1px solid var(--line);background:var(--surface);padding:0 14px;font-weight:600;display:inline-flex;align-items:center;gap:8px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.meta{font-size:12px;color:var(--muted)}
+details summary{cursor:pointer;font-weight:600;font-size:13px}
+details[open] summary{margin-bottom:10px}
+
+/* phone */
+.side{display:grid;justify-items:center;gap:12px}
+@media (min-width:960px){.side{position:sticky;top:20px}}
+.caption{font-size:12px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;font-weight:600}
+.phone{width:360px;max-width:100%;aspect-ratio:360/740;background:var(--frame);border-radius:48px;padding:12px;box-shadow:0 24px 60px rgba(10,14,20,.25)}
+.screen{position:relative;width:100%;height:100%;border-radius:38px;overflow:hidden;background:var(--surface)}
+.notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:96px;height:26px;border-radius:20px;background:#000;z-index:90}
+.home{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);width:110px;height:4px;border-radius:4px;background:var(--ink);opacity:.35;z-index:90}
+.scroll{position:absolute;inset:0;overflow-y:auto;scrollbar-width:none}
+.scroll::-webkit-scrollbar{display:none}
+.sbar{height:44px;display:flex;justify-content:space-between;align-items:center;padding:0 26px;font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
+.top{display:flex;align-items:center;justify-content:space-between;padding:4px 14px 10px}
+.ibtn{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;padding:0}
+.ibtn svg{width:17px;height:17px}
+.store{font-family:var(--display);font-weight:700;letter-spacing:.05em;text-transform:uppercase;font-size:12px}
+.gallery{position:relative;aspect-ratio:1/1;background:#fff}
+.gallery img{width:100%;height:100%;object-fit:contain;display:block}
+.fab{position:absolute;right:12px;bottom:12px;display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:10px 14px 10px 12px;background:var(--ink);color:var(--surface);font-weight:600;font-size:13px;box-shadow:0 8px 22px rgba(0,0,0,.22)}
+.fab svg{width:18px;height:18px}
+.fab .spark{position:absolute;top:-4px;right:-4px;width:12px;height:12px;border-radius:50%;background:var(--accent);border:2px solid var(--surface)}
+.thumbs{display:flex;gap:7px;padding:10px 14px}
+.thumb{width:52px;height:52px;border-radius:9px;border:1.5px solid var(--ink);background:#fff;overflow:hidden;padding:0}
+.thumb img{width:100%;height:100%;object-fit:contain}
+.thumb.result{border-color:var(--accent)}
+.info{padding:4px 14px 90px;display:grid;gap:12px}
+.eyebrow{font-size:11px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;font-weight:500}
+.pname{font-family:var(--display);font-weight:700;font-size:21px;line-height:1.15;margin:2px 0 4px}
+.price{font-family:var(--display);font-size:17px;font-weight:700;font-variant-numeric:tabular-nums}
+.rating{font-size:12px;color:var(--muted)}
+.sizes{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.size{height:36px;border-radius:9px;border:1px solid var(--line);background:var(--surface);font-weight:600;font-size:13px}
+.size[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.desc{color:var(--muted);font-size:13px;margin:0}
+.buy{position:absolute;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding:10px 14px 22px;display:flex;gap:8px;z-index:20}
+.cta{flex:1;height:44px;border:0;border-radius:11px;background:var(--ink);color:var(--surface);font-weight:600}
+
+/* overlays inside the phone */
+.layer{position:absolute;inset:0;z-index:40}
+.scrim{position:absolute;inset:0;background:rgba(10,12,16,.45);opacity:0;transition:opacity .25s}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--surface);border-radius:22px 22px 0 0;padding:10px 18px 30px;transform:translateY(100%);transition:transform .3s cubic-bezier(.2,.8,.2,1);display:grid;gap:14px}
+.layer.open .scrim{opacity:1}
+.layer.open .sheet{transform:none}
+.grab{width:40px;height:4px;border-radius:4px;background:var(--line);justify-self:center}
+.sheet h3{font-size:19px}
+.sheet .sub{margin:2px 0 0;color:var(--muted);font-size:13px}
+.guide{display:grid;grid-template-columns:96px minmax(0,1fr);gap:14px;align-items:center}
+.guide .pic{aspect-ratio:3/4;border-radius:12px;background:var(--tile);display:grid;place-items:center;overflow:hidden}
+.guide .pic svg{width:70%;height:auto;color:var(--muted)}
+.tips{list-style:none;margin:0;padding:0;display:grid;gap:8px;font-size:13px}
+.tips li{display:flex;gap:8px;align-items:flex-start}
+.tips li::before{content:"";flex:0 0 6px;height:6px;border-radius:50%;background:var(--accent);margin-top:7px}
+.sbtn{height:48px;border-radius:12px;border:1px solid var(--line);background:var(--surface);font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;width:100%}
+.sbtn svg{width:19px;height:19px}
+.sbtn.primary{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.priv{font-size:11.5px;color:var(--muted);text-align:center;margin:0}
+.full{position:absolute;inset:0;z-index:50;background:#0d0f12;color:#fff;display:flex;flex-direction:column}
+.fullbar{display:flex;align-items:center;justify-content:space-between;padding:48px 14px 8px;gap:10px;position:relative;z-index:3}
+.fullbar .ibtn{background:rgba(255,255,255,.12);border-color:transparent;color:#fff}
+.fullbar .ttl{font-family:var(--display);font-weight:600;font-size:15px}
+.frame{position:relative;flex:1;margin:4px 14px;border-radius:18px;overflow:hidden;background:#1b1f25}
+.frame video,.frame canvas,.frame>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.frame video{transform:scaleX(-1)}
+.outline{position:absolute;inset:0;pointer-events:none;display:grid;place-items:center}
+.outline svg{width:62%;height:auto;color:rgba(255,255,255,.55)}
+.hintpill{position:absolute;left:50%;top:12px;transform:translateX(-50%);background:rgba(0,0,0,.5);border-radius:999px;padding:6px 12px;font-size:12px;white-space:nowrap}
+.count{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--display);font-size:96px;font-weight:700;text-shadow:0 4px 30px rgba(0,0,0,.5)}
+.fullfoot{padding:14px 18px 30px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.shutter{width:68px;height:68px;border-radius:50%;border:4px solid #fff;background:transparent;padding:0;display:grid;place-items:center}
+.shutter::after{content:"";width:52px;height:52px;border-radius:50%;background:#fff;transition:transform .1s}
+.shutter:active::after{transform:scale(.9)}
+.ghost{background:rgba(255,255,255,.12);border:0;color:#fff;border-radius:999px;padding:9px 14px;font-weight:600;font-size:13px;min-width:84px}
+.ghost[aria-pressed="true"]{background:#fff;color:#0d0f12}
+.wbtn{flex:1;height:46px;border-radius:12px;border:0;background:#fff;color:#0d0f12;font-weight:600}
+.wbtn.alt{background:rgba(255,255,255,.12);color:#fff}
+.camerr{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:24px;font-size:13px;color:#cfd5dc}
+
+/* generating */
+.scan{position:absolute;left:0;right:0;height:38%;top:-38%;background:linear-gradient(180deg,rgba(125,147,255,0),rgba(125,147,255,.35) 70%,rgba(255,255,255,.75));mix-blend-mode:screen;animation:scan 2.4s cubic-bezier(.5,0,.5,1) infinite}
+@keyframes scan{to{top:100%}}
+.genchip{position:absolute;left:12px;bottom:12px;display:flex;align-items:center;gap:8px;background:rgba(0,0,0,.55);border-radius:12px;padding:6px 10px 6px 6px;font-size:12px}
+.genchip img{width:34px;height:34px;border-radius:7px;background:#fff;object-fit:contain}
+.genstat{padding:14px 18px 30px;display:grid;gap:10px}
+.genstat b{font-family:var(--display);font-size:17px;font-weight:600}
+.genstat span{font-size:13px;color:#b8c0ca}
+.bar{height:4px;border-radius:4px;background:rgba(255,255,255,.15);overflow:hidden;position:relative}
+.bar i{position:absolute;inset:0 auto 0 0;width:0;background:#fff;transition:width .5s linear}
+.bar.indet i{width:30%;animation:indet 1.4s ease-in-out infinite}
+@keyframes indet{0%{left:-30%}100%{left:100%}}
+
+/* result */
+.compare{position:absolute;inset:0;touch-action:none;cursor:ew-resize}
+.compare img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.compare .before{clip-path:inset(0 calc(100% - var(--pos,50%)) 0 0)}
+.handle{position:absolute;top:0;bottom:0;left:var(--pos,50%);width:2px;background:#fff;transform:translateX(-1px);pointer-events:none}
+.handle::after{content:"";position:absolute;top:50%;left:50%;width:34px;height:34px;border-radius:50%;background:#fff;transform:translate(-50%,-50%);box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.handle svg{position:absolute;top:50%;left:50%;width:18px;height:18px;transform:translate(-50%,-50%);color:#0d0f12;z-index:1}
+.tag{position:absolute;top:12px;background:rgba(0,0,0,.5);border-radius:999px;padding:4px 10px;font-size:11px;font-weight:600;pointer-events:none}
+.tag.l{left:12px}.tag.r{right:12px}
+.resfoot{padding:12px 18px 30px;display:grid;gap:10px}
+.resinfo{display:flex;align-items:center;gap:10px;font-size:13px}
+.resinfo img{width:40px;height:40px;border-radius:8px;background:#fff;object-fit:contain}
+.resinfo div{flex:1;min-width:0}
+.resinfo small{display:block;color:#b8c0ca;font-size:11.5px}
+.ptoast{position:absolute;left:50%;bottom:96px;transform:translate(-50%,8px);background:var(--ink);color:var(--surface);padding:9px 14px;border-radius:11px;font-size:12px;font-weight:500;opacity:0;transition:.25s;z-index:95;width:max-content;max-width:calc(100% - 28px);text-align:center;pointer-events:none}
+.ptoast.show{opacity:1;transform:translate(-50%,0)}
+#resLayer:not([hidden]) ~ .ptoast{bottom:160px}
+.note{font-size:12px;color:var(--muted);max-width:360px;text-align:center;margin:0}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+  <section class="panel" aria-label="Presenter panel">
+    <div>
+      <h1>Virtual try-on</h1>
+      <p class="lede">The shopper taps Try it on, takes or uploads a photo, and an AI model dresses them in the product. This panel shows what is happening behind the scenes.</p>
+    </div>
+
+    <div class="sec">
+      <h2>What the model receives</h2>
+      <div class="pair">
+        <div class="fig"><div class="box" id="figPhoto">Shopper photo appears here</div>Shopper photo</div>
+        <div class="fig"><div class="box white"><img id="figGarment" alt="Everyday Crew Tee, front"></div>Product image</div>
+        <div class="fig"><div class="box" id="figResult">Result appears here</div>Result</div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h2>Progress</h2>
+      <ol class="flow" id="flow">
+        <li id="st-photo"><span class="dot"></span><div>Photo ready<small>Cropped to a 3:4 portrait</small></div><span class="t"></span></li>
+        <li id="st-connect"><span class="dot"></span><div>Connecting to the try-on model<small>IDM-VTON, an open model, on a free Hugging Face server</small></div><span class="t"></span></li>
+        <li id="st-queue"><span class="dot"></span><div>Waiting for a free GPU<small id="queueTxt">Free servers are shared, so there can be a short line</small></div><span class="t"></span></li>
+        <li id="st-gen"><span class="dot"></span><div>Dressing the shopper<small>Finds the body, masks the old top, draws the new one</small></div><span class="t"></span></li>
+        <li id="st-done"><span class="dot"></span><div>Result on the phone</div><span class="t"></span></li>
+      </ol>
+      <div class="notice bad" id="errBox" hidden></div>
+    </div>
+
+    <div class="sec">
+      <details>
+        <summary>Settings and backup</summary>
+        <div class="sec">
+          <div class="field">
+            <label for="hfToken">Hugging Face token (optional)</label>
+            <input id="hfToken" type="password" autocomplete="off" placeholder="hf_…" spellcheck="false">
+            <p>The free server gives a small daily allowance. Signing in with a free Hugging Face account token gives more try-ons per day. The token stays in this browser and is only sent to Hugging Face.</p>
+          </div>
+          <div class="row">
+            <button class="btn" id="showLast" disabled>Show last result</button>
+            <span class="meta" id="lastMeta">No saved result yet. The last successful try-on is kept in this browser as a backup.</span>
+          </div>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <aside class="side">
+    <div class="caption">Shopper's app · Product page</div>
+    <div class="phone">
+      <div class="screen" id="screen">
+        <div class="notch"></div>
+        <div class="scroll" id="scroll">
+          <div class="sbar"><span>9:41</span><span>5G ▮▮▮</span></div>
+          <div class="top">
+            <button class="ibtn" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <div class="store">Northbound Basics</div>
+            <button class="ibtn" aria-label="Bag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg></button>
+          </div>
+          <div class="gallery" id="gallery">
+            <img id="heroImg" alt="Everyday Crew Tee in dusty mauve">
+            <button class="fab" id="tryBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6a2 2 0 1 1 2 2c-1 0-2 .7-2 1.6V10"/><path d="M12 10l-9 6.5a1 1 0 0 0 .6 1.8h16.8a1 1 0 0 0 .6-1.8L12 10z"/></svg>Try it on<span class="spark"></span></button>
+          </div>
+          <div class="thumbs" id="thumbs"><button class="thumb" aria-label="Product photo"><img id="thumbImg" alt=""></button></div>
+          <div class="info">
+            <div>
+              <div class="eyebrow">Men · T-shirts · Regular fit</div>
+              <div class="pname">Everyday Crew Tee</div>
+              <div class="price">₹1,299</div>
+              <div class="rating">★ 4.5 · 862 reviews</div>
+            </div>
+            <div class="sizes" id="sizes"></div>
+            <p class="desc">Soft 180 GSM cotton crew neck in dusty mauve, with a small chest logo. Not sure how it looks on you? Tap Try it on.</p>
+          </div>
+        </div>
+        <div class="buy"><button class="cta" id="cta">Add to bag</button></div>
+
+        <!-- sheet: choose photo source -->
+        <div class="layer" id="sheetLayer" hidden>
+          <div class="scrim" id="scrim"></div>
+          <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+            <div class="grab"></div>
+            <div><h3 id="sheetTitle">Try it on</h3><p class="sub">See the Everyday Crew Tee on you in about a minute.</p></div>
+            <div class="guide">
+              <div class="pic"><svg viewBox="0 0 60 80" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><circle cx="30" cy="15" r="8"/><path d="M14 74V44c0-10 7-16 16-16s16 6 16 16v30"/><path d="M14 46l-6 22M46 46l6 22"/></svg></div>
+              <ul class="tips"><li>Face the camera, head to hips in frame</li><li>Arms relaxed, slightly away from your body</li><li>Good light and a plain top works best</li></ul>
+            </div>
+            <button class="sbtn primary" id="takePhoto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Take a photo</button>
+            <label class="sbtn" for="fileIn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/></svg>Upload a photo</label>
+            <input type="file" id="fileIn" accept="image/*" hidden>
+            <p class="priv">Your photo is only used for this try-on and is not saved by the store.</p>
+          </div>
+        </div>
+
+        <!-- camera -->
+        <div class="full" id="camLayer" hidden>
+          <div class="fullbar"><button class="ibtn" id="camClose" aria-label="Close camera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button><span class="ttl">Take a photo</span><span style="width:34px"></span></div>
+          <div class="frame" id="camFrame">
+            <video id="video" playsinline muted></video>
+            <div class="outline" id="camOutline"><svg viewBox="0 0 60 80" fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="3 3" stroke-linejoin="round"><circle cx="30" cy="15" r="8"/><path d="M14 80V44c0-10 7-16 16-16s16 6 16 16v36"/><path d="M14 46l-6 24M46 46l6 24"/></svg></div>
+            <div class="hintpill" id="camHint">Line yourself up with the outline</div>
+            <div class="count" id="count" hidden></div>
+            <div class="camerr" id="camErr" hidden></div>
+          </div>
+          <div class="fullfoot"><button class="ghost" id="timerBtn" aria-pressed="true">3s timer</button><button class="shutter" id="shutter" aria-label="Take photo"></button><span style="min-width:84px"></span></div>
+        </div>
+
+        <!-- confirm photo -->
+        <div class="full" id="confirmLayer" hidden>
+          <div class="fullbar"><button class="ibtn" id="confClose" aria-label="Cancel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button><span class="ttl">Use this photo?</span><span style="width:34px"></span></div>
+          <div class="frame"><img id="confImg" alt="Your photo"></div>
+          <div class="fullfoot"><button class="wbtn alt" id="retake">Choose again</button><button class="wbtn" id="usePhoto">Try it on</button></div>
+        </div>
+
+        <!-- generating -->
+        <div class="full" id="genLayer" hidden>
+          <div class="fullbar"><button class="ibtn" id="genCancel" aria-label="Cancel try-on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button><span class="ttl">Trying it on</span><span style="width:34px"></span></div>
+          <div class="frame"><img id="genImg" alt=""><div class="scan"></div><div class="genchip"><img id="genGarm" alt="">Everyday Crew Tee</div></div>
+          <div class="genstat"><b id="genTitle">Getting ready…</b><span id="genSub">This usually takes under a minute.</span><div class="bar indet" id="genBar"><i></i></div></div>
+        </div>
+
+        <!-- result -->
+        <div class="full" id="resLayer" hidden>
+          <div class="fullbar"><button class="ibtn" id="resClose" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button><span class="ttl">On you</span><button class="ibtn" id="resRetry" aria-label="Try another photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg></button></div>
+          <div class="frame">
+            <div class="compare" id="compare" style="--pos:100%">
+              <img id="afterImg" alt="You wearing the Everyday Crew Tee">
+              <img id="beforeImg" class="before" alt="Your original photo">
+              <div class="handle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 7l-5 5 5 5M15 7l5 5-5 5"/></svg></div>
+              <span class="tag l">Before</span><span class="tag r">With the tee</span>
+            </div>
+          </div>
+          <div class="resfoot">
+            <div class="resinfo"><img id="resGarm" alt=""><div>Everyday Crew Tee · Size <span id="resSize">M</span><small>AI preview. Fit and colour may differ slightly.</small></div></div>
+            <div class="row" style="gap:8px"><button class="wbtn alt" id="saveImg">Save image</button><button class="wbtn" id="resAdd">Add to bag</button></div>
+          </div>
+        </div>
+
+        <div class="ptoast" id="ptoast" role="status"></div>
+        <div class="home"></div>
+      </div>
+    </div>
+    <p class="note">Try-on runs on IDM-VTON, an open research model, through a free Hugging Face server. Product image: t-shirt mockup.</p>
+  </aside>
+</div>
+
+<script type="module">
+const $ = id => document.getElementById(id);
+const GARMENT = window.GARMENT_IMG || '';
+const SPACE = 'yisol/IDM-VTON';
+const GARMENT_DESC = 'Short sleeve round neck t-shirt';
+['heroImg','thumbImg','figGarment','genGarm','resGarm'].forEach(id => $(id).src = GARMENT);
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const store = { get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }, set(k,v){ try{ localStorage.setItem(k,v); return true; }catch(e){ return false; } } };
+const ptoast = m => { const t=$('ptoast'); t.textContent=m; t.classList.add('show'); clearTimeout(ptoast.h); ptoast.h=setTimeout(()=>t.classList.remove('show'),2600); };
+
+/* product page */
+let size = 'M';
+$('sizes').innerHTML = ['XS','S','M','L','XL','XXL'].map(s=>`<button class="size" aria-pressed="${s==='M'}">${s}</button>`).join('');
+$('sizes').addEventListener('click', e => { const b=e.target.closest('.size'); if(!b) return; size=b.textContent; document.querySelectorAll('.size').forEach(x=>x.setAttribute('aria-pressed',x===b)); $('resSize').textContent=size; });
+const addToBag = () => ptoast(`Added Everyday Crew Tee, size ${size}, to bag`);
+$('cta').addEventListener('click', addToBag);
+
+/* layers */
+const show = (id) => { ['camLayer','confirmLayer','genLayer','resLayer'].forEach(x => $(x).hidden = x!==id); };
+function openSheet(){ const L=$('sheetLayer'); L.hidden=false; requestAnimationFrame(()=>requestAnimationFrame(()=>L.classList.add('open'))); }
+function closeSheet(){ const L=$('sheetLayer'); L.classList.remove('open'); setTimeout(()=>{ L.hidden=true; }, 300); }
+$('tryBtn').addEventListener('click', openSheet);
+$('scrim').addEventListener('click', closeSheet);
+
+/* presenter progress */
+const STEPS=['st-photo','st-connect','st-queue','st-gen','st-done'];
+let stepT0=0;
+function resetFlow(){ STEPS.forEach(id=>{ $(id).className=''; $(id).querySelector('.t').textContent=''; }); $('queueTxt').textContent='Free servers are shared, so there can be a short line'; $('errBox').hidden=true; }
+function stepOn(id){ const i=STEPS.indexOf(id); STEPS.forEach((s,k)=>{ const el=$(s); if(k<i && !el.classList.contains('done')){ el.className='done'; } }); $(id).className='on'; stepT0=performance.now(); }
+function stepDone(id){ const el=$(id); el.className='done'; el.querySelector('.t').textContent = ((performance.now()-stepT0)/1000).toFixed(1)+' s'; }
+function stepFail(id){ $(id).className='fail'; }
+
+/* photo prep: crop to 3:4, 768 x 1024 */
+let photoURL = null, photoBlob = null;
+async function prepPhoto(src, mirror=false){
+  const img = new Image(); img.src = src; await img.decode();
+  const W=768, H=1024, c=document.createElement('canvas'); c.width=W; c.height=H;
+  const ctx=c.getContext('2d'); ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H);
+  const r=Math.max(W/img.naturalWidth, H/img.naturalHeight), dw=img.naturalWidth*r, dh=img.naturalHeight*r;
+  const dx=(W-dw)/2, dy=Math.min(0, Math.max(H-dh, (H-dh)*.35));
+  if(mirror){ ctx.translate(W,0); ctx.scale(-1,1); }
+  ctx.imageSmoothingQuality='high'; ctx.drawImage(img, dx, dy, dw, dh);
+  photoBlob = await new Promise(r=>c.toBlob(r,'image/jpeg',.92));
+  if(photoURL) URL.revokeObjectURL(photoURL);
+  photoURL = URL.createObjectURL(photoBlob);
+  return photoURL;
+}
+function confirmPhoto(){ $('confImg').src = photoURL; show('confirmLayer'); resetFlow(); stepOn('st-photo'); stepDone('st-photo'); $('figPhoto').innerHTML=`<img src="${photoURL}" alt="Shopper photo">`; $('figResult').textContent='Result appears here'; }
+
+$('fileIn').addEventListener('change', async e => {
+  const f = e.target.files[0]; e.target.value=''; if(!f) return;
+  if(!f.type.startsWith('image/')){ ptoast('Choose a photo file'); return; }
+  closeSheet();
+  const url = URL.createObjectURL(f);
+  try{ await prepPhoto(url); confirmPhoto(); }catch(err){ ptoast('That photo could not be opened. Try a JPG or PNG.'); }
+  URL.revokeObjectURL(url);
+});
+
+/* camera */
+let stream = null, timerOn = true, counting = false;
+async function openCamera(){
+  closeSheet(); show('camLayer'); $('camErr').hidden=true; $('camOutline').hidden=false; $('camHint').hidden=false;
+  try{
+    stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'user', width:{ideal:1280}, height:{ideal:1706}}, audio:false});
+    $('video').srcObject = stream; await $('video').play();
+  }catch(err){
+    $('camOutline').hidden=true; $('camHint').hidden=true;
+    $('camErr').hidden=false;
+    $('camErr').textContent = err && err.name==='NotAllowedError' ? 'Camera access was blocked. Allow the camera for this page in your browser settings, or close this and upload a photo instead.'
+      : 'The camera is not available here. Close this and upload a photo instead.';
+  }
+}
+function stopCamera(){ if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; } $('video').srcObject=null; }
+$('takePhoto').addEventListener('click', openCamera);
+$('camClose').addEventListener('click', () => { counting=false; $('count').hidden=true; stopCamera(); show(null); });
+$('timerBtn').addEventListener('click', e => { timerOn=!timerOn; e.currentTarget.setAttribute('aria-pressed', timerOn); e.currentTarget.textContent = timerOn ? '3s timer' : 'No timer'; });
+$('shutter').addEventListener('click', async () => {
+  const v=$('video'); if(!stream || !v.videoWidth || counting) return;
+  if(timerOn){ counting=true; for(let n=3;n>0;n--){ if(!counting) return; $('count').hidden=false; $('count').textContent=n; await sleep(1000); } counting=false; $('count').hidden=true; }
+  if(!stream) return;
+  const c=document.createElement('canvas'); c.width=v.videoWidth; c.height=v.videoHeight; c.getContext('2d').drawImage(v,0,0);
+  const url = c.toDataURL('image/jpeg',.92);
+  stopCamera();
+  await prepPhoto(url, true); confirmPhoto();
+});
+$('confClose').addEventListener('click', () => { show(null); });
+$('retake').addEventListener('click', () => { show(null); openSheet(); });
+
+/* try-on through the free Hugging Face server */
+let gradio = null, client = null, clientToken = null, job = null, runId = 0;
+async function getClient(token){
+  if(!gradio) gradio = await import('https://cdn.jsdelivr.net/npm/@gradio/client@2.7.1/dist/browser.js');
+  if(client && clientToken === token) return client;
+  const opts = { events:['data','status'] };
+  if(token) opts.token = token;
+  opts.status_callback = s => { if(s && (s.status==='sleeping' || s.detail==='SLEEPING' || s.detail==='BUILDING' || s.detail==='APP_STARTING')){ $('genTitle').textContent='Waking up the try-on model…'; $('genSub').textContent='The free server was asleep. This can take a minute the first time.'; } };
+  client = await gradio.Client.connect(SPACE, opts); clientToken = token;
+  return client;
+}
+const garmentBlob = () => fetch(GARMENT).then(r=>r.blob());
+function friendly(err){
+  const m = String(err && (err.message || err.title || err) || '').toLowerCase();
+  if(/quota|exceeded|zerogpu|gpu task aborted|you have exceeded/.test(m)) return {t:'The free daily try-on allowance is used up', d:'Add a free Hugging Face token in Settings for more try-ons, try again later, or show the last saved result.'};
+  if(/failed to fetch|network|connect|could not resolve|cors/.test(m)) return {t:'Could not reach the try-on server', d:'Check your internet connection and try again. If you opened the published Claude page, use the local demo instead: the published page cannot call outside servers.'};
+  if(/paused|runtime_error|build_error|not_found|space/.test(m)) return {t:'The free try-on server is unavailable right now', d:'It may be paused or restarting. Try again in a few minutes, or show the last saved result.'};
+  return {t:'The try-on did not finish', d:'Try again. Clear, front-facing photos work best.'};
+}
+async function runTryOn(){
+  const run = ++runId;
+  show('genLayer'); $('genImg').src = photoURL;
+  $('genTitle').textContent='Getting ready…'; $('genSub').textContent='This usually takes under a minute.'; $('genBar').className='bar indet'; $('genBar').firstElementChild.style.width='';
+  const t0 = performance.now();
+  try{
+    stepOn('st-connect');
+    const token = ($('hfToken').value||'').trim() || null;
+    const c = await getClient(token && token.startsWith('hf_') ? token : null);
+    if(run!==runId) return;
+    stepDone('st-connect'); stepOn('st-queue');
+    $('genTitle').textContent='In line for a free GPU…'; $('genSub').textContent='Free servers are shared with other people.';
+    const garm = await garmentBlob();
+    job = c.submit('/tryon', [
+      { background: gradio.handle_file(photoBlob), layers: [], composite: null },
+      gradio.handle_file(garm), GARMENT_DESC, true, false, 30, 42
+    ]);
+    let started = false, result = null;
+    for await (const msg of job){
+      if(run!==runId) return;
+      if(msg.type==='status'){
+        if(msg.stage==='error'){ throw new Error(msg.message || 'error'); }
+        if(msg.stage==='pending' && typeof msg.position==='number' && msg.position>0){
+          $('queueTxt').textContent = `${msg.position} ${msg.position===1?'person':'people'} ahead`;
+          $('genSub').textContent = `${msg.position} ahead of you${msg.eta?`, about ${Math.ceil(msg.eta)} s`:''}`;
+        } else if(!started && (msg.stage==='generating' || (msg.stage==='pending' && (msg.position===0 || msg.position==null) && msg.eta!=null))){
+          started = true; stepDone('st-queue'); stepOn('st-gen');
+          $('genTitle').textContent='Dressing you…'; $('genSub').textContent = msg.eta ? `About ${Math.ceil(msg.eta)} seconds` : 'Usually 20 to 60 seconds';
+          if(msg.eta){ const bar=$('genBar'); bar.className='bar'; const i=bar.firstElementChild; i.style.transition='none'; i.style.width='0'; requestAnimationFrame(()=>{ i.style.transition=`width ${msg.eta}s linear`; i.style.width='92%'; }); }
+        }
+      } else if(msg.type==='data'){ result = msg.data; break; }
+    }
+    if(run!==runId) return;
+    const out = result && result[0];
+    const url = out && (out.url || out.path || (typeof out==='string' ? out : null));
+    if(!url) throw new Error('no image');
+    if(!started){ stepDone('st-queue'); stepOn('st-gen'); }
+    let blob = null, outURL = url;
+    try{ blob = await (await fetch(url)).blob(); outURL = URL.createObjectURL(blob); }catch(e){ console.warn('showing result by URL', e); }
+    stepDone('st-gen'); stepOn('st-done');
+    showResult(photoURL, outURL);
+    stepDone('st-done'); $('st-done').querySelector('.t').textContent = ((performance.now()-t0)/1000).toFixed(0)+' s total';
+    if(blob) saveLast(blob);
+  }catch(err){
+    if(run!==runId) return;
+    console.error(err);
+    const cur = STEPS.find(id => $(id).className==='on'); if(cur) stepFail(cur);
+    const f = friendly(err);
+    $('errBox').hidden=false; $('errBox').innerHTML = `<b>${f.t}</b>${f.d}`;
+    show(null); ptoast(f.t);
+    if(/quota|exceeded/i.test(String(err&&err.message))) client=null;
+  }
+}
+$('usePhoto').addEventListener('click', runTryOn);
+$('genCancel').addEventListener('click', () => { runId++; try{ job && job.cancel && job.cancel(); }catch(e){} show(null); resetFlow(); ptoast('Try-on cancelled'); });
+
+/* result with before and after */
+function showResult(before, after){
+  $('beforeImg').src = before; $('afterImg').src = after;
+  $('figResult').innerHTML = `<img src="${after}" alt="Result">`;
+  show('resLayer');
+  const cmp=$('compare'); cmp.style.setProperty('--pos','100%');
+  let p=100; const go=()=>{ p-=2.2; cmp.style.setProperty('--pos', Math.max(50,p)+'%'); if(p>50) requestAnimationFrame(go); };
+  setTimeout(()=>requestAnimationFrame(go), 500);
+  const th=$('thumbs'); th.querySelector('.result')?.remove();
+  th.insertAdjacentHTML('beforeend', `<button class="thumb result" id="resThumb" aria-label="Your try-on"><img src="${after}" alt="" style="object-fit:cover"></button>`);
+}
+const cmp=$('compare'); let dragging=false;
+const setPos = e => { const r=cmp.getBoundingClientRect(); const x=Math.min(1,Math.max(0,(e.clientX-r.left)/r.width)); cmp.style.setProperty('--pos',(x*100)+'%'); };
+cmp.addEventListener('pointerdown', e => { dragging=true; cmp.setPointerCapture(e.pointerId); setPos(e); });
+cmp.addEventListener('pointermove', e => { if(dragging) setPos(e); });
+cmp.addEventListener('pointerup', () => dragging=false);
+$('resClose').addEventListener('click', () => show(null));
+$('resRetry').addEventListener('click', () => { show(null); openSheet(); });
+$('resAdd').addEventListener('click', () => { show(null); addToBag(); });
+$('thumbs').addEventListener('click', e => { if(e.target.closest('#resThumb')) show('resLayer'); });
+$('saveImg').addEventListener('click', () => {
+  const a=document.createElement('a'); a.href=$('afterImg').src; a.download='everyday-crew-tee-try-on.jpg';
+  document.body.append(a); a.click(); a.remove();
+  ptoast('Saving image');
+});
+
+/* backup: last successful result, kept in this browser */
+function saveLast(blob){
+  const fr=new FileReader(); fr.onload=()=>{ const before=new FileReader(); before.onload=()=>{
+    const ok = store.set('tryon.last', JSON.stringify({after:fr.result, before:before.result, at:Date.now()}));
+    refreshLast(ok ? null : 'Could not keep a backup in this browser.'); }; before.readAsDataURL(photoBlob); };
+  fr.readAsDataURL(blob);
+}
+function refreshLast(msg){
+  let d=null; try{ d=JSON.parse(store.get('tryon.last')||'null'); }catch(e){}
+  $('showLast').disabled = !d;
+  $('lastMeta').textContent = msg || (d ? `Saved ${new Date(d.at).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'})}. Use it if the free server is busy during a demo.` : 'No saved result yet. The last successful try-on is kept in this browser as a backup.');
+  return d;
+}
+$('showLast').addEventListener('click', () => { const d=refreshLast(); if(!d) return; $('figPhoto').innerHTML=`<img src="${d.before}" alt="Shopper photo">`; showResult(d.before, d.after); ptoast('Showing the last saved result'); });
+refreshLast();
+
+/* token: per-browser convenience */
+$('hfToken').value = store.get('tryon.hf') || '';
+$('hfToken').addEventListener('change', e => { store.set('tryon.hf', e.target.value.trim()); client=null; });
+</script>
+
+</body>
+</html>

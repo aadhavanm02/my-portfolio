@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fernway Store Portal · Handbook Assistant demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      color-scheme: light;
+      --green: #2f6b4f;
+      --green-dark: #1f3d2f;
+      --cream: #f7f3ee;
+      --ink: #1f2a24;
+      --muted: #5f6b63;
+      --line: #e6e0d7;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Inter, system-ui, sans-serif; background: var(--cream); color: var(--ink); }
+    header {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 24px; background: var(--green-dark); color: #fff;
+    }
+    .logo {
+      display: grid; place-items: center; width: 34px; height: 34px;
+      border-radius: 10px; background: #fff; color: var(--green-dark); font-weight: 700; font-size: 14px;
+    }
+    header strong { font-size: 15px; }
+    header span { margin-left: auto; font-size: 13px; opacity: .75; }
+    main { max-width: 1040px; margin: 0 auto; padding: 28px 24px 120px; }
+    h1 { margin: 0 0 4px; font-size: 26px; letter-spacing: -.01em; }
+    .lede { margin: 0 0 24px; color: var(--muted); }
+    .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+    .card { padding: 18px; border: 1px solid var(--line); border-radius: 16px; background: #fff; }
+    .card h2 { margin: 0 0 12px; font-size: 14px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+    .row { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-top: 1px solid #f0ebe4; font-size: 14px; }
+    .row:first-of-type { border-top: 0; }
+    .ok { color: var(--green); font-weight: 600; }
+    .warn { color: #b06a12; font-weight: 600; }
+    .demo-note {
+      margin-top: 24px; padding: 14px 16px; border-radius: 12px;
+      background: #eef4f0; color: var(--green-dark); font-size: 13px; line-height: 1.5;
+    }
+  </style>
+  <script>
+    // Userscript helpers the assistant expects (it originally runs in Tampermonkey).
+    window.GM_addStyle = function (css) {
+      const el = document.createElement('style');
+      el.textContent = css;
+      document.head.appendChild(el);
+    };
+    window.GM_info = { script: { name: 'Handbook Assistant', version: 'demo' } };
+    window.GM_xmlhttpRequest = function (details) {
+      if (details.onerror) details.onerror(new Error('No network calls in the demo'));
+    };
+  </script>
+</head>
+<body>
+  <header>
+    <div class="logo">FW</div>
+    <strong>Fernway Store Portal</strong>
+    <span>Riverside · Tuesday morning shift</span>
+  </header>
+  <main>
+    <h1>Good morning, Riverside team</h1>
+    <p class="lede">Doors open at 7:00. The Handbook Assistant is on the right: ask it anything about running the store.</p>
+    <div class="grid">
+      <section class="card">
+        <h2>Opening tasks</h2>
+        <div class="row"><span>Alarm off, lights on</span><span class="ok">Done</span></div>
+        <div class="row"><span>Espresso dialled in</span><span class="ok">Done</span></div>
+        <div class="row"><span>Fridge temperatures</span><span class="warn">Milk fridge 6 °C</span></div>
+        <div class="row"><span>Till float counted</span><span>To do</span></div>
+      </section>
+      <section class="card">
+        <h2>Today</h2>
+        <div class="row"><span>Bean delivery</span><span>9:30</span></div>
+        <div class="row"><span>Fire alarm test</span><span>Wednesday 9:00</span></div>
+        <div class="row"><span>Guest coffee</span><span>Huila, Colombia</span></div>
+        <div class="row"><span>Last Bake starts</span><span>17:00</span></div>
+      </section>
+      <section class="card">
+        <h2>On shift</h2>
+        <div class="row"><span>Priya N.</span><span>Shift lead</span></div>
+        <div class="row"><span>Tomás R.</span><span>Barista</span></div>
+        <div class="row"><span>Mei L.</span><span>Barista</span></div>
+      </section>
+    </div>
+    <p class="demo-note">
+      Demo with made-up content: Fernway Coffee Co. and its handbook are fictional. The assistant searches the handbook in
+      your browser. Suggested questions show summaries written ahead in the format the AI returns; other questions get a
+      quick summary built from the matching sections.
+    </p>
+  </main>
+  <script src="assistant.js"></script>
+  <script>
+    // Open the assistant once it has loaded, so the demo starts on the main feature.
+    window.addEventListener('load', () => {
+      setTimeout(() => document.getElementById('ea-launcher')?.click(), 500);
+    });
+  </script>
+</body>
+</html>

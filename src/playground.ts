@@ -3,7 +3,7 @@
 // "template" items are placeholders, ready to switch to live once a playable build exists:
 // add the build under public/playground/<folder>/, set `src`, and change status to "live".
 
-export type PlaygroundIcon = "cube" | "sneaker" | "notebook" | "chat" | "exam";
+export type PlaygroundIcon = "cube" | "shirt" | "notebook" | "chat" | "exam";
 
 export type PlaygroundItem = {
   id: string;
@@ -37,17 +37,17 @@ export const playgroundItems: PlaygroundItem[] = [
     note: "Loads an image model on first use, so it can take a moment.",
   },
   {
-    id: "pdp-3d-viewer",
-    title: "PDP 3D Viewer",
-    tagline: "A product page where the shoe turns in your hand.",
+    id: "virtual-try-on",
+    title: "Virtual Try-On",
+    tagline: "See a product on yourself before you buy it.",
     description:
-      "A mobile product detail page for a running shoe, with a 3D model in the gallery. Drag to rotate, pinch to zoom, and see it from every side before buying.",
+      "A phone product page with a Try it on button. Take or upload a photo and an AI model dresses you in the garment, while a side panel shows what the model receives and how far along it is.",
     status: "live",
-    icon: "sneaker",
-    tags: ["3D", "Mobile", "Product page"],
-    src: "/playground/pdp-3d-viewer/index.html",
-    preview: "/assets/playground/pdp-3d-viewer.jpg",
-    note: "Loads a 10MB 3D model.",
+    icon: "shirt",
+    tags: ["AI", "Ecommerce", "Mobile"],
+    src: "/playground/try-on/index.html",
+    preview: "/assets/playground/virtual-try-on.jpg",
+    note: "Runs on a free AI server, so a result takes 30 to 90 seconds.",
   },
   {
     id: "weave-notebook",
@@ -65,25 +65,27 @@ export const playgroundItems: PlaygroundItem[] = [
   {
     id: "sop-assistant",
     title: "SOP Assistant",
-    tagline: "Ask a question, get the exact SOP answer.",
+    tagline: "Ask a question, get a short answer from a long handbook.",
     description:
-      "An in-page assistant for a video QC team. It searches a long operating procedure with hybrid keyword and semantic ranking, then has an AI write a short summary from only the matching sections.",
-    status: "template",
+      "An assistant that sits inside an internal tool. It searches a long operating procedure with hybrid keyword and semantic ranking, then writes a short summary with key points, rules, tables and images from only the matching sections.",
+    status: "live",
     icon: "chat",
-    mock: "chat",
     tags: ["AI", "Search", "Internal tool"],
-    pending: "Runs inside an internal tool with private content. A demo with sample content is on the way.",
+    src: "/playground/sop-assistant/index.html",
+    preview: "/assets/playground/sop-assistant.jpg",
+    note: "Demo with a made-up coffee chain handbook; summaries run in your browser.",
   },
   {
     id: "ai-interview-practice",
     title: "AI Interview Practice",
-    tagline: "Practice interviews on any topic with AI questions and feedback.",
+    tagline: "Practice interviews with questions, feedback and a final report.",
     description:
-      "Generates multiple-choice or open-ended interview questions for any topic and difficulty, evaluates typed answers, and writes a hiring-manager style report.",
-    status: "template",
+      "Pick a topic, difficulty and mode. Answer multiple-choice questions with instant explanations, or type open answers and get scored feedback, a model answer and a hiring-manager style report at the end.",
+    status: "live",
     icon: "exam",
-    mock: "quiz",
     tags: ["AI", "Learning", "Full stack"],
-    pending: "Needs its own server and AI key, so it can't run inside this site yet.",
+    src: "/playground/ai-interview/index.html",
+    preview: "/assets/playground/ai-interview-practice.jpg",
+    note: "Demo version: uses sample questions and scores answers in your browser.",
   },
 ];
