@@ -6448,3 +6448,473 @@ button.pg-preview {
   z-index: 2;
   transform: none;
 }
+
+/* ---------- Footer on phones: wrap instead of overflowing ---------- */
+@media (max-width: 767px) {
+  .footer {
+    width: calc(100% - 48px);
+    row-gap: 14px;
+    padding: 8px 0 40px;
+  }
+
+  .footer nav {
+    flex-wrap: wrap;
+    gap: 4px 6px;
+  }
+
+  .footer nav + nav {
+    padding-top: 14px;
+    border-top: 1px solid var(--color-neutral-200);
+  }
+
+  .footer a {
+    padding: 8px 10px;
+    font-size: 15px;
+    white-space: nowrap;
+  }
+}
+
+/* ---------- Stats strip as a white rounded card ---------- */
+.case-stats {
+  overflow: hidden;
+  border: 0;
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+
+.case-stats div + div {
+  border-left-color: var(--color-border);
+}
+
+@media (max-width: 1199px) {
+  .case-stats div:nth-child(n + 3) {
+    border-top-color: var(--color-border);
+  }
+}
+
+@media (max-width: 767px) {
+  .case-stats {
+    border-radius: 18px;
+  }
+}
+
+/* ---------- Solution: separate alternating feature sections ---------- */
+.case-features {
+  display: flex;
+  flex-direction: column;
+}
+
+.case-feature {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 56px;
+  padding: 56px 0;
+  border-top: 1px solid var(--color-neutral-200);
+}
+
+.case-feature:first-child {
+  padding-top: 8px;
+  border-top: 0;
+}
+
+.case-feature--flip .case-feature__media {
+  order: 2;
+}
+
+.case-feature__media .case-media-group {
+  margin: 0;
+}
+
+/* Feature images get a generous 4:3 frame instead of the short wide strip. */
+.case-features .case-feature .case-feature__media .case-media-group .case-media-placeholder__frame,
+.case-features .case-feature .case-feature__media .case-media-image img {
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-media);
+}
+
+.case-feature__body {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.case-feature__meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.case-feature h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--type-card-title-size);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--type-card-title-line);
+}
+
+.case-feature__detail {
+  margin: 0;
+  color: var(--color-body-muted);
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+.case-feature__compare {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.case-feature__compare--single {
+  grid-template-columns: 1fr;
+}
+
+.case-feature__before,
+.case-feature__after {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 16px;
+  border-radius: 16px;
+}
+
+.case-feature__before {
+  border: 1px dashed var(--color-neutral-300);
+}
+
+.case-feature__after {
+  background: var(--color-surface);
+  box-shadow: 0 1px 0 var(--color-border), 0 6px 18px rgb(16 16 16 / 4%);
+}
+
+.case-feature__before span,
+.case-feature__after span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.case-feature__before span {
+  color: var(--color-muted);
+}
+
+.case-feature__after span {
+  color: var(--color-peach-600);
+}
+
+.case-feature__before p,
+.case-feature__after p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.case-feature__before p {
+  color: var(--color-muted);
+}
+
+.case-feature__highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.case-feature__highlights li {
+  padding: 5px 11px;
+  border-radius: var(--radius-pill);
+  background: var(--color-peach-bg);
+  color: var(--color-peach-700);
+  font-size: 13px;
+  font-weight: var(--font-weight-semibold);
+}
+
+@media (max-width: 1199px) {
+  .case-feature {
+    gap: 36px;
+  }
+}
+
+@media (max-width: 899px) {
+  .case-feature,
+  .case-feature--flip {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .case-feature--flip .case-feature__media {
+    order: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .case-feature {
+    padding: 32px 0;
+    gap: 16px;
+  }
+
+  .case-features .case-feature .case-feature__media .case-media-group .case-media-placeholder__frame,
+  .case-features .case-feature .case-feature__media .case-media-image img {
+    aspect-ratio: 16 / 10;
+    border-radius: 16px;
+  }
+
+  .case-feature__body {
+    gap: 10px;
+  }
+
+  .case-feature h3 {
+    font-size: 19px;
+  }
+
+  .case-feature__detail {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .case-feature__compare {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .case-feature__before,
+  .case-feature__after {
+    padding: 12px 14px;
+    border-radius: 14px;
+  }
+
+  .case-feature__before p,
+  .case-feature__after p {
+    font-size: 14px;
+  }
+
+  .case-feature__highlights li {
+    padding: 4px 10px;
+    font-size: 12px;
+  }
+}
+
+/* ---------- Variants grid as a white rounded card ---------- */
+/* Dividers come from 1px gaps over the border color, so they stay clean at any column count. */
+.case-variants__grid {
+  gap: 1px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-border);
+}
+
+.case-variants__grid article {
+  border: 0;
+  background: var(--color-surface);
+}
+
+@media (max-width: 767px) {
+  .case-variants__grid {
+    border-radius: 18px;
+  }
+}
+
+/* ---------- Decision designs always visible ---------- */
+.case-decision__media {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-border);
+}
+
+.case-decision__media-label {
+  color: var(--color-muted);
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.case-decision__media .case-media-group {
+  margin: 0;
+}
+
+/* ---------- Future scope cards on white ---------- */
+.case-future article {
+  border: 0;
+  background: var(--color-surface);
+}
+
+/* ---------- Learnings in a white rounded box ---------- */
+.case-learnings {
+  padding: 12px 36px;
+  border-radius: var(--radius-media);
+  background: var(--color-surface);
+}
+
+/* The first row in each column sits flush with the box top. */
+.case-learnings li:nth-child(-n + 2) {
+  border-top: 0;
+}
+
+/* ---------- About facts in a white rounded box ---------- */
+.about-facts {
+  overflow: hidden;
+  border: 0;
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+
+.about-facts div + div {
+  border-left-color: var(--color-border);
+}
+
+@media (max-width: 1199px) {
+  .about-facts div:nth-child(n + 3) {
+    border-top-color: var(--color-border);
+  }
+}
+
+/* ---------- Contact buttons: label swaps to the address on hover ---------- */
+.contact-panel a.contact-button {
+  min-width: 0;
+  gap: 12px;
+  padding: 18px 28px 18px 24px;
+}
+
+.contact-button__swap {
+  display: grid;
+  overflow: hidden;
+  text-align: left;
+}
+
+.contact-button__label,
+.contact-button__value {
+  grid-area: 1 / 1;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.3;
+  white-space: nowrap;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.25s ease;
+}
+
+.contact-button__value {
+  opacity: 0;
+  transform: translateY(110%);
+}
+
+.contact-panel a.contact-button svg {
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@media (hover: hover) {
+  .contact-panel a.contact-button:hover .contact-button__label,
+  .contact-panel a.contact-button:focus-visible .contact-button__label {
+    opacity: 0;
+    transform: translateY(-110%);
+  }
+
+  .contact-panel a.contact-button:hover .contact-button__value,
+  .contact-panel a.contact-button:focus-visible .contact-button__value {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .contact-panel a.contact-button:hover svg,
+  .contact-panel a.contact-button:focus-visible svg {
+    transform: rotate(-12deg) scale(1.1);
+  }
+}
+
+/* No hover on touch screens, so show the label and the address together. */
+@media (hover: none) {
+  .contact-button__swap {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .contact-button__value {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: var(--font-weight-regular);
+    opacity: 0.72;
+    transform: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .case-decision__media {
+    gap: 10px;
+    padding-top: 14px;
+  }
+
+  .case-decision__media-label {
+    font-size: 11px;
+  }
+
+  .case-learnings {
+    padding: 4px 18px;
+    border-radius: 20px;
+  }
+
+  .case-learnings li:nth-child(2) {
+    border-top: 1px solid var(--color-neutral-200);
+  }
+
+  .about-facts {
+    border-radius: 18px;
+  }
+
+  .contact-panel a.contact-button {
+    padding: 14px 18px;
+  }
+
+  .contact-button__label {
+    font-size: 17px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-button__label,
+  .contact-button__value,
+  .contact-panel a.contact-button svg {
+    transition: none;
+  }
+}
+
+/* The old text-link hover dims links to 72%; the contact buttons have their own hover. */
+.contact-panel a.contact-button:hover,
+.contact-panel a.contact-button:focus-visible {
+  opacity: 1;
+}
+
+/* Beat the older `.contact-button span` flex rule so both lines overlap in one row. */
+.contact-button .contact-button__swap {
+  display: grid;
+  gap: 0;
+}
+
+@media (hover: none) {
+  .contact-button .contact-button__swap {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+}
+
+@media (hover: none) {
+  .contact-button .contact-button__value {
+    font-size: 13px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+}

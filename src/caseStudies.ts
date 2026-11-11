@@ -31,8 +31,12 @@ export type JourneyLane = {
 export type ChangeItem = {
   area: string;
   title: string;
+  // The fuller story of the change, shown as the main paragraph.
+  detail: string;
   before?: string;
   after: string;
+  // Short key points shown as chips.
+  highlights?: string[];
   media?: MediaItem;
 };
 
@@ -461,6 +465,8 @@ const cartAbandonment: CaseStudy = {
         {
           area: "Structure",
           title: "Navigation built to grow",
+          detail: "The old plugin had three plain tabs: Report, Follow-Up Emails and Settings. I rebuilt the top navigation on ForceUI as Dashboard, Follow Up Emails, Reports, Integrations and Settings, with Popup Templates added for Pro. Reports became a dropdown so new report types don't crowd the top bar.",
+          highlights: ["ForceUI product bar", "Reports dropdown", "Room for new features"],
           before: "Three plain tabs: Report, Follow-Up Emails, Settings.",
           after: "Five sections plus Popup Templates for Pro. Reports is a dropdown.",
           media: { caption: "Old tabs vs the new top navigation." },
@@ -468,6 +474,8 @@ const cartAbandonment: CaseStudy = {
         {
           area: "Dashboard",
           title: "Recovery at a glance",
+          detail: "The old Report page showed six numbers and nothing else. The new Dashboard keeps the six stat cards, adds a chart comparing recoverable and recovered revenue over time, a date range picker, a Recent Follow Up Report table and a Product Report table, each with View All.",
+          highlights: ["Six stat cards", "Revenue comparison chart", "One date picker for everything", "Recent follow-ups", "Product Report"],
           before: "Six numbers and nothing else.",
           after: "Stat cards, a revenue comparison chart, a date picker and recent report tables.",
           media: { caption: "Old Report page vs the new Dashboard." },
@@ -475,6 +483,8 @@ const cartAbandonment: CaseStudy = {
         {
           area: "Emails",
           title: "A list that shows what works",
+          detail: "Store owners couldn't tell which emails were bringing shoppers back. The template list now shows sent count, open rate and click rate beside each template, so it's clear at a glance which email does most of the work.",
+          highlights: ["Sent count", "Open rate", "Click rate"],
           before: "Name, subject and timing only.",
           after: "Sent count, open rate and click rate beside each template.",
           media: { caption: "Email list with the rate columns." },
@@ -482,6 +492,8 @@ const cartAbandonment: CaseStudy = {
         {
           area: "Emails",
           title: "Editing in a drawer",
+          detail: "The old editor was a long WordPress form on its own page. Editing now opens a drawer beside the list, with the subject, body and variables, send timing, coupon, test email and WooCommerce email style grouped together. The rule engine already existed but was missing options, so I redesigned it as a toggle that reveals a simple condition builder: rule type, operator, value, add rule.",
+          highlights: ["Subject, body and variables", "Send timing", "Auto coupon", "Test email", "Rule engine"],
           before: "A long WordPress form on its own page.",
           after: "A drawer beside the list: content, timing, coupon, test email and a fuller rule engine.",
           media: { caption: "The edit drawer with the rule engine open." },
@@ -489,6 +501,8 @@ const cartAbandonment: CaseStudy = {
         {
           area: "Reports",
           title: "Reports you can search and export",
+          detail: "The old cart table had bulk actions and little else. The Email Report now has search, a status filter, a date picker, Export, a country column, colored status chips and row actions to view, unsubscribe or delete. Product Report is new, showing which products are abandoned and recovered most.",
+          highlights: ["Search", "Status filter", "Export", "Status chips", "Row actions", "New Product Report"],
           before: "A cart table with bulk actions and little else.",
           after: "Search, status filter, export, status chips and row actions. Product Report is new.",
           media: { caption: "The Email Report table, annotated." },
@@ -496,12 +510,16 @@ const cartAbandonment: CaseStudy = {
         {
           area: "Reports",
           title: "Every detail of one cart",
+          detail: "Opening a cart shows its Email Log on a full page: the scheduled emails with their coupon and status, billing and shipping addresses side by side, and the order items with totals. It's the detailed read a store owner needs before deciding what to do next.",
+          highlights: ["Scheduled emails", "Coupon and status", "Billing and shipping", "Order items and totals"],
           after: "A full-page Email Log: scheduled emails, billing and shipping side by side, and the order.",
           media: { caption: "The Email Logs page." },
         },
         {
           area: "Settings",
           title: "Settings split by topic",
+          detail: "The old settings sat on one long page, with long columns of role and order status checkboxes. Settings now has a left sub-menu: General, Coupon, Email, Recovery Report, GDPR and Advanced. Tracking is a toggle, roles and statuses are multi-select fields with chips, each setting sits in its own card, and saving shows a confirmation. Notify Recovery To Admin, Recovery Report emails and GDPR are new.",
+          highlights: ["Six setting groups", "Chip multi-selects", "One card per setting", "Save confirmation", "New GDPR settings"],
           before: "One long page of checkbox columns.",
           after: "A left sub-menu, toggles, chip multi-selects, and one card per setting. GDPR is new.",
           media: { caption: "Old Settings vs the new General settings." },
@@ -509,6 +527,8 @@ const cartAbandonment: CaseStudy = {
         {
           area: "Integrations",
           title: "More ways to reach shoppers",
+          detail: "Integrations is new. Webhook, SMS, WhatsApp and OttoKit each get their own page in a left sub-menu with an enable toggle, so store owners can follow up wherever their shoppers actually reply.",
+          highlights: ["Webhook", "SMS", "WhatsApp", "OttoKit"],
           before: "Email was the only channel.",
           after: "Webhook, SMS, WhatsApp and OttoKit, each with its own page and toggle.",
           media: { caption: "The Integrations page." },
@@ -516,6 +536,8 @@ const cartAbandonment: CaseStudy = {
         {
           area: "Pro",
           title: "Popup Templates",
+          detail: "A Pro feature that captures a shopper's email when they add to cart or try to leave. The list shows each template's type, emails captured, views and “No thanks” clicks. Editing opens the popup in Spectra, Brainstorm Force's page builder, while rules and coupons stay in the plugin.",
+          highlights: ["Add to cart popups", "Exit popups", "Captures and views", "“No thanks” clicks", "Designed in Spectra"],
           before: "No way to reach shoppers who leave before checkout.",
           after: "Email capture on add to cart or exit, with captures, views and “No thanks” clicks tracked.",
           media: { caption: "The popup template list and the popup." },
@@ -523,6 +545,8 @@ const cartAbandonment: CaseStudy = {
         {
           area: "Pro",
           title: "Upgrade to Pro",
+          detail: "I designed how Pro features appear to free users across the Dashboard, Follow Up Emails, Product Report, Integrations and Settings, so free users can see what upgrading adds without being blocked. All of them shipped, including the blurred Product Report on the Dashboard.",
+          highlights: ["Dashboard", "Follow Up Emails", "Product Report", "Integrations", "Settings"],
           after: "Pro features shown to free users in five places, including a blurred Product Report. All shipped.",
           media: { caption: "The blurred Product Report on the live Dashboard." },
         },
@@ -752,6 +776,8 @@ const modernCart: CaseStudy = {
         {
           area: "Dashboard",
           title: "Settings grouped by task",
+          detail: "Store owners had to hunt for settings across tabs. I split the dashboard into five tabs, each with one job: My Account for the plan and license, General for how the cart behaves, Text Label for what it says, Floating Cart Icon for the icon shoppers see on every page, and Styling for how it looks. In General, dropdowns come first and toggles below, so the page reads in one pass.",
+          highlights: ["My Account", "General", "Text Label", "Floating Cart Icon", "Styling"],
           before: "Settings scattered across tabs.",
           after: "Five tabs, one job each: My Account, General, Text Label, Floating Cart Icon, Styling.",
           media: { caption: "The five tabs side by side." },
@@ -759,6 +785,8 @@ const modernCart: CaseStudy = {
         {
           area: "Dashboard",
           title: "Cart text that sounds like the store",
+          detail: "The cart's wording was fixed, so it couldn't sound like the store it lived in. In Text Label, every word a shopper sees is editable, from the cart heading to the empty cart message. Each field starts filled with sensible default text, so store owners only change what they care about.",
+          highlights: ["Cart heading", "Empty cart message", "Free shipping line", "Suggestion titles"],
           before: "Fixed wording in every store.",
           after: "Every shopper-facing word editable, with defaults filled in.",
           media: { caption: "Default heading vs DNK's wording." },
@@ -766,6 +794,8 @@ const modernCart: CaseStudy = {
         {
           area: "Dashboard",
           title: "The floating cart in its own tab",
+          detail: "The floating cart icon is what shoppers see on every page, but its settings were buried inside General. It now has its own tab with position, hide when empty, and a set of preset icons. Custom icon upload was my idea too, and the team built it later.",
+          highlights: ["Position", "Hide when empty", "Preset icons", "Custom upload"],
           before: "Buried inside General.",
           after: "Position, hide when empty, preset icons. Custom upload, my idea, came later.",
           media: { caption: "Floating icon next to its tab." },
@@ -773,6 +803,8 @@ const modernCart: CaseStudy = {
         {
           area: "Dashboard",
           title: "Styling that's safe to try",
+          detail: "Store owners hesitate to change colors and sizes when they're not sure they can undo it. Styling is grouped into Colors, Icon Style, Width and Miscellaneous. Every color has a reset button, number fields show their default underneath, and units like px, % and ms sit inside the field.",
+          highlights: ["Reset on every color", "Visible defaults", "Units inside fields"],
           before: "Owners hesitated to change what they couldn't undo.",
           after: "Grouped controls, reset buttons, visible defaults, units in fields.",
           media: { caption: "Color reset and number default, close up." },
@@ -780,6 +812,8 @@ const modernCart: CaseStudy = {
         {
           area: "Cart",
           title: "Product suggestions",
+          detail: "An empty cart was a dead end, and a full cart gave shoppers no reason to keep browsing. The empty cart now shows a featured product and a Shop Now button, and a full cart shows a “You might also like” carousel below the items, kept small so it never covers the cart.",
+          highlights: ["Featured product", "Shop Now button", "“You might also like” carousel"],
           before: "Empty carts were dead ends; full carts were just lists.",
           after: "A featured product when empty, a “You might also like” carousel when full.",
           media: { caption: "Empty and full cart with suggestions." },
@@ -787,6 +821,8 @@ const modernCart: CaseStudy = {
         {
           area: "Cart",
           title: "A clearer coupon field",
+          detail: "My first version was a collapsible “Got a Discount Code?” row. It worked, but it didn't feel like applying anything. Now “Apply Coupon Code” stays a link until it's needed, opens into a field with an Apply button, and shows the applied code as a tag that can be removed in one tap.",
+          highlights: ["Quiet link", "Apply button", "Removable code tag"],
           before: "A collapsible “Got a Discount Code?” row.",
           after: "A link that opens into a field, then a tag you remove in one tap.",
           media: { caption: "Coupon field, before and after." },
@@ -794,6 +830,8 @@ const modernCart: CaseStudy = {
         {
           area: "Cart",
           title: "A complete order summary",
+          detail: "Shoppers couldn't see what made up their total. The order summary now lays out shipping, tax, subtotal and savings, so the total never comes as a surprise at checkout, and the checkout button is the one clear next step.",
+          highlights: ["Shipping", "Tax", "Subtotal", "Savings"],
           before: "No breakdown of the total.",
           after: "Shipping, tax, subtotal and savings, before checkout.",
           media: { caption: "The order summary." },
@@ -801,6 +839,8 @@ const modernCart: CaseStudy = {
         {
           area: "Cart",
           title: "A popup cart",
+          detail: "Some stores want the cart front and center, not at the edge of the screen. I designed a second cart type that opens in the middle of the page, with the full set of states for desktop, tablet and mobile.",
+          highlights: ["Desktop", "Tablet", "Mobile"],
           before: "Slide-out was the only option.",
           after: "A centered popup for desktop, tablet and mobile.",
           media: { caption: "Popup cart on three screen sizes." },

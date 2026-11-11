@@ -737,30 +737,48 @@ function JourneyView({ section }: { section: Extract<CaseSection, { kind: "journ
 function SolutionView({ section }: { section: Extract<CaseSection, { kind: "solution" }> }) {
   return (
     <>
-      <div className="case-changes">
-        {section.items.map((item) => (
-          <article className="case-change" key={item.title}>
-            {item.media ? <MediaThumb item={item.media} /> : null}
-            <span className="case-tag">{item.area}</span>
-            <h3>{item.title}</h3>
-            <dl>
-              {item.before ? (
-                <div className="case-change__before">
-                  <dt>
-                    <X aria-hidden="true" size={14} weight="bold" />
-                    <span className="sr-only">Before</span>
-                  </dt>
-                  <dd>{item.before}</dd>
-                </div>
-              ) : null}
-              <div className="case-change__after">
-                <dt>
-                  <Check aria-hidden="true" size={14} weight="bold" />
-                  <span className="sr-only">After</span>
-                </dt>
-                <dd>{item.after}</dd>
+      <div className="case-features">
+        {section.items.map((item, index) => (
+          <article className={`case-feature${index % 2 ? " case-feature--flip" : ""}`} key={item.title}>
+            <div className="case-feature__media">
+              {item.media ? <MediaGroup items={[item.media]} /> : null}
+            </div>
+
+            <div className="case-feature__body">
+              <div className="case-feature__meta">
+                <span className="case-index">{pad(index)}</span>
+                <span className="case-tag">{item.area}</span>
               </div>
-            </dl>
+              <h3>{item.title}</h3>
+              <p className="case-feature__detail">{item.detail}</p>
+
+              <div className={`case-feature__compare${item.before ? "" : " case-feature__compare--single"}`}>
+                {item.before ? (
+                  <div className="case-feature__before">
+                    <span>
+                      <X aria-hidden="true" size={12} weight="bold" />
+                      Before
+                    </span>
+                    <p>{item.before}</p>
+                  </div>
+                ) : null}
+                <div className="case-feature__after">
+                  <span>
+                    <Check aria-hidden="true" size={12} weight="bold" />
+                    {item.before ? "After" : "What it does"}
+                  </span>
+                  <p>{item.after}</p>
+                </div>
+              </div>
+
+              {item.highlights ? (
+                <ul className="case-feature__highlights" aria-label="Key details">
+                  {item.highlights.map((highlight) => (
+                    <li key={highlight}>{highlight}</li>
+                  ))}
+                </ul>
+              ) : null}
+            </div>
           </article>
         ))}
       </div>
@@ -881,12 +899,10 @@ function DecisionCard({ decision, index }: { decision: DecisionItem; index: numb
       </ol>
 
       {decision.media ? (
-        <details className="case-decision__media">
-          <summary>
-            See the designs <span>({decision.media.length})</span>
-          </summary>
+        <div className="case-decision__media">
+          <span className="case-decision__media-label">The designs</span>
           <MediaGroup items={decision.media} />
-        </details>
+        </div>
       ) : null}
     </article>
   );
@@ -1429,7 +1445,9 @@ function CaseStudyPage({ project }: { project: CaseStudy }) {
       }
 
       setActiveTopic(current);
-      setShowTocButton(window.scrollY > 320);
+      // Hide the floating contents button at the very bottom so it never covers the footer links.
+      const nearBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 220;
+      setShowTocButton(window.scrollY > 320 && !nearBottom);
     }
 
     updateActiveTopic();
@@ -1679,18 +1697,18 @@ function ContactPanel({ id }: { id: string }) {
       <div className="contact-actions">
         <a className="contact-button contact-button--primary" href={`mailto:${contactEmail}`} onClick={handleEmail}>
           <EnvelopeSimple aria-hidden="true" size={22} weight="bold" />
-          <span>
-            <strong>Email me</strong>
-            <small>{contactEmail}</small>
+          <span className="contact-button__swap">
+            <strong className="contact-button__label">Email me</strong>
+            <strong className="contact-button__value">{contactEmail}</strong>
           </span>
         </a>
 
         {contactPhone ? (
           <a className="contact-button" href={`tel:${contactPhone.tel}`} onClick={handlePhone}>
             <Phone aria-hidden="true" size={22} weight="bold" />
-            <span>
-              <strong>Call me</strong>
-              <small>{contactPhone.display}</small>
+            <span className="contact-button__swap">
+              <strong className="contact-button__label">Call me</strong>
+              <strong className="contact-button__value">{contactPhone.display}</strong>
             </span>
           </a>
         ) : null}
@@ -2025,18 +2043,6 @@ function AboutPage() {
                 <p>{hobby.body}</p>
               </article>
             ))}
-          </div>
-        </section>
-
-        <section className="about-cta">
-          <h2>Want to see how I think?</h2>
-          <div>
-            <a className="button button--large" href={withBasePath("/")}>
-              See my work
-            </a>
-            <a className="about-cta__secondary" href={withBasePath("/skills")}>
-              Browse skills <ArrowRight aria-hidden="true" size={16} weight="bold" />
-            </a>
           </div>
         </section>
 
