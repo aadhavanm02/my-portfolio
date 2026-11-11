@@ -100,6 +100,9 @@ export type CaseSection = SectionBase &
 
 export type CaseStudy = {
   slug: string;
+  // Optional brand color. Leave it out to use the site's Flamingo orange. When set, every
+  // accent inside the case study (tags, numbers, highlights, the contents rail) uses it.
+  brand?: string;
   cardTitle: string;
   cardSummary: string;
   proof: string;
@@ -961,4 +964,277 @@ const modernCart: CaseStudy = {
   ],
 };
 
-export const caseStudies: CaseStudy[] = [cartAbandonment, modernCart];
+// Built from the Social Feed Case Study Notes. Decisions, results and learnings
+// are left out until the reasons and outcomes are confirmed.
+const superfansSocialFeed: CaseStudy = {
+  slug: "superfans-social-feed",
+  brand: "#915EE9",
+  cardTitle: "Social Feed for Superfans",
+  cardSummary:
+    "A Reels-style video feed inside brands' own mobile apps, where shoppers watch, shop, comment and post, and merchants stay in control from the Superfans dashboard.",
+  proof: "Short video, shopping and community, designed for both sides: shoppers and merchants.",
+  tone: "violet",
+  image: "/assets/superfans-dashboard.png",
+  imageClass: "project-image--superfans",
+  headline: "Designing Social Feed: short video, shopping and community inside a brand's own app",
+  hook: "Social Feed puts a Reels-style video feed inside a brand's own app, where shoppers can watch, shop, talk and post, and the brand stays in control.",
+  summary:
+    "Superfans.io builds mobile apps for Shopify and Shopify Plus brands. Social Feed has two sides: the shopper's app, and the merchant's Superfans dashboard for posts, Instagram import, moderation and access control. The design file covers ten months of work, from the first feed wireframes in January to design QA on the built product in October 2026.",
+  stats: [
+    { value: "10 months", label: "January to October 2026" },
+    { value: "2 sides", label: "Shopper app and merchant dashboard" },
+    { value: "12", label: "Design versions logged across app, dashboard and posting" },
+    { value: "6", label: "Design QA feedback documents on the built product" },
+  ],
+  meta: [
+    ["Role", "Senior Product Designer"],
+    ["Company", "Superfans.io"],
+    ["Platform", "Mobile app and merchant dashboard"],
+    ["Scope", "Feed, comments, posting, moderation, access"],
+  ],
+  hero: {
+    caption: "The Superfans dashboard, where merchants manage their app and its Social Feed.",
+    src: "/assets/superfans-dashboard.png",
+  },
+  sections: [
+    {
+      kind: "problem",
+      id: "the-problem",
+      nav: "The Problem",
+      eyebrow: "The Problem",
+      title: "A content feed with two sides to design for",
+      intro:
+        "A video feed inside a brand's app is more than a player. Shoppers watch, comment, shop and post their own videos. Merchants then need tools to publish, manage and protect everything that appears in it.",
+      pains: [
+        { title: "Two kinds of users", body: "Shoppers in the app and merchants in the dashboard each need their own flows." },
+        { title: "Video doesn't fit a table", body: "The first dashboard used a table layout, which hid the visual nature of the posts." },
+        { title: "Shopper posts need a check", body: "Content from shoppers has to be reviewed before, and after, it goes live." },
+        { title: "Comments can go wrong", body: "Reports, edits and deletes all need clear, safe handling on both sides." },
+        { title: "Not every customer should see it", body: "Brands need control over who can view, post and comment." },
+      ],
+      mapping: [
+        ["Shoppers and merchants need different tools", "A feed for shoppers, a control room for merchants"],
+        ["Video posts were hard to scan in a table", "A visual grid and a single view with a phone preview"],
+        ["Shopper content could go live unchecked", "Review before posting, plus reporting and moderation"],
+        ["One feed for every customer", "Access controls for who can see, post and comment"],
+      ],
+      constraints: [
+        "Fits the existing Superfans app and dashboard",
+        "Works with brand posts, Instagram posts and shopper posts",
+        "Three video formats: 9:16, 16:9 and 1:1",
+        "Scope grew over ten months",
+      ],
+    },
+    {
+      kind: "journey",
+      id: "walkthrough",
+      nav: "Walkthrough",
+      eyebrow: "Walkthrough",
+      title: "One shopper, one brand team",
+      intro: "Every post a shopper sees, likes or reports lands in front of the brand team on the other side.",
+      video: { kind: "video", caption: "Prototype walkthrough: a shopper watches, shops and posts; the brand team reviews and moderates." },
+      lanes: [
+        {
+          name: "Maya",
+          role: "Shopper",
+          about: "Shops with a medical scrubs brand that has its own Superfans app.",
+          steps: [
+            {
+              title: "Finds the Feed tab",
+              body: "A new Feed tab sits in the bottom navigation, and a swipe up hint shows first-time users how to browse.",
+              media: { caption: "Feed tab and swipe up hint." },
+            },
+            {
+              title: "Watches and shops",
+              body: "A full-screen vertical video with like, comment and share, a caption that expands, and a tagged product to shop.",
+              media: { caption: "Vertical video with a tagged product." },
+            },
+            {
+              title: "Joins the conversation",
+              body: "Comments and replies, with edit, delete and report. A comment opened from a notification is highlighted.",
+              media: { caption: "Comments and replies." },
+            },
+            {
+              title: "Posts her own video",
+              body: "Picks a video, adds a caption, tags products and previews it. The post goes into review before it appears.",
+              media: { caption: "Shopper posting flow." },
+            },
+          ],
+        },
+        {
+          name: "Brand team",
+          role: "Merchant",
+          about: "Runs the brand's app from the Superfans dashboard.",
+          steps: [
+            {
+              title: "Manages posts",
+              body: "The Social Feed page shows All, App Exclusive and From Instagram posts as a grid, with a single view beside a phone preview.",
+              media: { caption: "Social Feed grid and single post view." },
+            },
+            {
+              title: "Imports from Instagram",
+              body: "Links an Instagram account and imports its own or tagged posts, several at a time.",
+              media: { caption: "Instagram import modal." },
+            },
+            {
+              title: "Moderates reports",
+              body: "Reviews reported comments and posts in Reported and Reviewed tabs, then hides them or keeps them visible.",
+              media: { caption: "Feed Moderation." },
+            },
+            {
+              title: "Decides who can see the feed",
+              body: "Opens the feed to everyone, to everyone except some customers, or only to specific customers.",
+              media: { caption: "Feed Access Controls." },
+            },
+          ],
+        },
+      ],
+    },
+    {
+      kind: "solution",
+      id: "solution",
+      nav: "Solution",
+      eyebrow: "Solution",
+      title: "What the feature covers, part by part",
+      intro: "The work spans the shopper's app, shopper posting, the merchant dashboard, moderation and access.",
+      items: [
+        {
+          area: "App",
+          title: "A feed inside the brand's app",
+          detail:
+            "Social Feed gets its own tab in the app's bottom navigation, next to Home, Cart, Wishlist and Account. Videos play full screen and vertically, with like, comment and share, a caption that expands and collapses, play and pause, and a tagged product shoppers can open and buy.",
+          after: "A Feed tab with full-screen vertical videos and a tagged product on every post that has one.",
+          highlights: ["Feed tab", "Vertical video", "Tagged product", "Expandable caption", "Play and pause"],
+          media: { caption: "The Feed tab and vertical video." },
+        },
+        {
+          area: "App",
+          title: "Comments that handle every case",
+          detail:
+            "The comments sheet covers comments and replies, the shopper's own comments, edited comments, reporting a comment with one of five report types, a delete confirmation, an empty state and avatar variations. The comment box shows its send button only while typing.",
+          after: "A full comments system, from the first reply to reporting a comment.",
+          highlights: ["Replies", "Edit and delete", "Report (5 types)", "Empty state", "Avatars"],
+          media: { caption: "Comments, replies and reporting." },
+        },
+        {
+          area: "App",
+          title: "Comments from a notification",
+          detail:
+            "When a shopper opens a comment from a push notification, the feed jumps to it and highlights it after a second, so it's easy to spot. A back button appears when comments open this way.",
+          after: "Deep-linked comments are highlighted, with a clear way back.",
+          highlights: ["Deep linking", "Highlight after 1s", "Back button"],
+          media: { caption: "A highlighted comment opened from a notification." },
+        },
+        {
+          area: "Posting",
+          title: "Shoppers posting their own videos",
+          detail:
+            "Shoppers can post from the feed in three flows: first-time, returning, and from a product page. The flow covers storage permission, a file picker with albums and screenshots, caption, tagging one or more products, a preview in 9:16, 16:9 or 1:1, and every state after: under review, rejected, posted, edit or delete, and upload failed.",
+          after: "A complete posting flow, with review built in before anything goes live.",
+          highlights: ["First-time flow", "Multiple product tags", "3 formats", "Under review", "Upload failed"],
+          media: { caption: "Shopper posting flow and review states." },
+        },
+        {
+          area: "Posting",
+          title: "Posting from the product page",
+          detail:
+            "A feed icon on the product page lets shoppers post about that product, with it already tagged. A Social Feed section on the product page also shows posts about it.",
+          after: "Shoppers can share a product right where they're looking at it.",
+          highlights: ["Feed icon on the PDP", "Product pre-tagged", "PDP feed section"],
+          media: { caption: "Posting from the product page." },
+        },
+        {
+          area: "Onboarding",
+          title: "Introducing the feature",
+          detail:
+            "New users meet Social Feed through an “Introducing Social Feed” sheet, onboarding modals on the product page and a banner covering Explore Posts, Engage Posts, Shop Products and Share Yours.",
+          after: "Several light entry points that explain the feed where shoppers already are.",
+          highlights: ["Intro sheet", "PDP modals", "Feature banner", "Swipe up hint"],
+          media: { caption: "Social Feed onboarding." },
+        },
+        {
+          area: "Dashboard",
+          title: "From a table to a visual grid",
+          detail:
+            "The first dashboard listed posts in a table. Version 1.2 removed it to make the page more visual, adding a grid view and a single view where a phone preview sits next to the post's comments. Merchants can reply, edit, copy the post ID, hide or delete from there.",
+          before: "Posts listed in a table.",
+          after: "A visual grid, plus a single view with a phone preview and comments.",
+          highlights: ["Grid view", "Single view", "Phone preview", "Reply and edit"],
+          media: { caption: "Grid view and single post view." },
+        },
+        {
+          area: "Dashboard",
+          title: "Post properties and visibility",
+          detail:
+            "Each post has media upload, a description, a redirection target, toggles for likes and comments, and visibility: hidden, visible or conditional. Brand posts and custom blocks were combined into one App Exclusive tab, and loader and error states cover uploads.",
+          after: "Merchants control what each post shows, where it leads and who sees it.",
+          highlights: ["Redirection", "Likes and comments toggles", "Conditional visibility", "Upload limits"],
+          media: { caption: "Post properties." },
+        },
+        {
+          area: "Dashboard",
+          title: "Instagram import",
+          detail:
+            "Merchants link an Instagram account and import posts through a modal with All, Your Posts and Tagged Posts, selecting several at once. Image posts can be imported too, with fit and fill options.",
+          after: "A brand's existing Instagram content can fill the feed in a few clicks.",
+          highlights: ["Link account", "Your and tagged posts", "Multi-select", "Fit and fill"],
+          media: { caption: "Instagram Posts import." },
+        },
+        {
+          area: "Dashboard",
+          title: "Post metrics",
+          detail: "Posts show their click-through rate, unique views, likes and comments, so merchants can see what resonates.",
+          after: "Performance for every post, at a glance.",
+          highlights: ["CTR", "Unique views", "Likes", "Comments"],
+          media: { caption: "Post metrics and hover states." },
+        },
+        {
+          area: "Moderation",
+          title: "Feed moderation",
+          detail:
+            "Reported content lands in a Reported tab with bulk select, and moves to a Reviewed tab once handled. Review modals cover content to be reviewed (hidden or auto hidden) and reviewed content (hidden or visible), alongside Feed Settings.",
+          after: "A clear review queue for reported posts and comments.",
+          highlights: ["Reported tab", "Bulk select", "Reviewed tab", "Auto hidden", "Feed Settings"],
+          media: { caption: "Feed Moderation." },
+        },
+        {
+          area: "Access",
+          title: "Who can see the feed",
+          detail:
+            "Feed Access Controls went through four versions in about three weeks. Merchants choose Everyone, Everyone except specific customers (using segments), or Only specific customers. The app has matching views for full access, post restricted, comment restricted, and post and comment restricted.",
+          after: "Brands decide who can view, post and comment, and the app explains the limits.",
+          highlights: ["Everyone", "Everyone except", "Only specific customers", "Restricted views"],
+          media: { caption: "Feed Access Controls and restricted views." },
+        },
+      ],
+    },
+    {
+      kind: "process",
+      id: "process",
+      nav: "Process",
+      eyebrow: "Process",
+      title: "Ten months, five stages",
+      intro: "The dated sections and version logs in the file show the feature growing one side at a time.",
+      steps: [
+        { label: "Shopper feed", body: "January to June: app wireframes v1.1 and v1.2, then v1.3 marked ready for dev." },
+        { label: "Dashboard", body: "February to September: posts, comments, metrics and Instagram import, over six versions." },
+        { label: "Shopper posting", body: "June and July: posting flows and onboarding, from v1.0 to v1.2 alongside a PRD." },
+        { label: "Moderation and access", body: "July to September: reported content, review, Feed Settings and access controls." },
+        { label: "Design QA", body: "October: feedback rounds on the built product." },
+      ],
+      notes: [
+        {
+          title: "Design QA on the built product",
+          body: "Six feedback documents, each a table of issue, screenshot and design reference, covered the feed, shopper posting, the dashboard, moderation and Feed Settings, some over two rounds.",
+        },
+        {
+          title: "Explored side by side",
+          body: "Two approaches for comment and post settings, a tab approach and a YouTube Shorts style approach, and a moderation version without auto hiding were explored before the final versions.",
+        },
+      ],
+      media: { caption: "Version log and dated sections in the Figma file." },
+    },
+  ],
+};
+
+export const caseStudies: CaseStudy[] = [superfansSocialFeed, cartAbandonment, modernCart];

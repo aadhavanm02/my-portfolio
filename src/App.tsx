@@ -68,6 +68,8 @@ const ndaStoragePrefix = "portfolio-nda-unlocked-until";
 const ndaUnlockDurationMs = 60 * 60 * 1000;
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 const videoSpeeds = [0.75, 1, 1.25, 1.5, 2];
+// The site's primary accent (Flamingo). Keep in sync with --brand in styles.css.
+const siteBrand = "#F06434";
 const contactEmail = "aadhavanm.design@gmail.com";
 const linkedInUrl = "https://www.linkedin.com/in/aadhavan-m/";
 const gmailComposeUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${contactEmail}`;
@@ -1317,9 +1319,39 @@ function PasswordProtectedContent({
   );
 }
 
+type WorkCard = {
+  key: string;
+  title: string;
+  summary: string;
+  proof: string;
+  tone: "violet" | "peach";
+  image: string;
+  imageClass?: string;
+  href?: string;
+  brand?: string;
+};
+
+// Work shown on the home page before it has a full case study. Add `href` once the case study exists.
+const upcomingWork: WorkCard[] = [];
+
+const workCards: WorkCard[] = [
+  ...upcomingWork,
+  ...projects.map((project) => ({
+    key: project.slug,
+    title: project.cardTitle,
+    summary: project.cardSummary,
+    proof: project.proof,
+    tone: project.tone,
+    image: project.image,
+    imageClass: project.imageClass,
+    href: `/work/${project.slug}`,
+    brand: project.brand,
+  })),
+];
+
 function HomePage() {
   const [showMoreProjects, setShowMoreProjects] = useState(false);
-  const visibleProjects = showMoreProjects ? projects : projects.slice(0, 4);
+  const visibleProjects = showMoreProjects ? workCards : workCards.slice(0, 4);
 
   return (
     <>
@@ -1343,18 +1375,26 @@ function HomePage() {
 
           <div className="project-list">
             {visibleProjects.map((project) => (
-              <article className="project-card" key={project.slug}>
+              <article
+                className={`project-card${project.brand ? " brand-scope" : ""}`}
+                key={project.key}
+                style={project.brand ? { ["--brand" as string]: project.brand } : undefined}
+              >
                 <div className="project-content">
-                  <p className={`proof-card proof-card--${project.tone}`}>{project.proof}</p>
+                  <p className={`proof-card proof-card--${project.brand ? "peach" : project.tone}`}>{project.proof}</p>
 
                   <div className="project-copy">
                     <div>
-                      <h2>{project.cardTitle}</h2>
-                      <p>{project.cardSummary}</p>
+                      <h2>{project.title}</h2>
+                      <p>{project.summary}</p>
                     </div>
-                    <a className="button" href={withBasePath(`/work/${project.slug}`)}>
-                      Read More
-                    </a>
+                    {project.href ? (
+                      <a className="button" href={withBasePath(project.href)}>
+                        Read More
+                      </a>
+                    ) : (
+                      <span className="button button--soon">Case study coming soon</span>
+                    )}
                   </div>
                 </div>
 
@@ -1365,7 +1405,7 @@ function HomePage() {
             ))}
           </div>
 
-{projects.length > 4 ? (
+{workCards.length > 4 ? (
           <button
             aria-expanded={showMoreProjects}
             className="view-more-button"
@@ -1446,6 +1486,47 @@ function handleSectionLink(event: MouseEvent<HTMLAnchorElement>, id: string) {
 
   event.preventDefault();
   smoothScrollToId(id);
+}
+
+function MoreCaseStudies({ current }: { current: CaseStudy }) {
+  const others = projects.filter((item) => item.slug !== current.slug);
+
+  if (others.length === 0) {
+    return null;
+  }
+
+  return (
+    <section className="case-section more-cases" aria-labelledby="more-cases-title">
+      <div className="case-section-heading">
+        <p>Keep exploring</p>
+        <h2 id="more-cases-title">More case studies</h2>
+      </div>
+
+      <div className="more-cases__grid">
+        {others.map((item) => (
+          <a
+            className="more-case brand-scope"
+            href={withBasePath(`/work/${item.slug}`)}
+            key={item.slug}
+            // Each card uses its own case study's brand, not the page it sits on.
+            style={{ ["--brand" as string]: item.brand ?? siteBrand }}
+          >
+            <span className="more-case__media" aria-hidden="true">
+              <img alt="" loading="lazy" src={resolveSrc(item.image)} />
+            </span>
+            <span className="more-case__body">
+              <span className="more-case__proof">{item.proof}</span>
+              <strong>{item.cardTitle}</strong>
+              <span className="more-case__summary">{item.cardSummary}</span>
+              <span className="more-case__link">
+                Read case study <ArrowRight aria-hidden="true" size={16} weight="bold" />
+              </span>
+            </span>
+          </a>
+        ))}
+      </div>
+    </section>
+  );
 }
 
 function CaseStudyPage({ project }: { project: CaseStudy }) {
@@ -1577,7 +1658,10 @@ function CaseStudyPage({ project }: { project: CaseStudy }) {
     <>
       <Header />
 
-      <main className="case-study">
+      <main
+        className={`case-study${project.brand ? " brand-scope" : ""}`}
+        style={project.brand ? { ["--brand" as string]: project.brand } : undefined}
+      >
         <nav
           aria-label="Case study topics"
           className={`case-topic-nav${isScrolling ? " is-scrolling" : ""}`}
@@ -1701,6 +1785,8 @@ function CaseStudyPage({ project }: { project: CaseStudy }) {
         ) : null}
 
         {afterSections.map((section) => renderSection(section))}
+
+        <MoreCaseStudies current={project} />
 
         <ContactPanel id="case-contact-title" />
       </main>
@@ -1964,9 +2050,23 @@ function SkillArt({ type }: { type: SkillVisual }) {
   }
 }
 
+// A skill takes a case study's brand color only when every proof comes from that one branded
+// case study. Mixed proofs, or proofs from unbranded case studies, keep the site's Flamingo orange.
+function skillBrand(skill: Skill) {
+  const brands = skill.proofs.map((proof) => projects.find((item) => item.slug === proof.study)?.brand);
+
+  return brands.length > 0 && brands.every((brand) => brand && brand === brands[0]) ? brands[0] : undefined;
+}
+
 function SkillCard({ skill }: { skill: Skill }) {
+  const brand = skillBrand(skill);
+
   return (
-    <article className="skill-card" id={skill.id}>
+    <article
+      className={`skill-card${brand ? " brand-scope" : ""}`}
+      id={skill.id}
+      style={brand ? { ["--brand" as string]: brand } : undefined}
+    >
       <div className="skill-card__visual">
         <SkillArt type={skill.visual} />
       </div>

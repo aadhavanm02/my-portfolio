@@ -2707,7 +2707,7 @@ button {
 .case-option.is-chosen {
   border-color: var(--color-peach-400);
   background: var(--color-peach-25);
-  box-shadow: 0 8px 24px rgb(239 93 33 / 10%);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--color-peach-500) 12%, transparent);
 }
 
 .case-option__top {
@@ -5567,7 +5567,7 @@ button {
   border-radius: 28px;
   background: var(--color-surface);
   color: var(--color-peach-500);
-  box-shadow: 0 12px 32px rgb(239 93 33 / 14%);
+  box-shadow: 0 12px 32px color-mix(in srgb, var(--color-peach-500) 14%, transparent);
   transition: transform 0.25s ease;
 }
 
@@ -7701,5 +7701,237 @@ button.pg-preview {
   .case-topic-nav:hover,
   .case-topic-nav:focus-within {
     left: max(16px, calc((100vw - 1140px) / 2 - 240px));
+  }
+}
+
+/* Start the rail level with "← All case studies": the first number circle lines up with the link. */
+.case-topic-nav {
+  top: 161px;
+  transform: none;
+}
+
+/* ---------- Learnings as a table: grid lines between every cell ---------- */
+/* The 1px gaps show the border color behind white cells, so lines stay clean at any column count. */
+.case-learnings {
+  gap: 1px;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  background: var(--color-border);
+}
+
+.case-learnings li,
+.case-learnings li:nth-child(-n + 2),
+.case-learnings li:nth-child(2) {
+  padding: 28px 32px;
+  border-top: 0;
+  background: var(--color-surface);
+}
+
+@media (max-width: 767px) {
+  .case-learnings {
+    padding: 0;
+  }
+
+  .case-learnings li,
+  .case-learnings li:nth-child(-n + 2),
+  .case-learnings li:nth-child(2) {
+    padding: 18px 16px;
+    border-top: 0;
+  }
+}
+
+/* Slightly stronger lines so the learnings read clearly as a table. */
+.case-learnings {
+  border-color: var(--color-neutral-200);
+  background: var(--color-neutral-200);
+}
+
+/* Work card without a case study yet. */
+.button.button--soon {
+  border: 1px dashed var(--color-neutral-300);
+  background: transparent;
+  color: var(--color-muted);
+  cursor: default;
+}
+
+/* =====================================================================
+   Accent color
+   The accent scale is generated from --brand. It defaults to Flamingo
+   (#F06434) across the site; a case study, its home card or a skill card
+   can set its own --brand to recolor everything inside it.
+   ===================================================================== */
+:root {
+  /* Flamingo: the site's primary accent. A case study can override it with its own --brand. */
+  --brand: #F06434;
+}
+
+:root,
+.brand-scope {
+  --color-peach-25: color-mix(in srgb, var(--brand) 3%, #fff);
+  --color-peach-50: color-mix(in srgb, var(--brand) 7%, #fff);
+  --color-peach-100: color-mix(in srgb, var(--brand) 14%, #fff);
+  --color-peach-200: color-mix(in srgb, var(--brand) 28%, #fff);
+  --color-peach-300: color-mix(in srgb, var(--brand) 45%, #fff);
+  --color-peach-400: color-mix(in srgb, var(--brand) 72%, #fff);
+  --color-peach-500: var(--brand);
+  /* Accent text and icons use the exact brand color, never a darker shade of it. */
+  --color-peach-600: var(--brand);
+  --color-peach-700: var(--brand);
+  --color-peach-800: color-mix(in srgb, var(--brand) 50%, #000);
+  --color-peach-900: color-mix(in srgb, var(--brand) 35%, #000);
+  --color-portfolio-peach-bg: var(--color-peach-50);
+  --color-portfolio-peach-border: var(--color-peach-100);
+  --color-peach-bg: var(--color-peach-50);
+  --color-peach-border: var(--color-peach-100);
+}
+
+/* ---------- More case studies (above the contact CTA) ---------- */
+.more-cases {
+  padding-bottom: 24px;
+}
+
+.more-cases__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+a.more-case {
+  display: flex;
+  overflow: hidden;
+  flex-direction: column;
+  border-radius: var(--radius-media);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
+}
+
+a.more-case:hover,
+a.more-case:focus-visible {
+  box-shadow: 0 22px 50px rgb(16 16 16 / 10%);
+  transform: translateY(-4px);
+}
+
+a.more-case:focus-visible {
+  outline: 3px solid var(--color-peach-500);
+  outline-offset: 3px;
+}
+
+.more-case__media {
+  display: block;
+  height: 240px;
+  overflow: hidden;
+  padding: 24px 24px 0;
+  background:
+    radial-gradient(circle at 20% 15%, var(--color-peach-100), transparent 55%),
+    var(--color-peach-25);
+}
+
+.more-case__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 14px 14px 0 0;
+  box-shadow: 0 14px 30px rgb(16 16 16 / 10%);
+  object-fit: cover;
+  object-position: top left;
+  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+a.more-case:hover .more-case__media img {
+  transform: translateY(-6px);
+}
+
+.more-case__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 10px;
+  padding: 22px 26px 26px;
+}
+
+.more-case__proof {
+  align-self: flex-start;
+  padding: 5px 11px;
+  border-radius: var(--radius-pill);
+  background: var(--color-peach-bg);
+  color: var(--color-peach-500);
+  font-size: 13px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.35;
+}
+
+.more-case strong {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.25;
+}
+
+.more-case__summary {
+  color: var(--color-body-muted);
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+.more-case__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 6px;
+  color: var(--color-peach-500);
+  font-size: 15px;
+  font-weight: var(--font-weight-semibold);
+}
+
+.more-case__link svg {
+  transition: transform 0.25s ease;
+}
+
+a.more-case:hover .more-case__link svg {
+  transform: translateX(4px);
+}
+
+@media (max-width: 899px) {
+  .more-cases__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 767px) {
+  a.more-case {
+    border-radius: 20px;
+  }
+
+  .more-case__media {
+    height: 170px;
+    padding: 16px 16px 0;
+  }
+
+  .more-case__body {
+    gap: 8px;
+    padding: 16px 16px 18px;
+  }
+
+  .more-case strong {
+    font-size: 19px;
+  }
+
+  .more-case__summary {
+    font-size: 14px;
+  }
+
+  .more-case__proof {
+    font-size: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  a.more-case,
+  .more-case__media img,
+  .more-case__link svg {
+    transition: none;
   }
 }
