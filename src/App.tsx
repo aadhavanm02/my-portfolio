@@ -15,6 +15,7 @@ import {
 } from "react";
 import {
   ArrowRight,
+  ArrowUp,
   ArrowSquareOut,
   ChatCircleDots,
   CheckCircle,
@@ -34,6 +35,7 @@ import {
   Flag,
   GearSix,
   GitFork,
+  LinkedinLogo,
   List,
   MagnifyingGlassMinus,
   MagnifyingGlassPlus,
@@ -67,16 +69,11 @@ const ndaUnlockDurationMs = 60 * 60 * 1000;
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 const videoSpeeds = [0.75, 1, 1.25, 1.5, 2];
 const contactEmail = "aadhavanm.design@gmail.com";
+const linkedInUrl = "https://www.linkedin.com/in/aadhavan-m/";
 const gmailComposeUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${contactEmail}`;
 // Add your number to show the Call button, for example:
 // { display: "+91 98765 43210", tel: "+919876543210" }
 const contactPhone: { display: string; tel: string } | null = { display: "+91 94861 39376", tel: "+919486139376" };
-const socialLinks = [
-  { label: "LinkedIn", href: "https://www.linkedin.com/in/aadhavan-m/" },
-  { label: "X (Twitter)", href: withBasePath("/#work") },
-  { label: "Instagram", href: withBasePath("/#work") },
-];
-
 function withBasePath(path: string) {
   return `${basePath}${path}`;
 }
@@ -1157,13 +1154,9 @@ function SiteFooter() {
           </a>
         ))}
       </nav>
-      <nav aria-label="Social links">
-        {socialLinks.map((link) => (
-          <a href={link.href} key={link.label} rel={link.href.startsWith("http") ? "noreferrer" : undefined} target={link.href.startsWith("http") ? "_blank" : undefined}>
-            {link.label}
-          </a>
-        ))}
-      </nav>
+      <a className="footer__social" href={linkedInUrl} rel="noreferrer" target="_blank">
+        LinkedIn
+      </a>
     </footer>
   );
 }
@@ -1395,10 +1388,71 @@ function HomePage() {
   );
 }
 
+let activeScrollFrame = 0;
+
+// Glide to a section: eases in, speeds up, then settles. Longer jumps get a little more time.
+function smoothScrollToId(id: string, offset = 24) {
+  const target = document.getElementById(id);
+
+  if (!target) {
+    return;
+  }
+
+  const startY = window.scrollY;
+  const endY = Math.max(0, target.getBoundingClientRect().top + startY - offset);
+  const distance = endY - startY;
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  window.cancelAnimationFrame(activeScrollFrame);
+  window.history.replaceState(null, "", `#${id}`);
+
+  if (prefersReducedMotion || Math.abs(distance) < 2) {
+    window.scrollTo({ top: endY, behavior: "instant" });
+    return;
+  }
+
+  const duration = Math.min(1100, Math.max(500, Math.abs(distance) * 0.35));
+  const easeInOutCubic = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  const root = document.documentElement;
+  const previousBehavior = root.style.scrollBehavior;
+  let startTime = 0;
+
+  // The page has CSS smooth scrolling on, which would fight each frame, so turn it off while gliding.
+  root.style.scrollBehavior = "auto";
+
+  function step(now: number) {
+    if (!startTime) {
+      startTime = now;
+    }
+
+    const progress = Math.min(1, (now - startTime) / duration);
+    window.scrollTo(0, startY + distance * easeInOutCubic(progress));
+
+    if (progress < 1) {
+      activeScrollFrame = window.requestAnimationFrame(step);
+    } else {
+      root.style.scrollBehavior = previousBehavior;
+    }
+  }
+
+  activeScrollFrame = window.requestAnimationFrame(step);
+}
+
+function handleSectionLink(event: MouseEvent<HTMLAnchorElement>, id: string) {
+  // Keep normal behaviour for new-tab clicks.
+  if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) {
+    return;
+  }
+
+  event.preventDefault();
+  smoothScrollToId(id);
+}
+
 function CaseStudyPage({ project }: { project: CaseStudy }) {
   const [activeTopic, setActiveTopic] = useState("overview");
   const [isTocOpen, setIsTocOpen] = useState(false);
   const [showTocButton, setShowTocButton] = useState(false);
+  const [isScrolling, setIsScrolling] = useState(false);
   const [isNdaUnlocked, setIsNdaUnlocked] = useState(() => getStoredNdaUnlock(project.slug));
   const firstProtectedIndex = project.sections.findIndex((section) => section.protected);
   const protectedEnd =
@@ -1450,12 +1504,23 @@ function CaseStudyPage({ project }: { project: CaseStudy }) {
       setShowTocButton(window.scrollY > 320 && !nearBottom);
     }
 
+    // While the page is moving, the rail shows the current section's name; it hides again shortly after.
+    let idleTimer = 0;
+
+    function handleScroll() {
+      updateActiveTopic();
+      setIsScrolling(true);
+      window.clearTimeout(idleTimer);
+      idleTimer = window.setTimeout(() => setIsScrolling(false), 1200);
+    }
+
     updateActiveTopic();
-    window.addEventListener("scroll", updateActiveTopic, { passive: true });
+    window.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("resize", updateActiveTopic);
 
     return () => {
-      window.removeEventListener("scroll", updateActiveTopic);
+      window.clearTimeout(idleTimer);
+      window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", updateActiveTopic);
     };
   }, [isNdaUnlocked, project.slug]);
@@ -1498,6 +1563,7 @@ function CaseStudyPage({ project }: { project: CaseStudy }) {
   }, [project.slug]);
 
   const activeTopicLabel = topics.find((topic) => topic.target === activeTopic)?.label ?? "Overview";
+  const activeTopicIndex = topics.findIndex((topic) => topic.target === activeTopic);
 
   function renderSection(section: CaseSection, className = "case-section") {
     return (
@@ -1512,17 +1578,31 @@ function CaseStudyPage({ project }: { project: CaseStudy }) {
       <Header />
 
       <main className="case-study">
-        <nav className="case-topic-nav" aria-label="Case study topics">
+        <nav
+          aria-label="Case study topics"
+          className={`case-topic-nav${isScrolling ? " is-scrolling" : ""}`}
+          style={{ ["--toc-progress" as string]: `${(Math.max(0, activeTopicIndex) / Math.max(1, topics.length - 1)) * 100}%` }}
+        >
+          <span className="case-topic-nav__rail" aria-hidden="true">
+            <i />
+          </span>
           {topics.map((topic, index) => {
             const isFirstForTarget = topics.findIndex((item) => item.target === topic.target) === index;
+            const isActive = activeTopic === topic.target && isFirstForTarget;
+            const state = isActive ? " is-active" : index < activeTopicIndex ? " is-past" : "";
 
             return (
               <a
-                aria-current={activeTopic === topic.target && isFirstForTarget ? "true" : undefined}
+                aria-current={isActive ? "true" : undefined}
+                className={`case-topic-nav__item${state}`}
                 href={`#${topic.target}`}
                 key={`${topic.label}-${topic.target}`}
+                onClick={(event) => handleSectionLink(event, topic.target)}
               >
-                {topic.label}
+                <span className="case-topic-nav__num" aria-hidden="true">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <span className="case-topic-nav__label">{topic.label}</span>
               </a>
             );
           })}
@@ -1562,7 +1642,12 @@ function CaseStudyPage({ project }: { project: CaseStudy }) {
 
                   return (
                     <li key={`mobile-${topic.label}-${topic.target}`}>
-                      <a aria-current={isActive ? "true" : undefined} href={`#${topic.target}`} onClick={() => setIsTocOpen(false)}>
+                      <a aria-current={isActive ? "true" : undefined} href={`#${topic.target}`}
+                        onClick={(event) => {
+                          setIsTocOpen(false);
+                          handleSectionLink(event, topic.target);
+                        }}
+                      >
                         <span>{String(index + 1).padStart(2, "0")}</span>
                         {topic.label}
                       </a>
@@ -1686,33 +1771,63 @@ function ContactPanel({ id }: { id: string }) {
   }
 
   return (
-    <section className="contact-panel" aria-labelledby={id}>
-      <h2 id={id}>
-        Want to create <br />
-        something awesome?
-        <br />
-        Let's talk.
-      </h2>
+    <section aria-labelledby={id} className="contact-panel contact-panel--split">
+      <div className="contact-panel__intro">
+        <p className="contact-panel__eyebrow">Contact</p>
+        <h2 id={id}>
+          Want to create something awesome? <span>Let's talk.</span>
+        </h2>
+      </div>
 
-      <div className="contact-actions">
-        <a className="contact-button contact-button--primary" href={`mailto:${contactEmail}`} onClick={handleEmail}>
-          <EnvelopeSimple aria-hidden="true" size={22} weight="bold" />
-          <span className="contact-button__swap">
-            <strong className="contact-button__label">Email me</strong>
-            <strong className="contact-button__value">{contactEmail}</strong>
-          </span>
-        </a>
-
-        {contactPhone ? (
-          <a className="contact-button" href={`tel:${contactPhone.tel}`} onClick={handlePhone}>
-            <Phone aria-hidden="true" size={22} weight="bold" />
-            <span className="contact-button__swap">
-              <strong className="contact-button__label">Call me</strong>
-              <strong className="contact-button__value">{contactPhone.display}</strong>
+      <ul className="contact-rows">
+        <li>
+          <a className="contact-row" href={`mailto:${contactEmail}`} onClick={handleEmail}>
+            <span className="contact-row__icon" aria-hidden="true">
+              <EnvelopeSimple size={22} weight="bold" />
+            </span>
+            <span className="contact-row__text">
+              <small>Email</small>
+              <strong>
+                {contactEmail.split("@")[0]}@<wbr />
+                {contactEmail.split("@")[1]}
+              </strong>
+            </span>
+            <span className="contact-row__arrow" aria-hidden="true">
+              <ArrowRight size={18} weight="bold" />
             </span>
           </a>
+        </li>
+        {contactPhone ? (
+          <li>
+            <a className="contact-row" href={`tel:${contactPhone.tel}`} onClick={handlePhone}>
+              <span className="contact-row__icon" aria-hidden="true">
+                <Phone size={22} weight="bold" />
+              </span>
+              <span className="contact-row__text">
+                <small>Phone</small>
+                <strong>{contactPhone.display}</strong>
+              </span>
+              <span className="contact-row__arrow" aria-hidden="true">
+                <ArrowRight size={18} weight="bold" />
+              </span>
+            </a>
+          </li>
         ) : null}
-      </div>
+        <li>
+          <a className="contact-row" href={linkedInUrl} rel="noreferrer" target="_blank">
+            <span className="contact-row__icon" aria-hidden="true">
+              <LinkedinLogo size={22} weight="bold" />
+            </span>
+            <span className="contact-row__text">
+              <small>LinkedIn</small>
+              <strong>in/aadhavan-m</strong>
+            </span>
+            <span className="contact-row__arrow" aria-hidden="true">
+              <ArrowRight size={18} weight="bold" />
+            </span>
+          </a>
+        </li>
+      </ul>
 
       <div aria-live="polite" className={`site-toast${toast ? " is-visible" : ""}`} role="status">
         {toast ? (
@@ -2324,6 +2439,34 @@ function PlaygroundPage() {
   );
 }
 
+function BackToTop() {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    function update() {
+      setIsVisible(window.scrollY > 500);
+    }
+
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+
+    return () => window.removeEventListener("scroll", update);
+  }, []);
+
+  return (
+    <button
+      aria-hidden={!isVisible}
+      aria-label="Back to top"
+      className={`back-to-top-fab${isVisible ? " is-visible" : ""}`}
+      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+      tabIndex={isVisible ? 0 : -1}
+      type="button"
+    >
+      <ArrowUp aria-hidden="true" size={22} weight="bold" />
+    </button>
+  );
+}
+
 function App() {
   const path = currentPath();
   const slug = path.replace(/^\/work\//, "");
@@ -2341,7 +2484,12 @@ function App() {
     page = <AboutPage />;
   }
 
-  return <div className="site-shell bg-portfolio-canvas text-portfolio-ink font-sans">{page}</div>;
+  return (
+    <div className="site-shell bg-portfolio-canvas text-portfolio-ink font-sans">
+      {page}
+      <BackToTop />
+    </div>
+  );
 }
 
 export default App;

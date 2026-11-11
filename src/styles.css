@@ -6918,3 +6918,788 @@ button.pg-preview {
     overflow-wrap: anywhere;
   }
 }
+
+/* ---------- Contact panel: split layout with contact rows ---------- */
+.contact-panel.contact-panel--split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  align-items: center;
+  gap: 64px;
+  padding: 88px;
+  text-align: left;
+}
+
+.contact-panel__eyebrow {
+  margin: 0 0 16px;
+  color: var(--color-peach-300);
+  font-size: 14px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.contact-panel--split h2 {
+  font-size: 52px;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+}
+
+.contact-panel--split h2 span {
+  display: block;
+  color: var(--color-peach-300);
+}
+
+.contact-rows {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid rgb(255 255 255 / 14%);
+  list-style: none;
+}
+
+.contact-rows li {
+  border-bottom: 1px solid rgb(255 255 255 / 14%);
+}
+
+.contact-panel a.contact-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 40px;
+  align-items: center;
+  gap: 18px;
+  padding: 22px 12px;
+  color: var(--color-on-ink);
+  font-family: var(--font-sans);
+  white-space: normal;
+  isolation: isolate;
+}
+
+/* A soft highlight that sweeps in from the left on hover. */
+.contact-panel a.contact-row::before {
+  content: "";
+  position: absolute;
+  inset: 4px 0;
+  z-index: -1;
+  border-radius: 18px;
+  background: rgb(255 255 255 / 7%);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.contact-panel a.contact-row:hover,
+.contact-panel a.contact-row:focus-visible {
+  opacity: 1;
+}
+
+.contact-panel a.contact-row:hover::before,
+.contact-panel a.contact-row:focus-visible::before {
+  transform: scaleX(1);
+}
+
+.contact-panel a.contact-row:focus-visible {
+  outline: 2px solid var(--color-peach-300);
+  outline-offset: 2px;
+  border-radius: 18px;
+}
+
+.contact-row__icon {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 10%);
+  color: var(--color-on-ink);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.contact-row__text {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.contact-row__text small {
+  color: rgb(255 255 255 / 55%);
+  font-size: 13px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.contact-row__text strong {
+  overflow-wrap: anywhere;
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.25;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.contact-row__arrow {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 1px solid rgb(255 255 255 / 22%);
+  border-radius: 50%;
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.contact-panel a.contact-row:hover .contact-row__icon,
+.contact-panel a.contact-row:focus-visible .contact-row__icon {
+  background: var(--color-on-ink);
+  color: var(--color-ink);
+}
+
+.contact-panel a.contact-row:hover .contact-row__text strong,
+.contact-panel a.contact-row:focus-visible .contact-row__text strong {
+  transform: translateX(4px);
+}
+
+.contact-panel a.contact-row:hover .contact-row__arrow,
+.contact-panel a.contact-row:focus-visible .contact-row__arrow {
+  border-color: var(--color-peach-500);
+  background: var(--color-peach-500);
+  transform: rotate(-45deg);
+}
+
+@media (max-width: 1199px) {
+  .contact-panel.contact-panel--split {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding: 64px;
+  }
+
+  .contact-panel--split h2 {
+    font-size: 44px;
+  }
+}
+
+@media (max-width: 767px) {
+  .contact-panel.contact-panel--split {
+    gap: 28px;
+    padding: 36px 20px 24px;
+  }
+
+  .contact-panel__eyebrow {
+    margin-bottom: 10px;
+    font-size: 12px;
+  }
+
+  .contact-panel--split h2,
+  .case-study .contact-panel--split h2 {
+    font-size: 30px;
+  }
+
+  .contact-panel a.contact-row {
+    grid-template-columns: 40px minmax(0, 1fr) 32px;
+    gap: 12px;
+    padding: 16px 4px;
+  }
+
+  .contact-row__icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .contact-row__icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .contact-row__text small {
+    font-size: 11px;
+  }
+
+  .contact-row__text strong {
+    font-size: 16px;
+  }
+
+  .contact-row__arrow {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-panel a.contact-row::before,
+  .contact-row__icon,
+  .contact-row__text strong,
+  .contact-row__arrow {
+    transition: none;
+  }
+}
+
+.contact-panel.contact-panel--split {
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.25fr);
+  gap: 48px;
+}
+
+.contact-row__text strong {
+  overflow-wrap: normal;
+  font-size: 22px;
+}
+
+@media (max-width: 1199px) {
+  .contact-panel.contact-panel--split {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 767px) {
+  .contact-row__text strong {
+    overflow-wrap: anywhere;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 767px) {
+  /* Wrap the email only after the @ (a <wbr> sits there), never mid-word. */
+  .contact-row__text strong {
+    overflow-wrap: normal;
+  }
+}
+
+/* ---------- Footer: page links + back to top ---------- */
+.footer {
+  align-items: center;
+}
+
+.back-to-top {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 6px 6px 18px;
+  border: 1px solid var(--color-neutral-200);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: var(--font-weight-medium);
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.back-to-top__icon {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--color-ink);
+  color: var(--color-on-ink);
+  transition: background 0.2s ease, transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.back-to-top:hover,
+.back-to-top:focus-visible {
+  border-color: var(--color-ink);
+}
+
+.back-to-top:hover .back-to-top__icon,
+.back-to-top:focus-visible .back-to-top__icon {
+  background: var(--color-peach-500);
+  transform: translateY(-3px);
+}
+
+.back-to-top:focus-visible {
+  outline: 2px solid var(--color-peach-500);
+  outline-offset: 3px;
+}
+
+@media (max-width: 767px) {
+  /* Links in one row, back to top centred below them. */
+  .footer nav + .back-to-top {
+    margin-top: 4px;
+  }
+
+  .back-to-top {
+    font-size: 14px;
+  }
+
+  .back-to-top__icon {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .back-to-top,
+  .back-to-top__icon {
+    transition: none;
+  }
+}
+
+/* Only dividers between rows, no outer lines. */
+.contact-rows {
+  border-top: 0;
+}
+
+.contact-rows li:last-child {
+  border-bottom: 0;
+}
+
+/* ---------- Floating back to top ---------- */
+.back-to-top-fab {
+  position: fixed;
+  right: max(24px, env(safe-area-inset-right));
+  bottom: max(24px, env(safe-area-inset-bottom));
+  z-index: 35;
+  display: grid;
+  width: 52px;
+  height: 52px;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--color-ink);
+  color: var(--color-on-ink);
+  box-shadow: var(--shadow-control);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(16px) scale(0.9);
+  transition: opacity 0.25s ease, transform 0.25s ease, background 0.2s ease;
+}
+
+.back-to-top-fab.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+}
+
+.back-to-top-fab:hover,
+.back-to-top-fab:focus-visible {
+  background: var(--color-peach-500);
+}
+
+.back-to-top-fab:hover svg,
+.back-to-top-fab:focus-visible svg {
+  animation: back-to-top-nudge 0.6s ease;
+}
+
+.back-to-top-fab:focus-visible {
+  outline: 2px solid var(--color-peach-500);
+  outline-offset: 3px;
+}
+
+@keyframes back-to-top-nudge {
+  40% { transform: translateY(-4px); }
+}
+
+@media (max-width: 767px) {
+  .back-to-top-fab {
+    right: max(16px, env(safe-area-inset-right));
+    bottom: max(20px, env(safe-area-inset-bottom));
+    width: 46px;
+    height: 46px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .back-to-top-fab,
+  .back-to-top-fab svg {
+    animation: none;
+    transition: none;
+  }
+}
+
+@media (max-width: 767px) {
+  /* Keep the centred contents pill clear of the back-to-top button on the right. */
+  .mobile-toc-button {
+    max-width: calc(100% - 152px);
+  }
+}
+
+/* ---------- LinkedIn links ---------- */
+.contact-panel a.contact-panel__linkedin {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 28px;
+  padding: 10px 16px 10px 12px;
+  border: 1px solid rgb(255 255 255 / 22%);
+  border-radius: var(--radius-pill);
+  color: var(--color-on-ink);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.2;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.contact-panel a.contact-panel__linkedin:hover,
+.contact-panel a.contact-panel__linkedin:focus-visible {
+  border-color: var(--color-on-ink);
+  background: rgb(255 255 255 / 8%);
+  opacity: 1;
+}
+
+.contact-panel a.contact-panel__linkedin svg:last-child {
+  color: var(--color-peach-300);
+  transition: transform 0.2s ease;
+}
+
+.contact-panel a.contact-panel__linkedin:hover svg:last-child {
+  transform: translate(2px, -2px);
+}
+
+.footer__divider {
+  width: 1px;
+  height: 18px;
+  background: var(--color-neutral-300);
+}
+
+.footer a.footer__social {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+@media (max-width: 767px) {
+  .contact-panel a.contact-panel__linkedin {
+    margin-top: 18px;
+    font-size: 14px;
+  }
+
+  .footer__divider {
+    display: none;
+  }
+}
+
+/* Touch screens keep :hover after a tap, so undo the row hover styles there. */
+@media (hover: none) {
+  .contact-panel a.contact-row:hover::before {
+    transform: scaleX(0);
+  }
+
+  .contact-panel a.contact-row:hover .contact-row__icon {
+    background: rgb(255 255 255 / 10%);
+    color: var(--color-on-ink);
+  }
+
+  .contact-panel a.contact-row:hover .contact-row__text strong {
+    transform: none;
+  }
+
+  .contact-panel a.contact-row:hover .contact-row__arrow {
+    border-color: rgb(255 255 255 / 22%);
+    background: transparent;
+    transform: none;
+  }
+}
+
+/* Footer LinkedIn: plain text link on the right. */
+.footer a.footer__social {
+  display: inline;
+  color: var(--color-ink);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+
+@media (max-width: 767px) {
+  .footer a.footer__social {
+    margin-top: -4px;
+  }
+}
+
+/* Footer LinkedIn matches the page links: same color, size and spacing, no underline. */
+.footer a.footer__social {
+  display: inline-block;
+  color: var(--color-neutral-500);
+  text-decoration: none;
+}
+
+.footer a.footer__social:hover,
+.footer a.footer__social:focus-visible {
+  color: var(--color-ink);
+}
+
+/* ---------- Desktop contents: progress rail that expands on hover ---------- */
+.case-topic-nav {
+  top: 50%;
+  left: max(20px, calc((100vw - 1140px) / 2 - 120px));
+  width: auto;
+  gap: 2px;
+  padding: 14px 10px;
+  border: 1px solid transparent;
+  border-radius: 22px;
+  background: transparent;
+  backdrop-filter: none;
+  transform: translateY(-50%);
+  transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.case-topic-nav:hover,
+.case-topic-nav:focus-within {
+  border-color: rgb(16 16 16 / 8%);
+  background: var(--color-surface);
+  box-shadow: 0 18px 50px rgb(16 16 16 / 10%);
+}
+
+/* The rail runs behind the dots and fills orange as you read. */
+.case-topic-nav__rail {
+  position: absolute;
+  top: 30px;
+  bottom: 30px;
+  left: 26px;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--color-neutral-200);
+}
+
+.case-topic-nav__rail i {
+  display: block;
+  width: 100%;
+  height: var(--toc-progress, 0%);
+  border-radius: 2px;
+  background: var(--color-peach-400);
+  transition: height 0.35s ease;
+}
+
+.case-topic-nav a.case-topic-nav__item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: var(--radius-pill);
+  color: var(--color-muted);
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  line-height: 1.2;
+  white-space: nowrap;
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.case-topic-nav__dot {
+  position: relative;
+  z-index: 1;
+  width: 10px;
+  height: 10px;
+  flex: none;
+  border: 2px solid var(--color-canvas);
+  border-radius: 50%;
+  background: var(--color-neutral-300);
+  box-sizing: content-box;
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.case-topic-nav__item.is-past .case-topic-nav__dot {
+  background: var(--color-peach-300);
+}
+
+.case-topic-nav__item.is-active .case-topic-nav__dot {
+  background: var(--color-peach-500);
+  box-shadow: 0 0 0 4px var(--color-peach-100);
+}
+
+.case-topic-nav:hover .case-topic-nav__dot,
+.case-topic-nav:focus-within .case-topic-nav__dot {
+  border-color: var(--color-surface);
+}
+
+/* Number and label stay tucked away until the rail is hovered. */
+.case-topic-nav__num,
+.case-topic-nav__label {
+  max-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-width 0.3s ease, opacity 0.2s ease;
+}
+
+.case-topic-nav__num {
+  color: var(--color-neutral-400);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.case-topic-nav:hover .case-topic-nav__num,
+.case-topic-nav:focus-within .case-topic-nav__num {
+  max-width: 24px;
+  opacity: 1;
+}
+
+.case-topic-nav:hover .case-topic-nav__label,
+.case-topic-nav:focus-within .case-topic-nav__label {
+  max-width: 180px;
+  opacity: 1;
+}
+
+/* The current section always shows its number in a small white pill. */
+.case-topic-nav__item.is-active {
+  background: var(--color-surface);
+  box-shadow: 0 4px 16px rgb(16 16 16 / 8%);
+}
+
+.case-topic-nav a.case-topic-nav__item.is-active,
+.case-topic-nav a.case-topic-nav__item:hover,
+.case-topic-nav a.case-topic-nav__item:focus-visible {
+  color: var(--color-ink);
+}
+
+.case-topic-nav__item.is-active .case-topic-nav__num {
+  max-width: 24px;
+  color: var(--color-peach-600);
+  font-weight: var(--font-weight-semibold);
+  opacity: 1;
+}
+
+.case-topic-nav__item.is-active .case-topic-nav__label {
+  font-weight: var(--font-weight-semibold);
+}
+
+.case-topic-nav:hover .case-topic-nav__item.is-active,
+.case-topic-nav:focus-within .case-topic-nav__item.is-active {
+  background: var(--color-peach-bg);
+  box-shadow: none;
+}
+
+.case-topic-nav a.case-topic-nav__item:hover:not(.is-active) {
+  background: var(--color-neutral-50);
+}
+
+/* Wide screens have room beside the content, so the current section name shows too. */
+@media (min-width: 1600px) {
+  .case-topic-nav {
+    left: max(20px, calc((100vw - 1140px) / 2 - 210px));
+  }
+
+  .case-topic-nav__item.is-active .case-topic-nav__label {
+    max-width: 180px;
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .case-topic-nav,
+  .case-topic-nav__rail i,
+  .case-topic-nav a.case-topic-nav__item,
+  .case-topic-nav__dot,
+  .case-topic-nav__num,
+  .case-topic-nav__label {
+    transition: none;
+  }
+}
+
+/* ---------- Desktop contents v2: numbered rail, name shows while scrolling ---------- */
+.case-topic-nav,
+.case-topic-nav:hover,
+.case-topic-nav:focus-within {
+  left: max(16px, calc((100vw - 1140px) / 2 - 100px));
+}
+
+.case-topic-nav {
+  gap: 6px;
+  padding: 12px 8px;
+}
+
+/* Rail runs through the centre of the number circles (8px pad + 1px border + 6px item pad + 15px). */
+.case-topic-nav__rail {
+  top: 34px;
+  bottom: 34px;
+  left: 29px;
+}
+
+.case-topic-nav a.case-topic-nav__item {
+  gap: 10px;
+  padding: 3px 6px;
+}
+
+.case-topic-nav__num,
+.case-topic-nav:hover .case-topic-nav__num,
+.case-topic-nav:focus-within .case-topic-nav__num,
+.case-topic-nav__item.is-active .case-topic-nav__num {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 30px;
+  height: 30px;
+  max-width: none;
+  flex: none;
+  place-items: center;
+  border: 1px solid var(--color-neutral-200);
+  border-radius: 50%;
+  background: var(--color-canvas);
+  color: var(--color-muted);
+  font-size: 12px;
+  font-weight: var(--font-weight-semibold);
+  opacity: 1;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.case-topic-nav:hover .case-topic-nav__num,
+.case-topic-nav:focus-within .case-topic-nav__num {
+  background: var(--color-surface);
+}
+
+.case-topic-nav__item.is-past .case-topic-nav__num {
+  border-color: var(--color-peach-200);
+  background: var(--color-peach-50);
+  color: var(--color-peach-700);
+}
+
+.case-topic-nav__item.is-active .case-topic-nav__num,
+.case-topic-nav:hover .case-topic-nav__item.is-active .case-topic-nav__num,
+.case-topic-nav:focus-within .case-topic-nav__item.is-active .case-topic-nav__num {
+  border-color: var(--color-peach-500);
+  background: var(--color-peach-500);
+  color: var(--color-on-ink);
+  box-shadow: 0 0 0 4px var(--color-peach-100);
+}
+
+/* At rest the active item is just its number, no pill behind it. */
+.case-topic-nav__item.is-active {
+  background: transparent;
+  box-shadow: none;
+}
+
+/* While scrolling, the current section name slides out in a white pill. */
+.case-topic-nav.is-scrolling .case-topic-nav__item.is-active {
+  background: var(--color-surface);
+  box-shadow: 0 6px 20px rgb(16 16 16 / 10%);
+}
+
+.case-topic-nav.is-scrolling .case-topic-nav__item.is-active .case-topic-nav__label {
+  max-width: 180px;
+  padding-right: 6px;
+  opacity: 1;
+}
+
+/* The old wide-screen rule kept the name visible at rest; now it only shows while scrolling or on hover. */
+@media (min-width: 1600px) {
+  .case-topic-nav {
+    left: max(16px, calc((100vw - 1140px) / 2 - 100px));
+  }
+
+  .case-topic-nav:not(.is-scrolling):not(:hover):not(:focus-within) .case-topic-nav__item.is-active .case-topic-nav__label {
+    max-width: 0;
+    opacity: 0;
+  }
+}
+
+/* Show the rail from 1280px up; the floating pill takes over below that. */
+@media (min-width: 1280px) and (max-width: 1439px) {
+  .case-topic-nav {
+    display: flex;
+  }
+
+  .mobile-toc-button,
+  .mobile-toc {
+    display: none;
+  }
+}
+
+@media (min-width: 1600px) {
+  /* Wide screens: sit further left so the scrolling name pill clears the content. */
+  .case-topic-nav,
+  .case-topic-nav:hover,
+  .case-topic-nav:focus-within {
+    left: max(16px, calc((100vw - 1140px) / 2 - 240px));
+  }
+}
