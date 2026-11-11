@@ -8227,3 +8227,324 @@ a.more-case:hover .more-case__link svg {
   gap: 4px;
   color: var(--color-peach-500);
 }
+
+/* ---------- Work card screenshots: animated layers ---------- */
+.project-media .project-shot {
+  position: absolute;
+}
+
+.project-media .project-shot img {
+  position: static;
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.shot-motion {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.shot-cursor {
+  position: absolute;
+  z-index: 3;
+  width: 18px;
+  height: 18px;
+  transform: translate(-17%, -10%);
+}
+
+.shot-cursor__icon {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: #101010;
+  stroke: #fff;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 2px 3px rgb(16 16 16 / 25%));
+}
+
+.shot-cursor__ripple {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 28px;
+  height: 28px;
+  margin: -14px 0 0 -14px;
+  border-radius: 50%;
+  background: rgb(16 16 16 / 18%);
+  opacity: 0;
+  transform: scale(0);
+}
+
+/* Superfans: hover the block list, then pick Theme List in the sidebar. */
+.shot-motion--superfans .shot-cursor {
+  animation: sf-cursor 10s cubic-bezier(0.45, 0, 0.2, 1) infinite;
+}
+
+.shot-motion--superfans .shot-cursor__icon {
+  animation: shot-click-sf 10s ease infinite;
+}
+
+.shot-motion--superfans .shot-cursor__ripple {
+  animation: shot-ripple-sf 10s ease-out infinite;
+}
+
+.shot-row {
+  position: absolute;
+  left: 18.83%;
+  width: 16.8%;
+  height: 3.68%;
+  border: 2px solid #915ee9;
+  border-radius: 8px;
+  background: rgb(145 94 233 / 7%);
+  mix-blend-mode: multiply;
+  opacity: 0;
+  animation: sf-row 10s cubic-bezier(0.45, 0, 0.2, 1) infinite;
+}
+
+.shot-side {
+  position: absolute;
+  top: 22.58%;
+  left: 1.25%;
+  width: 14.38%;
+  height: 3.68%;
+  border-radius: 8px;
+  background: rgb(16 16 16 / 6%);
+  mix-blend-mode: multiply;
+  opacity: 0;
+  animation: sf-side 10s ease infinite;
+}
+
+@keyframes sf-cursor {
+  0% { top: 46%; left: 34%; }
+  12%, 30% { top: 33.8%; left: 24.2%; }
+  42%, 58% { top: 22.3%; left: 23.8%; }
+  70%, 84% { top: 24.9%; left: 7%; }
+  100% { top: 46%; left: 34%; }
+}
+
+@keyframes sf-row {
+  0%, 9% { top: 31.41%; opacity: 0; }
+  13%, 32% { top: 31.41%; opacity: 1; }
+  42%, 58% { top: 19.85%; opacity: 1; }
+  63%, 100% { top: 19.85%; opacity: 0; }
+}
+
+@keyframes sf-side {
+  0%, 66% { opacity: 0; }
+  70%, 88% { opacity: 1; }
+  93%, 100% { opacity: 0; }
+}
+
+@keyframes shot-click-sf {
+  0%, 75%, 79%, 100% { transform: scale(1); }
+  77% { transform: scale(0.82); }
+}
+
+@keyframes shot-ripple-sf {
+  0%, 75% { opacity: 0; transform: scale(0); }
+  76% { opacity: 1; transform: scale(0.2); }
+  84%, 100% { opacity: 0; transform: scale(1); }
+}
+
+/* ModernCart: hover down the settings menu, then press Request Support. */
+.shot-motion--modern .shot-cursor {
+  animation: mc-cursor 11s cubic-bezier(0.45, 0, 0.2, 1) infinite;
+}
+
+.shot-motion--modern .shot-cursor__icon {
+  animation: shot-click-mc 11s ease infinite;
+}
+
+.shot-motion--modern .shot-cursor__ripple {
+  animation: shot-ripple-mc 11s ease-out infinite;
+}
+
+.shot-pill {
+  position: absolute;
+  left: 11.51%;
+  width: 14.56%;
+  height: 2.19%;
+  border-radius: 8px;
+  background: rgb(240 100 52 / 8%);
+  mix-blend-mode: multiply;
+  opacity: 0;
+  animation: mc-pill 11s cubic-bezier(0.45, 0, 0.2, 1) infinite;
+}
+
+.shot-press {
+  position: absolute;
+  top: 26.93%;
+  left: 12.55%;
+  width: 12.48%;
+  height: 2.47%;
+  border-radius: 6px;
+  background: rgb(16 16 16 / 16%);
+  mix-blend-mode: multiply;
+  opacity: 0;
+  animation: mc-press 11s ease infinite;
+}
+
+@keyframes mc-cursor {
+  0% { top: 22%; left: 30%; }
+  10%, 18% { top: 8.8%; left: 18.2%; }
+  26%, 34% { top: 13.77%; left: 18.2%; }
+  42%, 50% { top: 16.25%; left: 19.5%; }
+  58%, 64% { top: 18.72%; left: 16.9%; }
+  76%, 86% { top: 28.1%; left: 19.5%; }
+  100% { top: 22%; left: 30%; }
+}
+
+@keyframes mc-pill {
+  0%, 7% { top: 7.7%; opacity: 0; }
+  11%, 18% { top: 7.7%; opacity: 1; }
+  26%, 34% { top: 12.7%; opacity: 1; }
+  42%, 50% { top: 15.18%; opacity: 1; }
+  58%, 64% { top: 17.65%; opacity: 1; }
+  69%, 100% { top: 17.65%; opacity: 0; }
+}
+
+@keyframes mc-press {
+  0%, 77% { opacity: 0; }
+  79%, 82% { opacity: 1; }
+  86%, 100% { opacity: 0; }
+}
+
+@keyframes shot-click-mc {
+  0%, 77%, 81%, 100% { transform: scale(1); }
+  79% { transform: scale(0.82); }
+}
+
+@keyframes shot-ripple-mc {
+  0%, 77% { opacity: 0; transform: scale(0); }
+  78% { opacity: 1; transform: scale(0.2); }
+  86%, 100% { opacity: 0; transform: scale(1); }
+}
+
+/* Cart Abandonment: a hover line scrubbing along the revenue chart. */
+.shot-chart__line {
+  position: absolute;
+  width: 0;
+  border-left: 1.5px dashed rgb(16 16 16 / 28%);
+}
+
+.shot-chart__dot {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 4px rgb(16 16 16 / 25%);
+  transform: translate(-50%, -50%);
+}
+
+.shot-chart__dot--orange,
+.shot-chart__tip .is-orange {
+  background: #f06434;
+}
+
+.shot-chart__dot--yellow,
+.shot-chart__tip .is-yellow {
+  background: #fbbf24;
+}
+
+.shot-chart__tip {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 7px 9px;
+  border: 1px solid rgb(16 16 16 / 8%);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 6px 18px rgb(16 16 16 / 12%);
+  color: #101010;
+  font-size: 11px;
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  transform: translate(12px, -50%);
+}
+
+.shot-chart__tip span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.shot-chart__tip i {
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+}
+
+@media (max-width: 767px) {
+  .shot-cursor {
+    width: 14px;
+    height: 14px;
+  }
+
+  .shot-chart__tip {
+    padding: 4px 6px;
+    font-size: 9px;
+  }
+
+  .shot-chart__dot {
+    width: 8px;
+    height: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shot-motion {
+    display: none;
+  }
+}
+
+/* Cart Abandonment on phones: the chart is cropped out, so hover the stat cards. */
+.shot-stat,
+.shot-cursor--stat {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .shot-motion--chart .shot-chart__line,
+  .shot-motion--chart .shot-chart__dot,
+  .shot-motion--chart .shot-chart__tip {
+    display: none;
+  }
+
+  .shot-stat {
+    position: absolute;
+    top: 14%;
+    display: block;
+    width: 15.06%;
+    height: 6.9%;
+    border: 1.5px solid #f06434;
+    border-radius: 6px;
+    background: rgb(240 100 52 / 6%);
+    mix-blend-mode: multiply;
+    animation: ca-stat 8s cubic-bezier(0.45, 0, 0.2, 1) infinite;
+  }
+
+  .shot-cursor--stat {
+    display: block;
+    animation: ca-cursor 8s cubic-bezier(0.45, 0, 0.2, 1) infinite;
+  }
+}
+
+@keyframes ca-stat {
+  0%, 6% { left: 3.63%; opacity: 0; }
+  12%, 40% { left: 3.63%; opacity: 1; }
+  52%, 82% { left: 19.34%; opacity: 1; }
+  90%, 100% { left: 19.34%; opacity: 0; }
+}
+
+@keyframes ca-cursor {
+  0% { top: 26%; left: 22%; }
+  12%, 40% { top: 19%; left: 13%; }
+  52%, 82% { top: 19%; left: 28%; }
+  100% { top: 26%; left: 22%; }
+}

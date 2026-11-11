@@ -1344,6 +1344,135 @@ function PasswordProtectedContent({
   );
 }
 
+// Small animated layers drawn on top of the home page screenshots, so a cursor, hover
+// state or chart tooltip looks like it is moving inside the product. Positions are in
+// percent of the screenshot, so they stay in place at every card size.
+const cursorIcon = (
+  <svg className="shot-cursor__icon" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M4 2.5 19.5 13l-7 1.3 4 7.2-3 1.6-4-7.3L4 20.2Z" />
+  </svg>
+);
+
+// Chart curve positions sampled from the Cart Abandonment screenshot (natural pixels).
+const cartCurve: [number, number][] = [
+  [260, 1040], [300, 1018], [340, 999], [380, 988], [420, 985], [460, 986], [500, 989], [540, 988],
+  [580, 985], [620, 983], [660, 986], [700, 995], [740, 1013], [780, 1035], [820, 1056], [860, 1074],
+  [900, 1084], [940, 1086], [980, 1076], [1020, 1054], [1060, 1023], [1100, 990],
+];
+const cartImage = { width: 2756, height: 2872, yellowOffset: 146 };
+
+function curveY(x: number) {
+  for (let i = 1; i < cartCurve.length; i++) {
+    const [x1, y1] = cartCurve[i];
+    if (x <= x1) {
+      const [x0, y0] = cartCurve[i - 1];
+      const t = (x - x0) / (x1 - x0);
+      // Smoothstep between samples keeps the dot gliding instead of zig-zagging.
+      return y0 + (y1 - y0) * (t * t * (3 - 2 * t));
+    }
+  }
+  return cartCurve[cartCurve.length - 1][1];
+}
+
+const chartValue = (y: number) => Math.round(((1090 - y) / 112.25) * 1000 + 2000);
+const money = (n: number) => `$${n.toLocaleString("en-US")}`;
+
+function CartChartMotion() {
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const [x, setX] = useState(560);
+
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let frame = 0;
+    let visible = false;
+    const start = performance.now();
+    const [minX, maxX] = [cartCurve[0][0], cartCurve[cartCurve.length - 1][0]];
+    const loop = 9000;
+
+    function tick(now: number) {
+      // Ease out to the right, pause, ease back, pause.
+      const p = ((now - start) % loop) / loop;
+      const phase = p < 0.42 ? p / 0.42 : p < 0.5 ? 1 : p < 0.92 ? 1 - (p - 0.5) / 0.42 : 0;
+      const eased = phase < 0.5 ? 2 * phase * phase : 1 - Math.pow(-2 * phase + 2, 2) / 2;
+      setX(minX + (maxX - minX) * eased);
+      if (visible) frame = requestAnimationFrame(tick);
+    }
+
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      cancelAnimationFrame(frame);
+      if (visible) frame = requestAnimationFrame(tick);
+    });
+    observer.observe(root);
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  const orangeY = curveY(x);
+  const yellowY = orangeY + cartImage.yellowOffset;
+  const day = Math.round(1 + (x - 195) / (2408 / 29));
+  const pctX = (x / cartImage.width) * 100;
+  const pct = (y: number) => `${(y / cartImage.height) * 100}%`;
+
+  return (
+    <div className="shot-motion shot-motion--chart" ref={rootRef}>
+      {/* Phones crop the card above the chart, so they hover the stat cards instead. */}
+      <span className="shot-stat" />
+      <span className="shot-cursor shot-cursor--stat">{cursorIcon}</span>
+      <span className="shot-chart__line" style={{ left: `${pctX}%`, top: pct(750), height: pct(560) }} />
+      <span className="shot-chart__dot shot-chart__dot--orange" style={{ left: `${pctX}%`, top: pct(orangeY) }} />
+      <span className="shot-chart__dot shot-chart__dot--yellow" style={{ left: `${pctX}%`, top: pct(yellowY) }} />
+      <span className="shot-chart__tip" style={{ left: `${pctX}%`, top: pct(orangeY - 150) }}>
+        <b>Day {day}</b>
+        <span>
+          <i className="is-orange" /> {money(chartValue(orangeY))}
+        </span>
+        <span>
+          <i className="is-yellow" /> {money(chartValue(yellowY))}
+        </span>
+      </span>
+    </div>
+  );
+}
+
+function ShotMotion({ kind }: { kind: string }) {
+  if (kind === "cart-abandonment-recovery") {
+    return <CartChartMotion />;
+  }
+
+  if (kind === "superfans-social-feed") {
+    return (
+      <div className="shot-motion shot-motion--superfans">
+        <span className="shot-row" />
+        <span className="shot-side" />
+        <span className="shot-cursor">
+          {cursorIcon}
+          <span className="shot-cursor__ripple" />
+        </span>
+      </div>
+    );
+  }
+
+  if (kind === "modern-cart") {
+    return (
+      <div className="shot-motion shot-motion--modern">
+        <span className="shot-pill" />
+        <span className="shot-press" />
+        <span className="shot-cursor">
+          {cursorIcon}
+          <span className="shot-cursor__ripple" />
+        </span>
+      </div>
+    );
+  }
+
+  return null;
+}
+
 type WorkCard = {
   key: string;
   title: string;
@@ -1424,7 +1553,10 @@ function HomePage() {
                 </div>
 
                 <div className="project-media" aria-hidden="true">
-                  <img className={project.imageClass} src={resolveSrc(project.image)} alt="" />
+                  <div className={`project-shot ${project.imageClass ?? ""}`}>
+                    <img src={resolveSrc(project.image)} alt="" />
+                    <ShotMotion kind={project.key} />
+                  </div>
                 </div>
               </article>
             ))}
