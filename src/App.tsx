@@ -1,5 +1,6 @@
 import {
   Fragment,
+  useCallback,
   useEffect,
   useId,
   useRef,
@@ -12,15 +13,28 @@ import {
 } from "react";
 import {
   ArrowRight,
+  ArrowSquareOut,
+  ChatCircleDots,
+  Cube,
+  Exam,
+  Notebook,
+  Sneaker,
+  Camera,
+  Horse,
+  PencilLine,
   ArrowsOutSimple,
   CaretLeft,
   CaretRight,
   Check,
+  ClockCounterClockwise,
+  Flag,
   GearSix,
+  GitFork,
   List,
   MagnifyingGlassMinus,
   MagnifyingGlassPlus,
   Pause,
+  PencilSimpleLine,
   Play,
   SpeakerHigh,
   ShoppingCart,
@@ -37,8 +51,11 @@ import {
   type MediaItem,
   type Stat,
 } from "./caseStudies";
+import { skillGroups, skills, tools, type Skill, type SkillGroup, type SkillVisual } from "./skills";
+import { about } from "./about";
+import { playgroundItems, type PlaygroundIcon, type PlaygroundItem } from "./playground";
 
-const navLinks = ["Work", "Skills", "About"];
+const navLinks = ["Work", "Skills", "Playground", "About"];
 const ndaPassword = "0511";
 const ndaStoragePrefix = "portfolio-nda-unlocked-until";
 const ndaUnlockDurationMs = 60 * 60 * 1000;
@@ -87,16 +104,30 @@ function storeNdaUnlock(projectSlug: string) {
   }
 }
 
+function currentPath() {
+  const pathname = window.location.pathname.startsWith(`${basePath}/`)
+    ? window.location.pathname.slice(basePath.length)
+    : window.location.pathname;
+
+  return pathname.replace(/\/$/, "") || "/";
+}
+
 function navHref(link: string) {
   if (link === "Work") {
     return withBasePath("/");
   }
 
-  return withBasePath(`/#${link.toLowerCase()}`);
+  return withBasePath(`/${link.toLowerCase()}`);
 }
 
 function isActiveNavLink(link: string) {
-  return link === "Work";
+  const path = currentPath();
+
+  if (link === "Work") {
+    return path === "/" || path.startsWith("/work/");
+  }
+
+  return path === `/${link.toLowerCase()}`;
 }
 
 const projects = caseStudies;
@@ -744,44 +775,101 @@ function SolutionView({ section }: { section: Extract<CaseSection, { kind: "solu
   );
 }
 
+function DecisionStep({
+  children,
+  icon,
+  label,
+  variant,
+}: {
+  children: ReactNode;
+  icon: ReactNode;
+  label: string;
+  variant: "before" | "turning" | "next" | "result";
+}) {
+  return (
+    <li className={`case-flow__step case-flow__step--${variant}`}>
+      <span className="case-flow__marker" aria-hidden="true">
+        {icon}
+      </span>
+      <div className="case-flow__body">
+        <h4>{label}</h4>
+        {children}
+      </div>
+    </li>
+  );
+}
+
+function Paragraphs({ items }: { items: string[] }) {
+  return (
+    <>
+      {items.map((text) => (
+        <p key={text}>
+          <RichText text={text} />
+        </p>
+      ))}
+    </>
+  );
+}
+
 function DecisionCard({ decision, index }: { decision: DecisionItem; index: number }) {
   return (
     <article className="case-decision">
       <header>
         <span className="case-index">Decision {pad(index)}</span>
         <h3>{decision.title}</h3>
-        <p className="case-decision__question">{decision.question}</p>
       </header>
 
-      <div className={`case-options case-options--${Math.min(decision.options.length, 4)}`}>
-        {decision.options.map((option, optionIndex) => (
-          <div className={`case-option${option.chosen ? " is-chosen" : ""}`} key={option.title}>
-            <div className="case-option__top">
-              <span className="case-option__letter">{String.fromCharCode(65 + optionIndex)}</span>
-              {option.badge || option.chosen ? (
-                <span className="case-option__badge">
-                  {option.chosen ? <Check aria-hidden="true" size={12} weight="bold" /> : null}
-                  {option.badge ?? "Chosen"}
-                </span>
-              ) : null}
-            </div>
-            <h4>{option.title}</h4>
-            <p>{option.body}</p>
+      <blockquote className="case-decision__hook">
+        <span>Hook</span>
+        <p>{decision.hook}</p>
+      </blockquote>
+
+      <ol className="case-flow">
+        <DecisionStep icon={<ClockCounterClockwise size={18} weight="bold" />} label="Before the decision" variant="before">
+          <Paragraphs items={decision.before} />
+        </DecisionStep>
+
+        <DecisionStep icon={<GitFork size={18} weight="bold" />} label="Turning point" variant="turning">
+          <p>{decision.turningIntro}</p>
+          <div className={`case-options case-options--${Math.min(decision.options.length, 4)}`}>
+            {decision.options.map((option, optionIndex) => (
+              <div className={`case-option${option.chosen ? " is-chosen" : ""}`} key={option.title}>
+                <div className="case-option__top">
+                  <span className="case-option__letter">{String.fromCharCode(65 + optionIndex)}</span>
+                  {option.badge || option.chosen ? (
+                    <span className="case-option__badge">
+                      {option.chosen ? <Check aria-hidden="true" size={12} weight="bold" /> : null}
+                      {option.badge ?? "Chosen"}
+                    </span>
+                  ) : null}
+                </div>
+                <h5>{option.title}</h5>
+                <p>{option.body}</p>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+          <Paragraphs items={decision.reasoning} />
+        </DecisionStep>
 
-      <div className="case-decision__why">
-        <span>Why</span>
-        <p>
-          <RichText text={decision.why} />
-        </p>
-      </div>
+        <DecisionStep icon={<PencilSimpleLine size={18} weight="bold" />} label="What I did next" variant="next">
+          <Paragraphs items={decision.next} />
+          {decision.nextList ? (
+            <ul>
+              {decision.nextList.map((item) => (
+                <li key={item}>
+                  <RichText text={item} />
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </DecisionStep>
 
-      <p className="case-outcome-pill">
-        <Check aria-hidden="true" size={16} weight="bold" />
-        {decision.outcome}
-      </p>
+        <DecisionStep icon={<Flag size={18} weight="bold" />} label="Result" variant="result">
+          <div className="case-flow__result">
+            <Paragraphs items={decision.result} />
+          </div>
+        </DecisionStep>
+      </ol>
 
       {decision.media ? (
         <details className="case-decision__media">
@@ -1222,7 +1310,7 @@ function HomePage() {
       <main>
         <section className="hero" aria-labelledby="hero-title">
           <h1 id="hero-title">
-            I’m Aadhavan M, a Product Designer with 3+ years solving problems{" "}
+            I’m Aadhavan M, a Product Designer with 4+ years solving problems{" "}
             <span>
               through systems, structure, and AI-assisted workflows for scalable
               digital products.
@@ -1383,6 +1471,15 @@ function CaseStudyPage({ project }: { project: CaseStudy }) {
     return () => window.removeEventListener("keydown", handleEscape);
   }, [isTocOpen]);
 
+  useEffect(() => {
+    // The page renders after load, so the browser can't jump to a #section on its own.
+    const target = window.location.hash ? document.getElementById(window.location.hash.slice(1)) : null;
+
+    if (target) {
+      window.setTimeout(() => target.scrollIntoView({ block: "start", behavior: "instant" }), 50);
+    }
+  }, [project.slug]);
+
   const activeTopicLabel = topics.find((topic) => topic.target === activeTopic)?.label ?? "Overview";
 
   function renderSection(section: CaseSection, className = "case-section") {
@@ -1521,18 +1618,566 @@ function CaseStudyPage({ project }: { project: CaseStudy }) {
   );
 }
 
-function App() {
-  const pathname = window.location.pathname.startsWith(`${basePath}/`)
-    ? window.location.pathname.slice(basePath.length)
-    : window.location.pathname;
-  const slug = pathname.replace(/^\/work\//, "").replace(/\/$/, "");
-  const project = projects.find((item) => item.slug === slug);
+function studyName(slug: string) {
+  return projects.find((item) => item.slug === slug)?.cardTitle.replace(/ for WooCommerce$/, "") ?? slug;
+}
+
+function ContactPanel({ id }: { id: string }) {
+  return (
+    <section className="contact-panel" aria-labelledby={id}>
+      <h2 id={id}>
+        Want to create <br />
+        something awesome?
+        <br />
+        Drop me an email.
+      </h2>
+      <a href={gmailComposeUrl} rel="noreferrer" target="_blank">
+        → aadhavanm.design@gmail.com
+      </a>
+    </section>
+  );
+}
+
+function SkillArt({ type }: { type: SkillVisual }) {
+  switch (type) {
+    case "nav":
+      return (
+        <div className="art art--nav">
+          <div className="art-nav__bar">
+            <span>Dashboard</span>
+            <span>Emails</span>
+            <span className="is-active">Reports ▾</span>
+            <span>Settings</span>
+          </div>
+          <div className="art-nav__menu">
+            <span>Email Report</span>
+            <span>Product Report</span>
+          </div>
+        </div>
+      );
+    case "interaction":
+      return (
+        <div className="art art--interaction">
+          <span className="art-pill art-pill--before">Got a Discount Code? ▾</span>
+          <ArrowRight aria-hidden="true" size={18} weight="bold" />
+          <span className="art-pill art-pill--after">
+            SAVE10 <X aria-hidden="true" size={12} weight="bold" />
+          </span>
+        </div>
+      );
+    case "chart":
+      return (
+        <div className="art art--chart">
+          <svg viewBox="0 0 240 110" aria-hidden="true" preserveAspectRatio="none">
+            <path className="art-chart__gap" d="M0 30 C40 22 60 40 100 28 S170 12 240 18 L240 70 C200 74 170 60 120 66 S40 78 0 80 Z" />
+            <path className="art-chart__top" d="M0 30 C40 22 60 40 100 28 S170 12 240 18" />
+            <path className="art-chart__bottom" d="M0 80 C40 78 70 72 120 66 S200 74 240 70" />
+          </svg>
+          <div className="art-chart__legend">
+            <span><i className="dot-top" />Recoverable</span>
+            <span><i className="dot-bottom" />Recovered</span>
+          </div>
+        </div>
+      );
+    case "layers":
+      return (
+        <div className="art art--layers">
+          {["Atoms", "Molecules", "Patterns", "Templates"].map((level, index) => (
+            <span key={level} style={{ width: `${40 + index * 20}%` }}>
+              {level}
+            </span>
+          ))}
+        </div>
+      );
+    case "research":
+      return (
+        <div className="art art--research">
+          {["S", "F", "M", "C", "Y"].map((letter, index) => (
+            <span className={index === 1 ? "is-focus" : ""} key={letter}>
+              {letter}
+            </span>
+          ))}
+          <small>5 competitors reviewed</small>
+        </div>
+      );
+    case "cart":
+      return (
+        <div className="art art--cart">
+          <div className="art-cart__panel">
+            <strong>Your cart is empty, let's fix that</strong>
+            <div className="art-cart__item">
+              <i />
+              <span>
+                <b>Canvas sneaker</b>
+                <small>₹2,499</small>
+              </span>
+              <em>+</em>
+            </div>
+          </div>
+        </div>
+      );
+    case "options":
+      return (
+        <div className="art art--options">
+          <div>
+            <b>A</b>
+            <span>Hide</span>
+          </div>
+          <div className="is-chosen">
+            <b>B</b>
+            <span>Show locked</span>
+            <Check aria-hidden="true" size={14} weight="bold" />
+          </div>
+        </div>
+      );
+    case "timeline":
+      return (
+        <div className="art art--timeline">
+          {["M", "T", "W", "T", "F", "S", "S"].map((day, index) => (
+            <span className={index < 6 ? "is-done" : "is-launch"} key={`${day}-${index}`}>
+              {index < 6 ? day : "🚀"}
+            </span>
+          ))}
+          <small>Launch in one week</small>
+        </div>
+      );
+    case "devices":
+      return (
+        <div className="art art--devices">
+          <span className="art-device art-device--desktop" />
+          <span className="art-device art-device--tablet" />
+          <span className="art-device art-device--phone" />
+        </div>
+      );
+    case "writing":
+      return (
+        <div className="art art--writing">
+          <span className="art-field art-field--before">Review Your Cart</span>
+          <span className="art-field art-field--after">
+            Your bag at DNK<i />
+          </span>
+        </div>
+      );
+  }
+}
+
+function SkillCard({ skill }: { skill: Skill }) {
+  return (
+    <article className="skill-card" id={skill.id}>
+      <div className="skill-card__visual">
+        <SkillArt type={skill.visual} />
+      </div>
+      <div className="skill-card__body">
+        <span className="case-tag">{skill.group}</span>
+        <h2>{skill.name}</h2>
+        <p className="skill-card__definition">{skill.definition}</p>
+        <ul className="skill-proofs">
+          {skill.proofs.map((proof) => (
+            <li key={proof.text}>
+              <a href={withBasePath(`/work/${proof.study}#${proof.section}`)}>
+                <span className="skill-proof__source">
+                  {studyName(proof.study)} · {proof.sectionLabel}
+                </span>
+                <span className="skill-proof__text">{proof.text}</span>
+                <ArrowRight aria-hidden="true" className="skill-proof__arrow" size={16} weight="bold" />
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </article>
+  );
+}
+
+function SkillsPage() {
+  const [group, setGroup] = useState<"All" | SkillGroup>("All");
+  const visible = group === "All" ? skills : skills.filter((skill) => skill.group === group);
+  const proofCount = skills.reduce((total, skill) => total + skill.proofs.length, 0);
 
   return (
-    <div className="site-shell bg-portfolio-canvas text-portfolio-ink font-sans">
-      {project ? <CaseStudyPage project={project} /> : <HomePage />}
+    <>
+      <Header />
+
+      <main className="page">
+        <section className="page-hero">
+          <p className="section-eyebrow">Skills</p>
+          <h1>
+            Skills, with <span>receipts.</span>
+          </h1>
+          <p>Every skill here links back to the moment in a case study where I used it.</p>
+          <div className="page-hero__stats">
+            <span>
+              <strong>{skills.length}</strong> skills
+            </span>
+            <span>
+              <strong>{projects.length}</strong> case studies
+            </span>
+            <span>
+              <strong>{proofCount}</strong> proofs
+            </span>
+          </div>
+        </section>
+
+        <div className="skill-filters" role="group" aria-label="Filter skills">
+          {(["All", ...skillGroups] as const).map((item) => (
+            <button aria-pressed={group === item} key={item} onClick={() => setGroup(item)} type="button">
+              {item}
+            </button>
+          ))}
+        </div>
+
+        <div className="skill-grid">
+          {visible.map((skill) => (
+            <SkillCard key={skill.id} skill={skill} />
+          ))}
+        </div>
+
+        <section className="page-band">
+          <h2>Tools I work with</h2>
+          <div className="case-chips">
+            {tools.map((tool) => (
+              <span className="case-chip" key={tool}>
+                {tool}
+              </span>
+            ))}
+          </div>
+        </section>
+
+        <ContactPanel id="skills-contact-title" />
+      </main>
+
+      <SiteFooter />
+    </>
+  );
+}
+
+function Placeholder({ label = "To be added" }: { label?: string }) {
+  return <span className="placeholder-chip">{label}</span>;
+}
+
+function AboutPage() {
+  const hobbyIcons = {
+    sketch: <PencilLine size={26} weight="bold" />,
+    chess: <Horse size={26} weight="bold" />,
+    camera: <Camera size={26} weight="bold" />,
+  };
+
+  return (
+    <>
+      <Header />
+
+      <main className="page about-page">
+        <section className="about-hero">
+          <div className="about-hero__text">
+            <p className="section-eyebrow">About</p>
+            <h1>{about.headline}</h1>
+            <p>{about.intro}</p>
+          </div>
+          <figure className="about-photo">
+            {about.photo ? (
+              <img alt="Aadhavan M" src={resolveSrc(about.photo)} />
+            ) : (
+              <div className="about-photo__placeholder">
+                <span className="about-photo__initials">AM</span>
+                <Placeholder label="Photo coming soon" />
+              </div>
+            )}
+          </figure>
+        </section>
+
+        <dl className="about-facts">
+          {about.facts.map((fact) => (
+            <div key={fact.label}>
+              <dt>{fact.label}</dt>
+              <dd>{fact.value ?? <Placeholder />}</dd>
+            </div>
+          ))}
+        </dl>
+
+        <section className="about-section">
+          <div className="case-section-heading">
+            <p>Journey</p>
+            <h2>Where I've been</h2>
+          </div>
+          <ol className="about-journey">
+            {about.journey.map((item) => (
+              <li className={item.placeholder ? "is-placeholder" : ""} key={item.title}>
+                <span className="about-journey__dot" aria-hidden="true" />
+                <div>
+                  <span className="about-journey__period">{item.period ?? <Placeholder label="Dates to be added" />}</span>
+                  <h3>
+                    {item.title}
+                    {item.place ? <span> · {item.place}</span> : null}
+                  </h3>
+                  <p>{item.body}</p>
+                  {item.tags ? (
+                    <div className="about-tags">
+                      {item.tags.map((tag) => (
+                        <span key={tag}>{tag}</span>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section className="about-section">
+          <div className="case-section-heading">
+            <p>How I work</p>
+            <h2>A few things I believe</h2>
+          </div>
+          <ol className="case-learnings">
+            {about.principles.map((item, index) => (
+              <li key={item.title}>
+                <span className="case-index">{pad(index)}</span>
+                <div>
+                  <h3>{item.title}</h3>
+                  <p>{item.body}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section className="about-section">
+          <div className="case-section-heading">
+            <p>Focus</p>
+            <h2>What I spend my time on</h2>
+          </div>
+          <div className="about-focus">
+            {about.focus.map((item) => (
+              <span key={item}>{item}</span>
+            ))}
+          </div>
+        </section>
+
+        <section className="about-section">
+          <div className="case-section-heading">
+            <p>Off the clock</p>
+            <h2>When I'm not designing</h2>
+          </div>
+          <div className="about-hobbies">
+            {about.hobbies.map((hobby) => (
+              <article key={hobby.title}>
+                <span aria-hidden="true">{hobbyIcons[hobby.icon]}</span>
+                <h3>{hobby.title}</h3>
+                <p>{hobby.body}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="about-cta">
+          <h2>Want to see how I think?</h2>
+          <div>
+            <a className="button button--large" href={withBasePath("/")}>
+              See my work
+            </a>
+            <a className="about-cta__secondary" href={withBasePath("/skills")}>
+              Browse skills <ArrowRight aria-hidden="true" size={16} weight="bold" />
+            </a>
+          </div>
+        </section>
+
+        <ContactPanel id="about-contact-title" />
+      </main>
+
+      <SiteFooter />
+    </>
+  );
+}
+
+const playgroundIcons: Record<PlaygroundIcon, ReactNode> = {
+  cube: <Cube size={40} weight="duotone" />,
+  sneaker: <Sneaker size={40} weight="duotone" />,
+  notebook: <Notebook size={40} weight="duotone" />,
+  chat: <ChatCircleDots size={40} weight="duotone" />,
+  exam: <Exam size={40} weight="duotone" />,
+};
+
+function PlaygroundPlayer({ item, onClose }: { item: PlaygroundItem; onClose: () => void }) {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const closeRef = useRef<HTMLButtonElement | null>(null);
+  const src = withBasePath(item.src ?? "");
+
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    closeRef.current?.focus();
+
+    function handleEscape(event: globalThis.KeyboardEvent) {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    }
+
+    window.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleEscape);
+    };
+  }, [onClose]);
+
+  return (
+    <div className="pg-player" role="presentation">
+      <div aria-label={`${item.title}, running in the page`} aria-modal="true" className="pg-player__dialog" role="dialog">
+        <header className="pg-player__bar">
+          <div className="pg-player__title">
+            <span className="pg-live-dot" aria-hidden="true" />
+            <strong>{item.title}</strong>
+            {item.note ? <span>{item.note}</span> : null}
+          </div>
+          <div className="pg-player__actions">
+            <a href={src} rel="noreferrer" target="_blank">
+              <ArrowSquareOut aria-hidden="true" size={18} weight="bold" />
+              <span>New tab</span>
+            </a>
+            <button aria-label={`Close ${item.title}`} onClick={onClose} ref={closeRef} type="button">
+              <X aria-hidden="true" size={20} weight="bold" />
+            </button>
+          </div>
+        </header>
+        <div className="pg-player__frame">
+          {!isLoaded ? (
+            <div className="pg-player__loading" aria-live="polite">
+              <span className="pg-spinner" aria-hidden="true" />
+              Loading {item.title}…
+            </div>
+          ) : null}
+          <iframe
+            allow="fullscreen; xr-spatial-tracking; microphone"
+            onLoad={() => setIsLoaded(true)}
+            src={src}
+            title={item.title}
+          />
+        </div>
+      </div>
     </div>
   );
+}
+
+function PlaygroundCard({ item, onPlay }: { item: PlaygroundItem; onPlay: (item: PlaygroundItem) => void }) {
+  const isLive = item.status === "live";
+
+  return (
+    <article className={`pg-card pg-card--${item.status}`} id={item.id}>
+      <div className="pg-card__cover">
+        {isLive ? (
+          <button className="pg-card__cover-button" onClick={() => onPlay(item)} type="button">
+            <span className="pg-card__icon" aria-hidden="true">
+              {playgroundIcons[item.icon]}
+            </span>
+            <span className="pg-card__play">
+              <Play aria-hidden="true" size={18} weight="fill" />
+              Play
+              <span className="sr-only"> {item.title}</span>
+            </span>
+          </button>
+        ) : (
+          <div className="pg-card__cover-template" aria-hidden="true">
+            <span className="pg-card__icon">{playgroundIcons[item.icon]}</span>
+            <span className="pg-card__soon">Preview coming soon</span>
+          </div>
+        )}
+      </div>
+
+      <div className="pg-card__body">
+        <span className={`pg-status pg-status--${item.status}`}>
+          {isLive ? (
+            <>
+              <span className="pg-live-dot" aria-hidden="true" />
+              Playable here
+            </>
+          ) : (
+            "Coming soon"
+          )}
+        </span>
+        <h2>{item.title}</h2>
+        <p className="pg-card__tagline">{item.tagline}</p>
+        <p className="pg-card__description">{item.description}</p>
+        <div className="pg-card__tags">
+          {item.tags.map((tag) => (
+            <span key={tag}>{tag}</span>
+          ))}
+        </div>
+        {isLive ? (
+          <div className="pg-card__footer">
+            <button className="button" onClick={() => onPlay(item)} type="button">
+              Play in browser
+            </button>
+            {item.note ? <small>{item.note}</small> : null}
+          </div>
+        ) : (
+          <p className="pg-card__pending">{item.pending}</p>
+        )}
+      </div>
+    </article>
+  );
+}
+
+function PlaygroundPage() {
+  const [activeItem, setActiveItem] = useState<PlaygroundItem | null>(null);
+  const liveCount = playgroundItems.filter((item) => item.status === "live").length;
+  const closePlayer = useCallback(() => setActiveItem(null), []);
+
+  return (
+    <>
+      <Header />
+
+      <main className="page">
+        <section className="page-hero">
+          <p className="section-eyebrow">Playground</p>
+          <h1>
+            Things I've built to <span>think with.</span>
+          </h1>
+          <p>Small tools and experiments, built with AI-assisted coding. Press play to use them right here.</p>
+          <div className="page-hero__stats">
+            <span>
+              <strong>{liveCount}</strong> playable now
+            </span>
+            <span>
+              <strong>{playgroundItems.length - liveCount}</strong> on the way
+            </span>
+          </div>
+        </section>
+
+        <div className="pg-grid">
+          {playgroundItems.map((item) => (
+            <PlaygroundCard item={item} key={item.id} onPlay={setActiveItem} />
+          ))}
+        </div>
+
+        <ContactPanel id="playground-contact-title" />
+      </main>
+
+      <SiteFooter />
+
+      {activeItem ? <PlaygroundPlayer item={activeItem} onClose={closePlayer} /> : null}
+    </>
+  );
+}
+
+function App() {
+  const path = currentPath();
+  const slug = path.replace(/^\/work\//, "");
+  const project = path.startsWith("/work/") ? projects.find((item) => item.slug === slug) : undefined;
+
+  let page = <HomePage />;
+
+  if (project) {
+    page = <CaseStudyPage project={project} />;
+  } else if (path === "/skills") {
+    page = <SkillsPage />;
+  } else if (path === "/playground") {
+    page = <PlaygroundPage />;
+  } else if (path === "/about") {
+    page = <AboutPage />;
+  }
+
+  return <div className="site-shell bg-portfolio-canvas text-portfolio-ink font-sans">{page}</div>;
 }
 
 export default App;

@@ -1,0 +1,1123 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Photos to 3D Demo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600;700&family=Schibsted+Grotesk:wght@400;500;600&display=swap">
+<script src="assets/sample-tee.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js"></script>
+<style>
+/* Layout: desktop split. Left = merchant dashboard card (upload, generate, review). Right = sticky phone mockup running the app PDP. Stacks on narrow screens. */
+:root{
+  --bg:#e9edf1; --surface:#ffffff; --tile:#e3e8ee; --ink:#12161b; --muted:#5d6874; --line:#d3dae2;
+  --accent:#2747e8; --accent-ink:#ffffff; --accent-soft:#e6eaff; --ok:#1f7a4d; --ok-soft:#e2f3ea; --frame:#15191e;
+  --display:"Familjen Grotesk","Helvetica Neue",Arial,sans-serif;
+  --body:"Schibsted Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0b0e12; --surface:#141920; --tile:#1b222b; --ink:#eef2f6; --muted:#97a3b0; --line:#28313c;
+  --accent:#7d93ff; --accent-ink:#0b0e12; --accent-soft:#1d2550; --ok:#5fcf97; --ok-soft:#14301f; --frame:#000000; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0b0e12; --surface:#141920; --tile:#1b222b; --ink:#eef2f6; --muted:#97a3b0; --line:#28313c;
+  --accent:#7d93ff; --accent-ink:#0b0e12; --accent-soft:#1d2550; --ok:#5fcf97; --ok-soft:#14301f; --frame:#000000; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:14px;line-height:1.5}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,label:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance}
+
+.wrap{max-width:1180px;margin:0 auto;padding-block:28px 40px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));display:grid;gap:28px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:980px){.wrap{grid-template-columns:minmax(0,1fr) 392px;align-items:start}}
+
+/* dashboard */
+.dash{background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden;min-width:0}
+.dbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 20px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.crumbs{font-size:13px;color:var(--muted)}
+.crumbs b{color:var(--ink);font-weight:600}
+.reset{border:1px solid var(--line);background:transparent;border-radius:8px;padding:6px 12px;font-size:13px}
+.dbody{padding:24px 20px 28px;display:grid;gap:24px}
+.head h1{font-size:26px}
+.head p{margin:6px 0 0;color:var(--muted);max-width:60ch}
+.fields{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:12px}
+.field label{display:block;font-size:12px;font-weight:600;margin-bottom:6px}
+.field input{width:100%;height:40px;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:0 12px;font:inherit;color:inherit}
+
+.sec{display:grid;gap:12px}
+.sechead{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.sechead h2{font-size:17px}
+.sechead span{font-size:13px;color:var(--muted)}
+.linkbtn{border:0;background:none;color:var(--accent);font-weight:600;padding:0;font-size:13px}
+.linkbtn:disabled{color:var(--muted);cursor:wait}
+
+.slots{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:560px){.slots{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.slot{position:relative;aspect-ratio:1/1;border:1.5px dashed var(--line);border-radius:14px;background:var(--bg);display:grid;place-items:center;text-align:center;cursor:pointer;overflow:hidden;transition:border-color .15s,background .15s}
+.slot:hover,.slot.drag{border-color:var(--accent);background:var(--accent-soft)}
+.slot input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.slot .empty{display:grid;gap:4px;justify-items:center;color:var(--muted);font-size:12px;pointer-events:none;padding:8px}
+.slot .empty svg{width:22px;height:22px}
+.slot .empty b{color:var(--ink);font-size:13px}
+.slot.filled{border-style:solid;background:#fff}
+.slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none}
+.slot .tag{position:absolute;left:8px;top:8px;background:var(--surface);border:1px solid var(--line);font-size:11px;font-weight:600;border-radius:999px;padding:2px 8px;pointer-events:none}
+.slot .rm{position:absolute;right:6px;top:6px;width:26px;height:26px;border-radius:50%;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;z-index:2}
+.slot .rm svg{width:14px;height:14px}
+.tip{font-size:12px;color:var(--muted);margin:0}
+
+.gen{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.btn{height:44px;border-radius:10px;border:1px solid var(--line);background:var(--surface);padding:0 18px;font-weight:600;display:inline-flex;align-items:center;gap:8px}
+.btn svg{width:18px;height:18px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.ok{background:var(--ok);border-color:var(--ok);color:var(--surface)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.gen small{color:var(--muted);font-size:13px}
+
+.job{border:1px solid var(--line);border-radius:14px;padding:16px;display:grid;gap:14px}
+.jobtop{display:flex;justify-content:space-between;gap:12px;font-weight:600}
+.jobtop span{font-variant-numeric:tabular-nums;color:var(--muted);font-weight:500}
+.track{height:6px;border-radius:6px;background:var(--tile);overflow:hidden}
+.track i{display:block;height:100%;width:0;background:var(--accent);transition:width .25s linear}
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.steps li{display:flex;align-items:center;gap:10px;color:var(--muted)}
+.steps li .dot{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;flex:0 0 18px}
+.steps li.on{color:var(--ink);font-weight:500}
+.steps li.on .dot{border-color:var(--accent);border-top-color:transparent;animation:spin .8s linear infinite}
+.steps li.done{color:var(--ink)}
+.steps li.done .dot{background:var(--ok);border-color:var(--ok)}
+.steps li.done .dot::after{content:"";width:8px;height:4px;border:2px solid var(--surface);border-top:0;border-right:0;transform:rotate(-45deg) translate(1px,-1px)}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.review{border:1px solid var(--line);border-radius:14px;padding:16px;display:grid;gap:12px;background:var(--bg)}
+.review h3{font-size:16px}
+.review p{margin:0;color:var(--muted);max-width:62ch}
+.checks{margin:0;padding-left:18px;color:var(--muted);font-size:13px;display:grid;gap:2px}
+.status{display:inline-flex;align-items:center;gap:8px;font-weight:600;color:var(--ok);background:var(--ok-soft);border-radius:999px;padding:6px 12px;font-size:13px;width:max-content}
+.status svg{width:16px;height:16px}
+
+/* phone */
+.side{display:grid;justify-items:center;gap:12px;position:relative}
+@media (min-width:980px){.side{position:sticky;top:20px}}
+.caption{font-size:12px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;font-weight:600}
+.phone{width:360px;max-width:100%;aspect-ratio:360/740;background:var(--frame);border-radius:48px;padding:12px;box-shadow:0 24px 60px rgba(10,14,20,.25)}
+.screen{position:relative;width:100%;height:100%;border-radius:38px;overflow:hidden;background:var(--surface)}
+.scroll{position:absolute;inset:0;overflow-y:auto;scrollbar-width:none}
+.scroll::-webkit-scrollbar{display:none}
+.scroll.lock{overflow:hidden}
+.notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:96px;height:26px;border-radius:20px;background:var(--frame);z-index:70}
+.sbar{height:44px;display:flex;justify-content:space-between;align-items:center;padding:0 26px;font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
+.top{display:flex;align-items:center;justify-content:space-between;padding:4px 14px 10px}
+.ibtn{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center}
+.ibtn svg{width:17px;height:17px}
+.store{font-family:var(--display);font-weight:700;letter-spacing:.05em;text-transform:uppercase;font-size:12px}
+
+.gallery{position:relative;aspect-ratio:1/1}
+.stage{position:absolute;inset:0;background:var(--tile);overflow:hidden}
+model-viewer{width:100%;height:100%;background:transparent;--progress-bar-color:transparent}
+.photo{position:absolute;inset:0;background:#fff;display:grid;place-items:center;transition:opacity .5s}
+.photo img{width:100%;height:100%;object-fit:contain}
+.photo.off{opacity:0;pointer-events:none}
+.nophoto{color:var(--muted);font-size:13px;display:grid;gap:6px;justify-items:center;text-align:center;padding:20px;background:var(--tile);position:absolute;inset:0;align-content:center}
+.nophoto svg{width:28px;height:28px}
+.chip{position:absolute;top:10px;left:10px;display:inline-flex;align-items:center;gap:5px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px 9px 4px 7px;font-size:11px;font-weight:600}
+.chip svg{width:14px;height:14px;color:var(--accent)}
+.explore{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);display:inline-flex;align-items:center;gap:7px;background:var(--ink);color:var(--surface);border:0;border-radius:999px;padding:9px 14px;font-weight:600;font-size:13px;white-space:nowrap}
+.explore svg{width:16px;height:16px}
+.preview-tag{position:absolute;top:10px;right:10px;background:var(--accent);color:var(--accent-ink);font-size:11px;font-weight:600;border-radius:999px;padding:4px 9px}
+.reveal{animation:pop .7s ease-out}
+@keyframes pop{from{transform:scale(.92);opacity:0}to{transform:none;opacity:1}}
+
+.thumbs{display:flex;gap:7px;padding:10px 14px;overflow-x:auto;scrollbar-width:none}
+.thumb{flex:0 0 52px;height:52px;border-radius:9px;border:1.5px solid transparent;background:#fff;padding:0;overflow:hidden}
+.thumb img{width:100%;height:100%;object-fit:contain;display:block}
+.thumb.ph{background:var(--tile)}
+.thumb[aria-pressed="true"]{border-color:var(--ink)}
+.thumb.is3d{display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:12px;color:var(--accent);background:var(--accent-soft)}
+
+.info{padding:4px 14px 90px;display:grid;gap:12px}
+.eyebrow{font-size:11px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;font-weight:500}
+.pname{font-family:var(--display);font-weight:700;font-size:21px;line-height:1.15;margin:2px 0 4px}
+.price{font-family:var(--display);font-size:17px;font-weight:700;font-variant-numeric:tabular-nums}
+.rating{font-size:12px;color:var(--muted)}
+.sizes{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.size{height:36px;border-radius:9px;border:1px solid var(--line);background:var(--surface);font-weight:600;font-size:13px}
+.size[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.desc{color:var(--muted);font-size:13px;margin:0}
+.buy{position:absolute;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding:10px 14px 22px;display:flex;gap:8px;z-index:30}
+.cta{flex:1;height:44px;border:0;border-radius:11px;background:var(--ink);color:var(--surface);font-weight:600}
+.home{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);width:110px;height:4px;border-radius:4px;background:var(--ink);opacity:.35;z-index:70}
+
+/* fullscreen viewer inside the phone */
+.gallery.expanded{position:static}
+.gallery.expanded .stage{position:absolute;inset:0;z-index:50}
+.gallery.expanded .chip,.gallery.expanded .explore,.gallery.expanded .preview-tag{display:none}
+.vbar{position:absolute;left:0;right:0;display:none;align-items:center;justify-content:space-between;gap:10px;padding:0 14px}
+.vtop{top:48px}
+.vbottom{bottom:26px;justify-content:center;gap:8px}
+.gallery.expanded .vbar{display:flex}
+.vtitle{font-family:var(--display);font-weight:600;font-size:15px}
+.pill{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:9px 13px;font-weight:600;font-size:13px;display:inline-flex;align-items:center;gap:6px}
+.pill svg{width:16px;height:16px}
+.pill.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.hint{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:rgba(18,22,27,.6);color:#fff;border-radius:14px;padding:12px 14px;display:none;gap:10px;font-size:11px;transition:opacity .4s;pointer-events:none}
+.gallery.expanded .hint{display:flex}
+.hint.gone{opacity:0}
+.hint div{display:grid;justify-items:center;gap:5px;text-align:center;width:62px}
+.hint svg{width:24px;height:24px}
+
+.ptoast{position:absolute;left:50%;bottom:84px;transform:translate(-50%,8px);background:var(--ink);color:var(--surface);padding:9px 14px;border-radius:11px;font-size:12px;font-weight:500;opacity:0;transition:.25s;z-index:60;width:max-content;max-width:calc(100% - 28px);text-align:center;pointer-events:none}
+.ptoast.show{opacity:1;transform:translate(-50%,0)}
+.masks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.mask{display:grid;gap:4px;font-size:11px;color:var(--muted);text-align:center}
+.mask canvas{width:100%;aspect-ratio:1/1;border-radius:10px;background:var(--bg);border:1px solid var(--line)}
+.tip.seg::before{content:'';display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--muted);margin-right:8px;vertical-align:1px}
+.tip.seg[data-state="ready"]::before{background:var(--ok)}
+.descbox{position:relative}
+.descbox textarea{width:100%;border:1px solid var(--line);background:var(--surface);color:inherit;border-radius:12px;padding:12px 56px 12px 12px;font:inherit;resize:vertical;min-height:84px}
+.mic{position:absolute;right:8px;top:8px;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center}
+.mic svg{width:20px;height:20px}
+.mic[aria-pressed="true"]{background:#d93a3a;border-color:#d93a3a;color:#fff;animation:ring 1.4s ease-out infinite}
+@keyframes ring{0%{box-shadow:0 0 0 0 rgba(217,58,58,.45)}100%{box-shadow:0 0 0 12px rgba(217,58,58,0)}}
+.miclive{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink)}
+.rec{width:8px;height:8px;border-radius:50%;background:#d93a3a;animation:pulse 1s infinite}
+.ideas{display:flex;flex-wrap:wrap;gap:6px}
+.ideas button{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:5px 11px;font-size:12px}
+.ideas button:hover{border-color:var(--accent)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips span{background:var(--accent-soft);color:var(--ink);border-radius:999px;padding:4px 10px;font-size:12px;font-weight:500}
+.chips span.src{background:transparent;color:var(--muted);padding-left:0}
+.err{margin:0;color:#c0392b;font-weight:500}
+.stats{font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.slider label{display:flex;justify-content:space-between}
+.slider input{width:100%;max-width:320px;accent-color:var(--accent)}
+.offscreen{position:fixed;left:0;top:0;width:360px;height:360px;opacity:0;pointer-events:none;z-index:-1}
+.note{font-size:12px;color:var(--muted);max-width:360px;text-align:center;margin:0}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+  <section class="dash" aria-label="Merchant dashboard">
+    <div class="dbar">
+      <div class="crumbs">Products › <b id="crumbname">Everyday Crew Tee</b> › Media</div>
+      <button class="reset" id="reset">Reset demo</button>
+    </div>
+    <div class="dbody">
+      <div class="head">
+        <h1>Turn product photos into a 3D model</h1>
+        <p>Add one to four photos of the product. Photos of a person wearing it work too. We build a 3D model your customers can rotate and zoom on the product page in your app.</p>
+      </div>
+
+      <div class="fields">
+        <div class="field"><label for="f-name">Product title</label><input id="f-name" value="Everyday Crew Tee"></div>
+        <div class="field"><label for="f-price">Price</label><input id="f-price" value="₹1,299"></div>
+      </div>
+
+      <div class="sec">
+        <div class="sechead">
+          <h2>Product photos</h2>
+          <span><span id="count">0 photos added</span> · <button class="linkbtn" id="sample" disabled>Preparing sample photos…</button></span>
+        </div>
+        <div class="slots" id="slots"></div>
+        <p class="tip">Only the Front photo is required. One photo showing the front and back side by side also works. A Left or Right photo gives the most accurate shape. Use a plain background with the whole product in frame.</p>
+        <p class="tip seg" id="segstatus"></p>
+      </div>
+
+      <div class="sec">
+        <div class="sechead"><h2>Describe the product</h2><span>Optional · type or speak</span></div>
+        <div class="descbox">
+          <textarea id="desc" rows="3" placeholder="Example: White cotton t-shirt worn by the model. Only the t-shirt, not the jeans. The back is plain white. Quite thin."></textarea>
+          <button class="mic" id="mic" type="button" aria-pressed="false" aria-label="Speak the description"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+        </div>
+        <div class="miclive" id="miclive" hidden><span class="rec"></span><span id="mictext">Listening… speak now</span></div>
+        <p class="tip" id="micmsg" hidden></p>
+        <div class="ideas" id="ideas" role="group" aria-label="Add a phrase">
+          <button type="button">Only the top, not the bottoms</button><button type="button">The back is plain</button><button type="button">Thin and flat</button><button type="button">Boxy shape</button><button type="button">Rounded and thick</button>
+        </div>
+      </div>
+
+      <div class="gen" id="genrow">
+        <button class="btn primary" id="generate" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 2l9 5v10l-9 5-9-5V7l9-5z"/><path d="M12 22V12M21 7l-9 5-9-5"/></svg>Generate 3D model</button>
+        <small id="genhint">Add a Front photo to continue</small>
+      </div>
+
+      <div class="job" id="job" hidden>
+        <div class="jobtop">Generating 3D model <span id="pct">0%</span></div>
+        <div class="track"><i id="trackfill"></i></div>
+        <ol class="steps" id="steps">
+          <li><span class="dot"></span> Finding the product in your photos</li>
+          <li><span class="dot"></span> Reading your description</li>
+          <li><span class="dot"></span> Building the shape</li>
+          <li><span class="dot"></span>Smoothing the surface</li>
+          <li><span class="dot"></span>Painting colours from your photos</li>
+          <li><span class="dot"></span>Packaging for mobile</li>
+        </ol>
+        <div class="chips" id="understood1" hidden></div>
+        <div class="masks" id="masks" hidden></div>
+        <p class="err" id="err" hidden></p>
+      </div>
+
+      <div class="review" id="review" hidden>
+        <h3>Review before it goes live</h3>
+        <p>The model is showing on the phone preview. Rotate and zoom it there and compare it with your photos.</p>
+        <div class="stats" id="stats"></div>
+        <div class="chips" id="understood2" hidden></div>
+        <ul class="checks"><li>Does the shape match the real product?</li><li>Do the colours match your photos?</li><li>Is anything from the background stuck to the model? Raise the sensitivity and regenerate.</li><li>Built from one view? Adjust the depth so it matches how thick the product really is.</li></ul>
+        <div class="field slider" id="depthfield"><label for="depth">Depth <span id="depthval">14%</span></label><input type="range" id="depth" min="4" max="80" value="14"></div>
+        <div class="field slider"><label for="tol">Background sensitivity <span id="tolval">38</span></label><input type="range" id="tol" min="12" max="90" value="38"></div>
+        <div class="gen">
+          <button class="btn ok" id="approve"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Approve and publish</button>
+          <button class="btn" id="regen">Regenerate</button>
+        </div>
+      </div>
+
+      <div id="live" hidden><span class="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Live in your app · 3D shows first in the gallery</span></div>
+    </div>
+  </section>
+
+  <aside class="side">
+    <div class="caption" id="phonecap">Your app · Product page</div>
+    <div class="phone">
+      <div class="screen" id="screen">
+        <div class="notch"></div>
+        <div class="scroll" id="scroll">
+          <div class="sbar"><span>9:41</span><span>5G ▮▮▮</span></div>
+          <div class="top">
+            <button class="ibtn" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <div class="store">Northbound Basics</div>
+            <button class="ibtn" aria-label="Bag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg></button>
+          </div>
+
+          <section class="gallery" id="gallery" aria-label="Product media">
+            <div class="stage" id="stage">
+              <model-viewer id="mv" alt="3D model of the product" camera-orbit="25deg 75deg auto"
+                min-camera-orbit="auto auto 60%" max-camera-orbit="auto auto 220%" interaction-prompt="none"
+                shadow-intensity="1" shadow-softness=".8" exposure="1" tone-mapping="neutral" environment-image="neutral"
+                rotation-per-second="18deg" auto-rotate-delay="0" ar ar-modes="webxr scene-viewer quick-look" disable-tap></model-viewer>
+              <div class="photo" id="photo"><img id="photoimg" alt="" hidden>
+                <div class="nophoto" id="nophoto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/></svg>Photos you add in the dashboard show here</div>
+              </div>
+              <span class="chip" id="chip" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 2l9 5v10l-9 5-9-5V7l9-5z"/><path d="M12 22V12M21 7l-9 5-9-5"/></svg>3D</span>
+              <span class="preview-tag" id="ptag" hidden>Preview</span>
+              <button class="explore" id="open" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>Tap to view in 3D</button>
+
+              <div class="vbar vtop">
+                <div class="vtitle" id="vtitle">Everyday Crew Tee</div>
+                <button class="ibtn" id="close" aria-label="Close 3D viewer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+              </div>
+              <div class="hint" id="hint" aria-hidden="true">
+                <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 12h16M7 9l-3 3 3 3M17 9l3 3-3 3"/></svg>Drag to rotate</div>
+                <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M9 9L4 4M4 4v4M4 4h4M15 15l5 5M20 20v-4M20 20h-4"/></svg>Pinch to zoom</div>
+                <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 3v18M3 12h18"/></svg>Two fingers to move</div>
+              </div>
+              <div class="vbar vbottom">
+                <button class="pill" id="rview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Reset view</button>
+                <button class="pill primary" id="ar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 7l5 3v5l-5 3-5-3v-5l5-3z"/></svg>View in your space</button>
+              </div>
+            </div>
+          </section>
+
+          <div class="thumbs" id="thumbs"></div>
+
+          <div class="info">
+            <div>
+              <div class="eyebrow">Men · T-shirts · Regular fit</div>
+              <div class="pname" id="pname">Everyday Crew Tee</div>
+              <div class="price" id="pprice">₹1,299</div>
+              <div class="rating">★ 4.5 · 862 reviews</div>
+            </div>
+            <div class="sizes" id="sizes"></div>
+            <p class="desc">Soft 180 GSM cotton crew neck in dusty mauve, with a small chest logo and a large back print. Turn it in 3D to see both sides.</p>
+          </div>
+        </div>
+        <div class="buy" id="buy"><button class="cta" id="cta">Add to bag</button></div>
+        <div class="ptoast" id="ptoast" role="status"></div>
+        <div class="home"></div>
+      </div>
+    </div>
+    <p class="note">Built in your browser: the product is cut out of your photos, given a rounded 3D shape, and your photos are wrapped onto it. Works best with clothing and flat products photographed front and back. Sample photo: a t-shirt mockup.</p>
+  </aside>
+</div>
+<div hidden>
+</div>
+
+<script type="module">
+const $ = id => document.getElementById(id);
+const mv = $('mv'), gallery = $('gallery');
+const SIDES = ['Front','Back','Left','Right'];
+const HOME = '25deg 75deg auto';
+let photos = [null,null,null,null], samples = null, state = 'empty', expanded = false, hero = 0;
+const frame = () => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+const ptoast = m => { const t=$('ptoast'); t.textContent=m; t.classList.add('show'); clearTimeout(ptoast.h); ptoast.h=setTimeout(()=>t.classList.remove('show'),2400); };
+
+/* product fields mirror into the phone */
+const syncText = () => { const n=$('f-name').value||'Untitled product'; $('pname').textContent=$('vtitle').textContent=$('crumbname').textContent=n; $('pprice').textContent=$('f-price').value; };
+$('f-name').addEventListener('input', syncText); $('f-price').addEventListener('input', syncText);
+$('sizes').innerHTML = ['XS','S','M','L','XL','XXL'].map(s=>`<button class="size" aria-pressed="${s==='M'}">${s}</button>`).join('');
+$('sizes').addEventListener('click', e => { const b=e.target.closest('.size'); if(!b) return; document.querySelectorAll('.size').forEach(x=>x.setAttribute('aria-pressed',x===b)); });
+$('cta').addEventListener('click', () => ptoast('Added to bag'));
+
+/* upload slots */
+function drawSlots(){
+  $('slots').innerHTML = SIDES.map((s,i) => photos[i]
+    ? `<div class="slot filled"><img src="${photos[i]}" alt="${s} photo"><span class="tag">${s}</span><button class="rm" data-rm="${i}" aria-label="Remove ${s} photo" ${state==='generating'?'disabled':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>`
+    : `<label class="slot" data-i="${i}"><input type="file" id="file-${i}" accept="image/*" multiple ${state==='generating'?'disabled':''}><span class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><b>${s}</b>${i===0?'Required':'Optional'}<br>Click or drop</span></label>`).join('');
+  const n = photos.filter(Boolean).length;
+  $('count').textContent = `${n} photo${n===1?'':'s'} added`;
+  $('generate').disabled = !photos[0] || state==='generating';
+  $('genhint').textContent = !photos[0] ? 'Add a Front photo to continue' : n===1 ? 'One photo works. Add a side photo for a more accurate shape.' : 'Takes a few seconds. Runs in your browser.';
+  if(state==='empty' || state==='ready') state = photos[0] ? 'ready' : 'empty';
+  drawPhone();
+}
+const readFile = f => new Promise(r => { const fr=new FileReader(); fr.onload=()=>r(fr.result); fr.readAsDataURL(f); });
+async function addFiles(files, start){
+  const imgs = [...files].filter(f=>f.type.startsWith('image/'));
+  let i = start;
+  for(const f of imgs){
+    while(i<4 && photos[i]) i++;
+    if(i>=4) break;
+    photos[i] = await readFile(f); i++;
+  }
+  backToEdit(); drawSlots();
+}
+$('slots').addEventListener('change', e => { if(e.target.type==='file') addFiles(e.target.files, +e.target.closest('.slot').dataset.i); });
+$('slots').addEventListener('click', e => { const b=e.target.closest('[data-rm]'); if(!b) return; e.preventDefault(); photos[+b.dataset.rm]=null; backToEdit(); drawSlots(); });
+['dragover','dragenter'].forEach(ev => $('slots').addEventListener(ev, e => { const s=e.target.closest('.slot'); if(!s) return; e.preventDefault(); s.classList.add('drag'); }));
+['dragleave','drop'].forEach(ev => $('slots').addEventListener(ev, e => { const s=e.target.closest('.slot'); if(s) s.classList.remove('drag'); }));
+$('slots').addEventListener('drop', e => { const s=e.target.closest('.slot'); if(!s) return; e.preventDefault(); addFiles(e.dataTransfer.files, s.dataset.i ? +s.dataset.i : 0); });
+$('sample').addEventListener('click', () => { if(!samples) return; photos = samples.slice(); if(!$('desc').value.trim()) $('desc').value='Dusty mauve cotton t-shirt. The photo shows the front on the left and the back on the right.'; backToEdit(); drawSlots(); });
+
+/* phone gallery */
+function drawPhone(){
+  const show3d = state==='review' || state==='live';
+  const have = photos.filter(Boolean);
+  $('chip').hidden = $('open').hidden = !show3d;
+  $('ptag').hidden = state!=='review';
+  $('phonecap').textContent = state==='review' ? 'Preview · only you can see this' : 'Your app · Product page';
+  const showPhoto = !show3d || hero>0;
+  $('photo').classList.toggle('off', !showPhoto);
+  const idx = show3d ? hero-1 : 0;
+  const src = have[Math.max(0,idx)];
+  $('photoimg').hidden = !src; $('nophoto').hidden = !!src;
+  if(src) $('photoimg').src = src;
+  const th = [];
+  if(show3d) th.push(`<button class="thumb is3d" data-h="0" aria-pressed="${hero===0}" aria-label="3D model">3D</button>`);
+  photos.forEach((p,i) => th.push(p ? `<button class="thumb" data-h="${show3d?i+1:i}" aria-pressed="${show3d?hero===i+1:i===0}" aria-label="${SIDES[i]} photo"><img src="${p}" alt=""></button>` : `<span class="thumb ph"></span>`));
+  $('thumbs').innerHTML = th.join('');
+}
+$('thumbs').addEventListener('click', e => {
+  const b = e.target.closest('[data-h]'); if(!b) return;
+  const show3d = state==='review' || state==='live';
+  if(!show3d){ const p=photos[+b.dataset.h]; if(p){ $('photoimg').src=p; document.querySelectorAll('.thumb[data-h]').forEach(x=>x.setAttribute('aria-pressed',x===b)); } return; }
+  hero = +b.dataset.h; drawPhone();
+});
+
+/* ---------- real reconstruction from the 4 photos ---------- */
+/* 1 segment each photo, 2 carve a voxel hull from the 4 outlines, 3 blur + surface nets mesh,
+   4 colour each vertex from the photos facing it, 5 write a GLB for the viewer */
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+async function loadImg(src, max=320){
+  const img = new Image(); img.src = src; await img.decode();
+  const k = Math.min(1, max/Math.max(img.naturalWidth, img.naturalHeight));
+  const w = Math.max(1, Math.round(img.naturalWidth*k)), h = Math.max(1, Math.round(img.naturalHeight*k));
+  const c = document.createElement('canvas'); c.width=w; c.height=h;
+  const ctx = c.getContext('2d', {willReadFrequently:true}); ctx.drawImage(img,0,0,w,h);
+  return {w, h, canvas:c, data: ctx.getImageData(0,0,w,h).data};
+}
+function segment(im, tol, cat){
+  const {w,h,data} = im, n = w*h, fg = new Uint8Array(n);
+  let person = false;
+  if(cat){
+    let ppl = 0; for(let i=0;i<n;i++) if(cat[i]>=1 && cat[i]<=3) ppl++;
+    person = ppl/n > .03;
+    if(person) for(let i=0;i<n;i++) fg[i] = (cat[i]===4 || cat[i]===5) ? 1 : 0;
+  }
+  if(!person){
+    /* background model: a smooth colour gradient fitted to the photo's edges (handles vignettes and studio backdrops) */
+    const border=[];
+    const bw_=Math.max(2, Math.round(Math.min(w,h)*.006));
+    for(let y=0;y<h;y++) for(let x=0;x<w;x++) if(x<bw_||y<bw_||x>=w-bw_||y>=h-bw_) border.push(y*w+x);
+    const basis=(x,y)=>{ const X=x/w-.5, Y=y/h-.5; return [1,X,Y,X*X,Y*Y,X*Y]; };
+    const AtA=Array.from({length:6},()=>new Float64Array(6)), Atb=[0,1,2].map(()=>new Float64Array(6));
+    for(const i of border){ if(data[i*4+3]<128) continue; const f=basis(i%w,(i/w)|0);
+      for(let a=0;a<6;a++){ for(let b=0;b<6;b++) AtA[a][b]+=f[a]*f[b]; for(let ch=0;ch<3;ch++) Atb[ch][a]+=f[a]*data[i*4+ch]; } }
+    const solve=(M,v)=>{ const n_=6, A=M.map((r,k)=>[...r, v[k]]); for(let k=0;k<n_;k++) A[k][k]+=1e-6;
+      for(let c=0;c<n_;c++){ let p=c; for(let r=c+1;r<n_;r++) if(Math.abs(A[r][c])>Math.abs(A[p][c])) p=r; [A[c],A[p]]=[A[p],A[c]];
+        for(let r=0;r<n_;r++){ if(r===c) continue; const f=A[r][c]/A[c][c]; for(let k=c;k<=n_;k++) A[r][k]-=f*A[c][k]; } }
+      return A.map((r,k)=>r[n_]/r[k]); };
+    const coef=[0,1,2].map(ch=>solve(AtA, Atb[ch]));
+    const bgAt=(i,ch)=>{ const f=basis(i%w,(i/w)|0); let v=0; for(let a=0;a<6;a++) v+=coef[ch][a]*f[a]; return v; };
+    const t2=tol*tol;
+    /* edge strength: the flood stops at the product's outline even where its colour is close to the backdrop */
+    const grad=new Float32Array(n);
+    { const bl=[0,1,2].map(()=>new Float32Array(n));
+      for(let y=0;y<h;y++) for(let x=0;x<w;x++){ for(let ch=0;ch<3;ch++){ let s_=0,k=0; for(let dy=-1;dy<=1;dy++) for(let dx=-1;dx<=1;dx++){ const xx=x+dx, yy=y+dy; if(xx<0||yy<0||xx>=w||yy>=h) continue; s_+=data[(yy*w+xx)*4+ch]; k++; } bl[ch][y*w+x]=s_/k; } }
+      for(let y=1;y<h-1;y++) for(let x=1;x<w-1;x++){ const i=y*w+x; let g=0;
+        for(let ch=0;ch<3;ch++){ const B_=bl[ch];
+          const gx=(B_[i-w+1]+2*B_[i+1]+B_[i+w+1])-(B_[i-w-1]+2*B_[i-1]+B_[i+w-1]);
+          const gy=(B_[i+w-1]+2*B_[i+w]+B_[i+w+1])-(B_[i-w-1]+2*B_[i-w]+B_[i-w+1]);
+          g+=gx*gx+gy*gy; }
+        grad[i]=Math.sqrt(g)/8; } }
+    const isBg = i => { if(data[i*4+3]<40) return true; if(grad[i]>=4) return false; const dr=data[i*4]-bgAt(i,0), dg=data[i*4+1]-bgAt(i,1), db=data[i*4+2]-bgAt(i,2); return dr*dr+dg*dg+db*db < t2; };
+    const seen = new Uint8Array(n), q = new Int32Array(n); let qh=0, qt=0;
+    const seed = i => { if(!seen[i] && isBg(i)){ seen[i]=1; q[qt++]=i; } };
+    for(const i of border) seed(i);
+    while(qh<qt){ const i=q[qh++], x=i%w; if(x>0) seed(i-1); if(x<w-1) seed(i+1); if(i>=w) seed(i-w); if(i<n-w) seed(i+w); }
+    for(let i=0;i<n;i++) fg[i] = (!seen[i] && data[i*4+3]>=40) ? 1 : 0;
+  }
+  const seg = {w,h,data,fg,person,n};
+  components(seg);
+  return seg;
+}
+function components(seg, keepCluster){
+  const {w,h,n} = seg, fg = seg.fg;
+  const on = keepCluster==null ? (i=>fg[i]===1) : (i=>fg[i]===1 && seg.garments.lab[i]===keepCluster);
+  const lab = new Int32Array(n).fill(-1), q = new Int32Array(n), comps=[];
+  for(let i=0;i<n;i++){
+    if(!on(i) || lab[i]>=0) continue;
+    const c = {id:comps.length, size:0, x0:w, y0:h, x1:-1, y1:-1};
+    let qh=0, qt=0; q[qt++]=i; lab[i]=c.id;
+    while(qh<qt){ const j=q[qh++]; c.size++; const x=j%w, y=(j/w)|0;
+      if(x<c.x0)c.x0=x; if(x>c.x1)c.x1=x; if(y<c.y0)c.y0=y; if(y>c.y1)c.y1=y;
+      const nb=[x>0?j-1:-1, x<w-1?j+1:-1, j>=w?j-w:-1, j<n-w?j+w:-1];
+      for(const k of nb) if(k>=0 && on(k) && lab[k]<0){ lab[k]=c.id; q[qt++]=k; } }
+    comps.push(c);
+  }
+  comps.sort((a,b)=>b.size-a.size);
+  seg.lab = lab; seg.comps = comps;
+}
+/* when a person wears several garments: split clothing pixels into two groups by colour and height */
+const hex = c => '#'+c.slice(0,3).map(v=>Math.round(v).toString(16).padStart(2,'0')).join('');
+function garmentClusters(seg){
+  const {w,h,data,fg,n} = seg, idx=[];
+  for(let i=0;i<n;i++) if(fg[i]) idx.push(i);
+  if(idx.length < 200) return null;
+  const feat = i => [data[i*4], data[i*4+1], data[i*4+2], ((i/w)|0)/h*140];
+  idx.sort((a,b)=>a-b);
+  const mean = list => { const m=[0,0,0,0]; for(const i of list){ const f=feat(i); for(let k=0;k<4;k++) m[k]+=f[k]; } return m.map(v=>v/Math.max(1,list.length)); };
+  let C = [mean(idx.slice(0, idx.length*.25|0)), mean(idx.slice(idx.length*.75|0))];
+  const lab = new Uint8Array(n).fill(255);
+  for(let it=0; it<10; it++){
+    const acc=[[0,0,0,0,0],[0,0,0,0,0]];
+    for(const i of idx){ const f=feat(i); let best=0, bd=Infinity;
+      for(let c=0;c<2;c++){ let d=0; for(let k=0;k<4;k++) d+=(f[k]-C[c][k])**2; if(d<bd){bd=d;best=c;} }
+      lab[i]=best; const a=acc[best]; for(let k=0;k<4;k++) a[k]+=f[k]; a[4]++; }
+    C = acc.map((a,c)=> a[4] ? a.slice(0,4).map(v=>v/a[4]) : C[c]);
+  }
+  const counts=[0,0]; for(const i of idx) counts[lab[i]]++;
+  const colDist = Math.hypot(C[0][0]-C[1][0], C[0][1]-C[1][1], C[0][2]-C[1][2]);
+  if(colDist < 45 || Math.min(...counts) < idx.length*.12) return null;
+  const order = C[0][3] <= C[1][3] ? [0,1] : [1,0];
+  return {lab, list: order.map((c,k)=>({id:c, pos:k===0?'upper':'lower', hex:hex(C[c]), share:counts[c]/idx.length}))};
+}
+function makeView(seg, keep){
+  const ids = new Set(keep.map(c=>c.id)), mask = new Uint8Array(seg.n);
+  let x0=seg.w,y0=seg.h,x1=-1,y1=-1,size=0;
+  for(const c of keep){ size+=c.size; x0=Math.min(x0,c.x0); y0=Math.min(y0,c.y0); x1=Math.max(x1,c.x1); y1=Math.max(y1,c.y1); }
+  for(let i=0;i<seg.n;i++) if(ids.has(seg.lab[i])) mask[i]=1;
+  return {w:seg.w,h:seg.h,data:seg.data,mask,x0,y0,x1,y1,frac:size/seg.n,person:seg.person};
+}
+/* one product per photo, or two side by side (front and back in one image) */
+function pickViews(seg, allowSplit){
+  const c = seg.comps; if(!c.length) return null;
+  const main = c[0];
+  if(allowSplit && c[1] && c[1].size >= .35*main.size){
+    const a=main, b=c[1], hr=(b.y1-b.y0+1)/(a.y1-a.y0+1), gap=Math.max(a.x0,b.x0)-Math.min(a.x1,b.x1);
+    if(gap >= 2 && hr > .6 && hr < 1.65){ const [l,r] = a.x0<b.x0 ? [a,b] : [b,a]; return [makeView(seg,[l]), makeView(seg,[r])]; }
+  }
+  const ex = .1*Math.max(main.x1-main.x0, main.y1-main.y0);
+  const keep = c.filter((k,i) => i===0 || (k.size >= .08*main.size && k.x1>=main.x0-ex && k.x0<=main.x1+ex && k.y1>=main.y0-ex && k.y0<=main.y1+ex));
+  return [makeView(seg, keep)];
+}
+const px = (S,u,v) => [Math.min(S.x1, S.x0 + Math.floor(u*(S.x1-S.x0+1))), Math.min(S.y1, S.y0 + Math.floor(v*(S.y1-S.y0+1)))];
+function inside(S,u,v){ if(u<0||u>1||v<0||v>1) return false; const [x,y]=px(S,u,v); return S.mask[y*S.w+x]===1; }
+const insideV = (V,u,v) => inside(V.S, V.flip ? 1-u : u, v);
+function colorAt(S,u,v){
+  u=Math.min(1,Math.max(0,u)); v=Math.min(1,Math.max(0,v));
+  const [cx,cy]=px(S,u,v);
+  for(let r=0;r<=5;r++) for(let dy=-r;dy<=r;dy++) for(let dx=-r;dx<=r;dx++){
+    if(Math.max(Math.abs(dx),Math.abs(dy))!==r) continue;
+    const x=cx+dx, y=cy+dy; if(x<0||y<0||x>=S.w||y>=S.h) continue;
+    const i=y*S.w+x; if(S.mask[i]) return [S.data[i*4],S.data[i*4+1],S.data[i*4+2]];
+  }
+  return null;
+}
+const colorAtV = (V,u,v) => V.plain ? V.plain : colorAt(V.S, V.flip ? 1-u : u, v);
+function drawMask(S, label){
+  const c=document.createElement('canvas'); c.width=S.w; c.height=S.h;
+  const ctx=c.getContext('2d'); const out=ctx.createImageData(S.w,S.h);
+  for(let i=0;i<S.w*S.h;i++){ if(S.mask[i]){ out.data[i*4]=S.data[i*4]; out.data[i*4+1]=S.data[i*4+1]; out.data[i*4+2]=S.data[i*4+2]; out.data[i*4+3]=255; } }
+  ctx.putImageData(out,0,0);
+  const d=document.createElement('div'); d.className='mask'; d.append(c, Object.assign(document.createElement('span'),{textContent:label}));
+  return d;
+}
+const aspect = S => (S.x1-S.x0+1)/(S.y1-S.y0+1);
+function grid(nx,nz,N){ const P=3, X=nx+2*P, Y=N+2*P, Z=nz+2*P; return {f:new Float32Array(X*Y*Z),X,Y,Z,P,nx,nz,N,filled:0}; }
+/* with a side view: carve the shape where all outlines agree */
+function carveHull(V, N){
+  const nx = Math.max(6, Math.min(170, Math.round(N*(aspect(V.front.S)+aspect(V.back.S))/2)));
+  const nz = Math.max(6, Math.min(170, Math.round(N*(aspect(V.left.S)+aspect(V.right.S))/2)));
+  const G = grid(nx,nz,N), {X,Y,P}=G;
+  const fr=new Uint8Array(nx*N), sd=new Uint8Array(nz*N);
+  for(let y=0;y<N;y++){ const v=1-(y+.5)/N;
+    for(let x=0;x<nx;x++){ const u=(x+.5)/nx; fr[y*nx+x] = insideV(V.front,u,v) && insideV(V.back,1-u,v) ? 1:0; }
+    for(let z=0;z<nz;z++){ const s=(z+.5)/nz; sd[y*nz+z] = insideV(V.left,s,v) && insideV(V.right,1-s,v) ? 1:0; } }
+  for(let z=0;z<nz;z++) for(let y=0;y<N;y++) for(let x=0;x<nx;x++)
+    if(fr[y*nx+x] && sd[y*nz+z]){ G.f[((z+P)*Y+(y+P))*X+(x+P)]=1; G.filled++; }
+  return G;
+}
+/* front (and back) only: estimate depth from the outline, thick in the middle, rounded at the edges */
+function inflate(V, N, depthRatio, edge=1){
+  const nx = Math.max(6, Math.min(170, Math.round(N*(aspect(V.front.S)+aspect(V.back.S))/2)));
+  const nz = Math.max(4, Math.round(nx*depthRatio));
+  const G = grid(nx,nz,N), {X,Y,P}=G;
+  const m = new Uint8Array(nx*N), dt = new Float32Array(nx*N);
+  for(let y=0;y<N;y++){ const v=1-(y+.5)/N; for(let x=0;x<nx;x++){ const u=(x+.5)/nx; m[y*nx+x] = insideV(V.front,u,v) && insideV(V.back,1-u,v) ? 1:0; } }
+  const BIG=1e9, at=(x,y)=> (x<0||y<0||x>=nx||y>=N) ? 0 : dt[y*nx+x];
+  for(let i=0;i<m.length;i++) dt[i] = m[i] ? BIG : 0;
+  for(let y=0;y<N;y++) for(let x=0;x<nx;x++){ const i=y*nx+x; if(!m[i]) continue; dt[i]=Math.min(dt[i], at(x-1,y)+1, at(x,y-1)+1, at(x-1,y-1)+1.414, at(x+1,y-1)+1.414); }
+  for(let y=N-1;y>=0;y--) for(let x=nx-1;x>=0;x--){ const i=y*nx+x; if(!m[i]) continue; dt[i]=Math.min(dt[i], at(x+1,y)+1, at(x,y+1)+1, at(x+1,y+1)+1.414, at(x-1,y+1)+1.414); }
+  const R = Math.max(1.2, (nz/2)*edge), zc = (nz-1)/2;
+  for(let y=0;y<N;y++) for(let x=0;x<nx;x++){
+    const i=y*nx+x; if(!m[i]) continue;
+    const t = Math.min(1, dt[i]/R), half = Math.max(.6, (nz/2)*Math.sqrt(1-(1-t)*(1-t)));
+    for(let z=0;z<nz;z++) if(Math.abs(z-zc) <= half){ G.f[((z+P)*Y+(y+P))*X+(x+P)]=1; G.filled++; }
+  }
+  return G;
+}
+function blur(G, passes=2){
+  const {X,Y,Z}=G; let a=G.f, b=new Float32Array(a.length);
+  const id=(x,y,z)=>(z*Y+y)*X+x;
+  for(let p=0;p<passes;p++){
+    for(let z=0;z<Z;z++) for(let y=0;y<Y;y++) for(let x=0;x<X;x++){ const i=id(x,y,z); b[i]=(a[i]*2+(x>0?a[i-1]:0)+(x<X-1?a[i+1]:0))/4; }
+    [a,b]=[b,a];
+    for(let z=0;z<Z;z++) for(let y=0;y<Y;y++) for(let x=0;x<X;x++){ const i=id(x,y,z); b[i]=(a[i]*2+(y>0?a[i-X]:0)+(y<Y-1?a[i+X]:0))/4; }
+    [a,b]=[b,a];
+    for(let z=0;z<Z;z++) for(let y=0;y<Y;y++) for(let x=0;x<X;x++){ const i=id(x,y,z); b[i]=(a[i]*2+(z>0?a[i-X*Y]:0)+(z<Z-1?a[i+X*Y]:0))/4; }
+    [a,b]=[b,a];
+  }
+  G.f=a;
+}
+const EDGES=[[0,1],[2,3],[4,5],[6,7],[0,2],[1,3],[4,6],[5,7],[0,4],[1,5],[2,6],[3,7]];
+function surfaceNets(G, iso=.5){
+  const {f,X,Y,Z}=G, id=(x,y,z)=>(z*Y+y)*X+x;
+  const cell=new Int32Array(X*Y*Z).fill(-1), V=[], T=[], v=new Float32Array(8);
+  for(let z=0;z<Z-1;z++) for(let y=0;y<Y-1;y++) for(let x=0;x<X-1;x++){
+    let m=0;
+    for(let k=0;k<8;k++){ v[k]=f[id(x+(k&1),y+((k>>1)&1),z+((k>>2)&1))]-iso; if(v[k]>0) m|=1<<k; }
+    if(m===0||m===255) continue;
+    let sx=0,sy=0,sz=0,c=0;
+    for(const [a,b] of EDGES){ if(((m>>a)&1)===((m>>b)&1)) continue;
+      const t=v[a]/(v[a]-v[b]);
+      sx+=(a&1)+t*((b&1)-(a&1)); sy+=((a>>1)&1)+t*(((b>>1)&1)-((a>>1)&1)); sz+=((a>>2)&1)+t*(((b>>2)&1)-((a>>2)&1)); c++; }
+    cell[id(x,y,z)]=V.length/3; V.push(x+sx/c, y+sy/c, z+sz/c);
+  }
+  const quad=(a,b,c,d,flip)=>{ if(a<0||b<0||c<0||d<0) return; if(flip) T.push(a,c,b,a,d,c); else T.push(a,b,c,a,c,d); };
+  for(let z=1;z<Z-1;z++) for(let y=1;y<Y-1;y++) for(let x=1;x<X-1;x++){
+    const i=id(x,y,z), inA=f[i]>iso;
+    if(inA!==(f[i+1]>iso)) quad(cell[i],cell[i-X],cell[i-X-X*Y],cell[i-X*Y], !inA);
+    if(inA!==(f[i+X]>iso)) quad(cell[i],cell[i-X*Y],cell[i-1-X*Y],cell[i-1], !inA);
+    if(inA!==(f[i+X*Y]>iso)) quad(cell[i],cell[i-1],cell[i-1-X],cell[i-X], !inA);
+  }
+  return {V:new Float32Array(V), T:new Uint32Array(T)};
+}
+function smooth(M, passes=2){
+  const n=M.V.length/3, nb=Array.from({length:n},()=>new Set());
+  for(let t=0;t<M.T.length;t+=3){ const a=M.T[t],b=M.T[t+1],c=M.T[t+2]; nb[a].add(b).add(c); nb[b].add(a).add(c); nb[c].add(a).add(b); }
+  for(let p=0;p<passes;p++){ const out=new Float32Array(M.V);
+    for(let i=0;i<n;i++){ if(!nb[i].size) continue; let sx=0,sy=0,sz=0; for(const j of nb[i]){ sx+=M.V[j*3]; sy+=M.V[j*3+1]; sz+=M.V[j*3+2]; }
+      const k=nb[i].size; out[i*3]+= .5*(sx/k-M.V[i*3]); out[i*3+1]+= .5*(sy/k-M.V[i*3+1]); out[i*3+2]+= .5*(sz/k-M.V[i*3+2]); }
+    M.V=out; }
+}
+function normals(G, M){
+  const {f,X,Y,Z}=G, id=(x,y,z)=>(z*Y+y)*X+x, cl=(a,lo,hi)=>Math.max(lo,Math.min(hi,a));
+  const val=(x,y,z)=>f[id(cl(x,0,X-1),cl(y,0,Y-1),cl(z,0,Z-1))];
+  const grad=(x,y,z)=>[val(x+1,y,z)-val(x-1,y,z), val(x,y+1,z)-val(x,y-1,z), val(x,y,z+1)-val(x,y,z-1)];
+  const n=M.V.length/3, Nr=new Float32Array(n*3);
+  for(let i=0;i<n;i++){
+    const px_=M.V[i*3], py=M.V[i*3+1], pz=M.V[i*3+2];
+    const x0=Math.floor(px_), y0=Math.floor(py), z0=Math.floor(pz), tx=px_-x0, ty=py-y0, tz=pz-z0;
+    let gx=0,gy=0,gz=0;
+    for(let k=0;k<8;k++){ const dx=k&1, dy=(k>>1)&1, dz=(k>>2)&1;
+      const w=(dx?tx:1-tx)*(dy?ty:1-ty)*(dz?tz:1-tz), g=grad(x0+dx,y0+dy,z0+dz); gx+=w*g[0]; gy+=w*g[1]; gz+=w*g[2]; }
+    const l=Math.hypot(gx,gy,gz)||1; Nr[i*3]=-gx/l; Nr[i*3+1]=-gy/l; Nr[i*3+2]=-gz/l;
+  }
+  M.N=Nr;
+}
+function paint(G, M, V){
+  const n=M.V.length/3, C=new Float32Array(n*3), lin=c=>Math.pow(c/255,2.2);
+  for(let i=0;i<n;i++){
+    const gx=M.V[i*3]-G.P, gy=M.V[i*3+1]-G.P, gz=M.V[i*3+2]-G.P;
+    const u=gx/G.nx, s=gz/G.nz, v=1-gy/G.N;
+    const nx=M.N[i*3], nz=M.N[i*3+2];
+    const views=[[V.front,u,Math.max(0,nz)],[V.back,1-u,Math.max(0,-nz)],[V.left,s,Math.max(0,-nx)],[V.right,1-s,Math.max(0,nx)]];
+    let r=0,g=0,b=0,wt=0;
+    for(const [view,uu,d] of views){ if(!view) continue; const w=d*d+.04; const c=colorAtV(view,uu,v); if(!c) continue; r+=w*lin(c[0]); g+=w*lin(c[1]); b+=w*lin(c[2]); wt+=w; }
+    if(wt){ C[i*3]=r/wt; C[i*3+1]=g/wt; C[i*3+2]=b/wt; } else { C[i*3]=C[i*3+1]=C[i*3+2]=.5; }
+  }
+  M.C=C;
+}
+/* ---------- textured relief: a clean, closed mesh from front (and back) photos ----------
+   Shape: the product outline, given rounded thickness from a distance field.
+   Look: the original photos mapped on as a sharp texture (front on the front, back on the back). */
+const sampleU = (view, uu) => view.flip ? 1-uu : uu;
+function fillOutside(S, passes){
+  /* copy product colours outward so texture edges never pick up the background */
+  const {w,h} = S, col = new Uint8ClampedArray(S.data);
+  /* shrink the mask a few pixels first: edge pixels are blended with the backdrop */
+  let known = new Uint8Array(S.mask);
+  const er = Math.max(2, Math.round(Math.max(S.x1-S.x0, S.y1-S.y0)/220));
+  for(let e=0;e<er;e++){ const nk=new Uint8Array(known);
+    for(let y=Math.max(1,S.y0);y<=Math.min(h-2,S.y1);y++) for(let x=Math.max(1,S.x0);x<=Math.min(w-2,S.x1);x++){ const i=y*w+x; if(known[i] && (!known[i-1]||!known[i+1]||!known[i-w]||!known[i+w])) nk[i]=0; }
+    known=nk; }
+  passes += er;
+  for(let p=0;p<passes;p++){
+    const add=[];
+    for(let y=Math.max(0,S.y0-passes);y<=Math.min(h-1,S.y1+passes);y++) for(let x=Math.max(0,S.x0-passes);x<=Math.min(w-1,S.x1+passes);x++){
+      const i=y*w+x; if(known[i]) continue;
+      let r=0,g=0,b=0,k=0;
+      for(const j of [i-1,i+1,i-w,i+w]){ if(j<0||j>=w*h||!known[j]) continue; r+=col[j*4]; g+=col[j*4+1]; b+=col[j*4+2]; k++; }
+      if(k) add.push(i,r/k,g/k,b/k);
+    }
+    for(let a=0;a<add.length;a+=4){ const i=add[a]; col[i*4]=add[a+1]; col[i*4+1]=add[a+2]; col[i*4+2]=add[a+3]; col[i*4+3]=255; known[i]=1; }
+  }
+  return col;
+}
+function cropCanvas(S){
+  const col = fillOutside(S, 10);
+  const bw=S.x1-S.x0+1, bh=S.y1-S.y0+1;
+  const mk=()=>{ const c=document.createElement('canvas'); c.width=bw; c.height=bh; return c; };
+  /* sharp photo inside, softened colours in a band at the edge (that band wraps the sides of the model) */
+  const inner=Math.max(4, Math.round(Math.max(bw,bh)/90));
+  let m=new Uint8Array(bw*bh); for(let y=0;y<bh;y++) for(let x=0;x<bw;x++) m[y*bw+x]=S.mask[(y+S.y0)*S.w+x+S.x0];
+  for(let e=0;e<inner;e++){ const n=new Uint8Array(m); for(let y=1;y<bh-1;y++) for(let x=1;x<bw-1;x++){ const i=y*bw+x; if(m[i]&&(!m[i-1]||!m[i+1]||!m[i-bw]||!m[i+bw])) n[i]=0; } for(let x=0;x<bw;x++){ n[x]=0; n[(bh-1)*bw+x]=0; } for(let y=0;y<bh;y++){ n[y*bw]=0; n[y*bw+bw-1]=0; } m=n; }
+  const sharp=mk(), sid=sharp.getContext('2d').createImageData(bw,bh);
+  for(let y=0;y<bh;y++) for(let x=0;x<bw;x++){ const s_=((y+S.y0)*S.w+(x+S.x0))*4, d=(y*bw+x)*4; sid.data[d]=col[s_]; sid.data[d+1]=col[s_+1]; sid.data[d+2]=col[s_+2]; sid.data[d+3]=255; }
+  sharp.getContext('2d').putImageData(sid,0,0);
+  const inside=mk(), iid=new ImageData(new Uint8ClampedArray(sid.data), bw, bh);
+  for(let i=0;i<bw*bh;i++) iid.data[i*4+3]=m[i]?255:0;
+  inside.getContext('2d').putImageData(iid,0,0);
+  /* edge colours: a blur weighted by the shirt mask only (no backdrop, no streaks) */
+  const norm=(r)=>{ const c=mk(), x=c.getContext('2d'); x.filter=`blur(${r}px)`; x.drawImage(inside,0,0); x.filter='none';
+    const d=x.getImageData(0,0,bw,bh); for(let i=0;i<bw*bh;i++) d.data[i*4+3] = d.data[i*4+3]>6 ? 255 : 0; x.putImageData(d,0,0); return c; };
+  let ar=0,ag=0,ab=0,ak=0; for(let i=0;i<bw*bh;i+=7) if(m[i]){ ar+=sid.data[i*4]; ag+=sid.data[i*4+1]; ab+=sid.data[i*4+2]; ak++; }
+  const out=mk(), o=out.getContext('2d');
+  o.fillStyle = ak ? `rgb(${ar/ak|0},${ag/ak|0},${ab/ak|0})` : '#888'; o.fillRect(0,0,bw,bh);
+  o.drawImage(norm(inner*6),0,0); o.drawImage(norm(inner*2.5),0,0);
+  o.filter='blur(1.5px)'; o.drawImage(inside,0,0); o.filter='none';
+  o.drawImage(inside,0,0);
+  return out;
+}
+function lumGrid(S, flip, nx, N){
+  const L=new Float32Array((nx+1)*(N+1));
+  for(let j=0;j<=N;j++) for(let i=0;i<=nx;i++){
+    let u=i/nx; if(flip) u=1-u; const v=j/N;
+    const x=Math.min(S.x1, S.x0+Math.floor(u*(S.x1-S.x0+1))), y=Math.min(S.y1, S.y0+Math.floor(v*(S.y1-S.y0+1)));
+    const p=(y*S.w+x)*4; L[j*(nx+1)+i]=(.3*S.data[p]+.59*S.data[p+1]+.11*S.data[p+2])/255;
+  }
+  return L;
+}
+function boxBlur(A, W, H, r){
+  const t=new Float32Array(A.length), o=new Float32Array(A.length);
+  for(let y=0;y<H;y++){ let s=0,c=0; for(let x=-r;x<W;x++){ if(x+r<W){ s+=A[y*W+x+r]; c++; } if(x-r-1>=0){ s-=A[y*W+x-r-1]; c--; } if(x>=0) t[y*W+x]=s/c; } }
+  for(let x=0;x<W;x++){ let s=0,c=0; for(let y=-r;y<H;y++){ if(y+r<H){ s+=t[(y+r)*W+x]; c++; } if(y-r-1>=0){ s-=t[(y-r-1)*W+x]; c--; } if(y>=0) o[y*W+x]=s/c; } }
+  return o;
+}
+function buildRelief(V, {depth=.14, edge=1, rows=260, folds=.35, worldHeight=.72}={}){
+  const F=V.front, B=V.back;
+  const aspF=(F.S.x1-F.S.x0+1)/(F.S.y1-F.S.y0+1), aspB=(B.S.x1-B.S.x0+1)/(B.S.y1-B.S.y0+1);
+  const N=rows, nx=Math.max(8, Math.round(N*aspF));
+  /* cells inside the outline (front and back must agree) */
+  const cin=new Uint8Array(nx*N);
+  for(let j=0;j<N;j++){ const v=(j+.5)/N; for(let i=0;i<nx;i++){ const u=(i+.5)/nx;
+    cin[j*nx+i] = insideV(F,u,v) ? 1 : 0; } }
+  /* keep only the biggest connected region */
+  { const lab=new Int32Array(nx*N).fill(-1), q=new Int32Array(nx*N); let best=-1,bs=0,id=0;
+    for(let s=0;s<nx*N;s++){ if(!cin[s]||lab[s]>=0) continue; let h=0,t=0,n=0; q[t++]=s; lab[s]=id;
+      while(h<t){ const c=q[h++]; n++; const x=c%nx, y=(c/nx)|0;
+        for(const d of [x>0?c-1:-1, x<nx-1?c+1:-1, y>0?c-nx:-1, y<N-1?c+nx:-1]) if(d>=0&&cin[d]&&lab[d]<0){ lab[d]=id; q[t++]=d; } }
+      if(n>bs){bs=n;best=id;} id++; }
+    for(let s=0;s<nx*N;s++) cin[s] = lab[s]===best ? 1:0; }
+  /* distance to the edge, per cell */
+  const dt=new Float32Array(nx*N), BIG=1e9, at=(x,y)=>(x<0||y<0||x>=nx||y>=N)?0:dt[y*nx+x];
+  for(let s=0;s<nx*N;s++) dt[s]=cin[s]?BIG:0;
+  for(let y=0;y<N;y++) for(let x=0;x<nx;x++){ const s=y*nx+x; if(!cin[s]) continue; dt[s]=Math.min(dt[s],at(x-1,y)+1,at(x,y-1)+1,at(x-1,y-1)+1.414,at(x+1,y-1)+1.414); }
+  for(let y=N-1;y>=0;y--) for(let x=nx-1;x>=0;x--){ const s=y*nx+x; if(!cin[s]) continue; dt[s]=Math.min(dt[s],at(x+1,y)+1,at(x,y+1)+1,at(x+1,y+1)+1.414,at(x-1,y+1)+1.414); }
+  /* corners of the grid become vertices */
+  const W=nx+1, H=N+1, cid=(i,j)=>j*W+i, cell=(i,j)=>(i<0||j<0||i>=nx||j>=N)?0:cin[j*nx+i];
+  const used=new Uint8Array(W*H), bnd=new Uint8Array(W*H), cd=new Float32Array(W*H);
+  for(let j=0;j<H;j++) for(let i=0;i<W;i++){
+    const a=[cell(i-1,j-1),cell(i,j-1),cell(i-1,j),cell(i,j)], k=a[0]+a[1]+a[2]+a[3];
+    if(!k) continue; const c=cid(i,j); used[c]=1; if(k<4) bnd[c]=1;
+    let m=BIG; for(const [x,y] of [[i-1,j-1],[i,j-1],[i-1,j],[i,j]]) if(cell(x,y)) m=Math.min(m, dt[y*nx+x]);
+    cd[c] = k<4 ? 0 : Math.max(0, m-.5);
+  }
+  /* smooth the outline so edges are not jagged */
+  const px=new Float32Array(W*H), py=new Float32Array(W*H);
+  for(let j=0;j<H;j++) for(let i=0;i<W;i++){ px[cid(i,j)]=i; py[cid(i,j)]=j; }
+  const Dg=Math.max(1.5, depth*nx/2), band=Math.max(3, Dg*edge*1.3);
+  for(let pass=0;pass<10;pass++){
+    const nxp=new Float32Array(px), nyp=new Float32Array(py);
+    for(let j=0;j<H;j++) for(let i=0;i<W;i++){ const c=cid(i,j); if(!used[c] || (!bnd[c] && cd[c]>band)) continue;
+      let sx=0,sy=0,k=0; for(const [a,b] of [[i-1,j],[i+1,j],[i,j-1],[i,j+1]]){ if(a<0||b<0||a>=W||b>=H) continue; const d=cid(a,b); if(!used[d]) continue; if(bnd[c] && !bnd[d]) continue; sx+=px[d]; sy+=py[d]; k++; }
+      if(k>=2){ nxp[c]=.5*px[c]+.5*sx/k; nyp[c]=.5*py[c]+.5*sy/k; } }
+    px.set(nxp); py.set(nyp);
+  }
+  /* smooth the distance field near the edge so thickness rises evenly (no row-by-row steps) */
+  for(let pass=0;pass<16;pass++){
+    const nc=new Float32Array(cd);
+    for(let j=0;j<H;j++) for(let i=0;i<W;i++){ const c=cid(i,j); if(!used[c]||bnd[c]||cd[c]>band*1.6) continue;
+      let s_=0,k=0; for(const [a,b] of [[i-1,j],[i+1,j],[i,j-1],[i,j+1]]){ if(a<0||b<0||a>=W||b>=H) continue; const d=cid(a,b); if(!used[d]) continue; s_+=cd[d]; k++; }
+      if(k) nc[c]=.5*cd[c]+.5*s_/k; }
+    cd.set(nc);
+  }
+  /* thickness: rounded at the rim, full in the middle */
+  const D=Math.max(1.5, depth*nx/2), R=Math.max(1.2, D*edge);
+  const prof=c=>{ const t=Math.min(1, cd[c]/R); return D*Math.sqrt(Math.max(0,1-(1-t)*(1-t))); };
+  /* gentle folds from the photo's shading, so creases read in 3D */
+  /* band-pass: keeps broad fabric folds, drops print and text detail */
+  const fold=(S,flip)=>{ const L=lumGrid(S,flip,nx,N), A=boxBlur(L,W,H,Math.max(2,Math.round(N/45))), Bl=boxBlur(L,W,H,Math.max(6,Math.round(N/10))); const o=new Float32Array(W*H); for(let c=0;c<W*H;c++) o[c]=A[c]-Bl[c]; return o; };
+  const fF = folds>0 ? fold(F.S, F.flip) : null;
+  const fB = folds>0 && !B.plain ? fold(B.S, !B.flip) : null;
+  const amp = folds*D*.9;
+  /* vertices: front sheet and back sheet, joined at the rim */
+  const pos=[], uv=[], idx=[], fIdx=new Int32Array(W*H).fill(-1), bIdx=new Int32Array(W*H).fill(-1);
+  const sc=worldHeight/N, cx=nx/2, cy=N/2;
+  for(let pass=0;pass<2;pass++) for(let j=0;j<H;j++) for(let i=0;i<W;i++){
+    const c=cid(i,j); if(!used[c]) continue;
+    const t=prof(c), rim=Math.min(1, cd[c]/R);
+    const u=px[c]/nx, v=py[c]/N;
+    let z;
+    if(pass===0){ z = t + (fF ? Math.max(-t*.6, Math.min(D*.5, fF[c]*amp*rim*4)) : 0); fIdx[c]=pos.length/3; uv.push(.5*Math.min(1,Math.max(0,sampleU(F,u))), v); }
+    else { z = -(t + (fB ? Math.max(-t*.6, Math.min(D*.5, fB[c]*amp*rim*4)) : 0)); bIdx[c]=pos.length/3; uv.push(.5+.5*Math.min(1,Math.max(0,sampleU(B,1-u))), v); }
+    if(bnd[c]) z=0;
+    pos.push((px[c]-cx)*sc, (cy-py[c])*sc, z*sc);
+  }
+  for(let j=0;j<N;j++) for(let i=0;i<nx;i++){ if(!cin[j*nx+i]) continue;
+    const a=cid(i,j), b=cid(i+1,j), c=cid(i+1,j+1), d=cid(i,j+1);
+    idx.push(fIdx[a],fIdx[d],fIdx[c], fIdx[a],fIdx[c],fIdx[b]);
+    idx.push(bIdx[a],bIdx[b],bIdx[c], bIdx[a],bIdx[c],bIdx[d]);
+  }
+  /* smooth normals within each sheet */
+  const P=new Float32Array(pos), I=new Uint32Array(idx), Nn=new Float32Array(P.length);
+  for(let t=0;t<I.length;t+=3){ const a=I[t]*3,b=I[t+1]*3,c=I[t+2]*3;
+    const ux=P[b]-P[a],uy=P[b+1]-P[a+1],uz=P[b+2]-P[a+2], vx=P[c]-P[a],vy=P[c+1]-P[a+1],vz=P[c+2]-P[a+2];
+    const nx_=uy*vz-uz*vy, ny_=uz*vx-ux*vz, nz_=ux*vy-uy*vx;
+    for(const k of [a,b,c]){ Nn[k]+=nx_; Nn[k+1]+=ny_; Nn[k+2]+=nz_; } }
+  for(let k=0;k<Nn.length;k+=3){ const l=Math.hypot(Nn[k],Nn[k+1],Nn[k+2])||1; Nn[k]/=l; Nn[k+1]/=l; Nn[k+2]/=l; }
+  /* texture atlas: front photo left, back photo right */
+  const TS=2048, atlas=document.createElement('canvas'); atlas.width=TS*2; atlas.height=TS;
+  const ctx=atlas.getContext('2d'); ctx.imageSmoothingQuality='high';
+  ctx.drawImage(cropCanvas(F.S), 0,0,TS,TS);
+  if(B.plain){ ctx.fillStyle=`rgb(${B.plain.map(Math.round).join(',')})`; ctx.fillRect(TS,0,TS,TS); }
+  else ctx.drawImage(cropCanvas(B.S), TS,0,TS,TS);
+  return {P, N:Nn, UV:new Float32Array(uv), T:I, atlas, tris:I.length/3};
+}
+async function toTexturedGLB(M){
+  const jpg = new Uint8Array(await (await new Promise(r=>M.atlas.toBlob(r,'image/jpeg',.9))).arrayBuffer());
+  const n=M.P.length/3, min=[Infinity,Infinity,Infinity], max=[-Infinity,-Infinity,-Infinity];
+  for(let i=0;i<n;i++) for(let k=0;k<3;k++){ const v=M.P[i*3+k]; if(v<min[k])min[k]=v; if(v>max[k])max[k]=v; }
+  const parts=[M.P, M.N, M.UV, M.T, jpg], views=[]; let off=0;
+  for(const a of parts){ views.push({buffer:0,byteOffset:off,byteLength:a.byteLength}); off+=a.byteLength; off=(off+3)&~3; }
+  const json={asset:{version:'2.0',generator:'Photos to 3D demo'},scene:0,scenes:[{nodes:[0]}],nodes:[{mesh:0}],
+    meshes:[{primitives:[{attributes:{POSITION:0,NORMAL:1,TEXCOORD_0:2},indices:3,material:0}]}],
+    materials:[{pbrMetallicRoughness:{baseColorTexture:{index:0},metallicFactor:0,roughnessFactor:.92},doubleSided:true}],
+    samplers:[{magFilter:9729,minFilter:9987,wrapS:33071,wrapT:33071}], textures:[{sampler:0,source:0}], images:[{bufferView:4,mimeType:'image/jpeg'}],
+    accessors:[{bufferView:0,componentType:5126,count:n,type:'VEC3',min,max},{bufferView:1,componentType:5126,count:n,type:'VEC3'},
+      {bufferView:2,componentType:5126,count:n,type:'VEC2'},{bufferView:3,componentType:5125,count:M.T.length,type:'SCALAR'}],
+    bufferViews:views,buffers:[{byteLength:off}]};
+  const js=new TextEncoder().encode(JSON.stringify(json)), jl=(js.length+3)&~3, jc=new Uint8Array(jl).fill(0x20); jc.set(js);
+  const total=12+8+jl+8+off, out=new ArrayBuffer(total), dv=new DataView(out), u8=new Uint8Array(out);
+  dv.setUint32(0,0x46546C67,true); dv.setUint32(4,2,true); dv.setUint32(8,total,true);
+  dv.setUint32(12,jl,true); dv.setUint32(16,0x4E4F534A,true); u8.set(jc,20);
+  let o=20+jl; dv.setUint32(o,off,true); dv.setUint32(o+4,0x004E4942,true); o+=8;
+  for(let k=0;k<parts.length;k++){ const a=parts[k]; u8.set(new Uint8Array(a.buffer,a.byteOffset,a.byteLength), o+views[k].byteOffset); }
+  return new Blob([out],{type:'model/gltf-binary'});
+}
+
+function toGLB(G, M){
+  const n=M.V.length/3, scale=.25/G.N, P=new Float32Array(n*3);
+  const min=[Infinity,Infinity,Infinity], max=[-Infinity,-Infinity,-Infinity];
+  for(let i=0;i<n;i++){
+    const p=[(M.V[i*3]-G.X/2)*scale, (M.V[i*3+1]-G.P)*scale, (M.V[i*3+2]-G.Z/2)*scale];
+    for(let k=0;k<3;k++){ P[i*3+k]=p[k]; if(p[k]<min[k])min[k]=p[k]; if(p[k]>max[k])max[k]=p[k]; }
+  }
+  const parts=[P,M.N,M.C,M.T], views=[]; let off=0;
+  for(const a of parts){ views.push({buffer:0,byteOffset:off,byteLength:a.byteLength}); off+=a.byteLength; }
+  const json={asset:{version:'2.0',generator:'Photos to 3D demo'},scene:0,scenes:[{nodes:[0]}],nodes:[{mesh:0}],
+    meshes:[{primitives:[{attributes:{POSITION:0,NORMAL:1,COLOR_0:2},indices:3,material:0}]}],
+    materials:[{pbrMetallicRoughness:{baseColorFactor:[1,1,1,1],metallicFactor:0,roughnessFactor:.82},doubleSided:true}],
+    accessors:[{bufferView:0,componentType:5126,count:n,type:'VEC3',min,max},{bufferView:1,componentType:5126,count:n,type:'VEC3'},
+      {bufferView:2,componentType:5126,count:n,type:'VEC3'},{bufferView:3,componentType:5125,count:M.T.length,type:'SCALAR'}],
+    bufferViews:views,buffers:[{byteLength:off}]};
+  let js=new TextEncoder().encode(JSON.stringify(json)); const jpad=(4-js.length%4)%4;
+  const jsonChunk=new Uint8Array(js.length+jpad).fill(0x20); jsonChunk.set(js);
+  const total=12+8+jsonChunk.length+8+off, out=new ArrayBuffer(total), dv=new DataView(out), u8=new Uint8Array(out);
+  dv.setUint32(0,0x46546C67,true); dv.setUint32(4,2,true); dv.setUint32(8,total,true);
+  dv.setUint32(12,jsonChunk.length,true); dv.setUint32(16,0x4E4F534A,true); u8.set(jsonChunk,20);
+  let o=20+jsonChunk.length; dv.setUint32(o,off,true); dv.setUint32(o+4,0x004E4942,true); o+=8;
+  for(const a of parts){ u8.set(new Uint8Array(a.buffer,a.byteOffset,a.byteLength),o); o+=a.byteLength; }
+  return new Blob([out],{type:'model/gltf-binary'});
+}
+
+let jobRun = 0, modelURL = null;
+$('tol').addEventListener('input', e => $('tolval').textContent = e.target.value);
+$('depth').addEventListener('input', e => $('depthval').textContent = e.target.value+'%');
+
+/* person and clothing segmentation (MediaPipe multiclass selfie model, bundled with the page) */
+let segmenter = null, segState = 'loading';
+function segStatus(){
+  const el=$('segstatus');
+  el.textContent = segState==='ready' ? 'Person removal ready. If a model is wearing the product, only the product is kept.'
+    : segState==='failed' ? 'Person removal could not start in this browser. Photos are cut out by background colour only.'
+    : 'Loading person removal…';
+  el.dataset.state = segState;
+}
+const segReady = (async () => {
+  segStatus();
+  try{
+    const parts = await Promise.all(['mp/seg-model-1.txt','mp/seg-model-2.txt'].map(u => fetch(u).then(r => { if(!r.ok) throw new Error(u); return r.text(); })));
+    const b64 = parts.join('').replace(/\s/g,''), bin = atob(b64), bytes = new Uint8Array(bin.length);
+    for(let i=0;i<bin.length;i++) bytes[i] = bin.charCodeAt(i);
+    const {ImageSegmenter, FilesetResolver} = await import(new URL('mp/vision_bundle.mjs', location.href).href);
+    const files = await FilesetResolver.forVisionTasks(new URL('mp/wasm', location.href).href);
+    segmenter = await ImageSegmenter.createFromOptions(files, {baseOptions:{modelAssetBuffer:bytes, delegate:'CPU'}, runningMode:'IMAGE', outputCategoryMask:true, outputConfidenceMasks:false});
+    segState = 'ready';
+  }catch(e){ console.error('segmenter', e); segState = 'failed'; }
+  segStatus();
+})();
+function categories(im){
+  if(!segmenter) return null;
+  try{
+    const r = segmenter.segment(im.canvas), m = r.categoryMask;
+    let out = m.getAsUint8Array();
+    if(m.width!==im.w || m.height!==im.h){ const o=new Uint8Array(im.w*im.h); for(let y=0;y<im.h;y++) for(let x=0;x<im.w;x++) o[y*im.w+x]=out[Math.floor(y*m.height/im.h)*m.width+Math.floor(x*m.width/im.w)]; out=o; } else out = out.slice();
+    m.close?.(); r.close?.();
+    return out;
+  }catch(e){ console.error(e); return null; }
+}
+
+const ROLES = ['front','back','left','right'], OPP = {front:'back', back:'front', left:'right', right:'left'}, NAME = {front:'Front', back:'Back', left:'Left', right:'Right'};
+
+/* ---- description: Claude reads it into settings, with a keyword reader as fallback ---- */
+const COLORS = {black:'#1b1b1b',white:'#f2f2f2',grey:'#8a8f96',gray:'#8a8f96',red:'#c0392b',maroon:'#6d1f2a',blue:'#2f5fb3',navy:'#1f2a44',green:'#2e7d4f',olive:'#6b6b3a',yellow:'#e7c43a',orange:'#e07a2e',pink:'#e58fb0',purple:'#6c4aa0',beige:'#d8c7a6',cream:'#efe6d2',brown:'#6b4a33',tan:'#c19a6b'};
+function readLocally(text, facts){
+  const t = text.toLowerCase(), out = {source:'keywords'};
+  if(/\b(only|just)\b[^.]*\b(t-?shirt|shirt|top|tee|hoodie|jacket|kurta|sweater|blouse)\b|\b(t-?shirt|shirt|top|hoodie|jacket)\b[^.]*\bnot\b[^.]*\b(jeans|pants|trousers|bottoms?|skirt|shorts)\b/.test(t)) out.keep='upper';
+  else if(/\b(only|just)\b[^.]*\b(jeans|pants|trousers|bottoms?|skirt|shorts|joggers)\b/.test(t)) out.keep='lower';
+  if(/\b(thin|flat|slim)\b/.test(t)) out.depth=.08;
+  if(/\b(thick|chunky|puffy|bulky|deep)\b/.test(t)) out.depth=.4;
+  if(/\b(box|boxy|square|cube|rectangular)\b/.test(t)) out.edges='boxy';
+  else if(/\b(round|rounded|soft|cylind|curved)\b/.test(t)) out.edges='round';
+  const back = t.match(/back[^.]*?\b(plain|solid)\b[^.]*|\b(plain|solid)\b[^.]*back[^.]*/);
+  if(back){ out.back='plain'; const c = Object.keys(COLORS).find(k => new RegExp('\\b'+k+'\\b').test(back[0])); if(c) out.backColor=COLORS[c]; }
+  const prod = t.match(/\b(t-?shirt|shirt|hoodie|jacket|kurta|dress|jeans|shoe|sneaker|bag|backpack|bottle|mug|cap|hat|box|watch|chair|lamp|vase)\b/);
+  if(prod) out.product = prod[1];
+  return out;
+}
+async function readDescription(text, facts){
+  if(!text.trim()) return {source:'none'};
+  const sample = window.claude?.use ? await window.claude.use('sample').catch(()=>null) : null;
+  if(sample){
+    try{
+      const prompt = `You turn a shop owner's product description into settings for a simple photo-to-3D tool. The tool cuts the product out of the photos, builds a solid from its outline, then paints it with the photo colours.
+
+What the tool found in the photos:
+${facts}
+
+The owner's description (may be dictated speech, informal):
+"""${text.slice(0,2000)}"""
+
+Reply with only a JSON object with these fields:
+{"product": short product name, "keep": "all" | "upper" | "lower" (only matters when a person wears two clothing groups: which group is the product), "depth": number 0.04 to 0.8 (product thickness divided by its width as seen from the front; t-shirt or garment 0.14, folded flat item 0.06, thin card 0.04, bag 0.3, box 0.5, bottle or mug 0.7), "edges": "round" | "soft" | "boxy", "back": "mirror" | "plain" (plain if they say the back has no print or is a solid colour), "backColor": "#rrggbb" or null, "summary": [up to 4 very short phrases saying what you understood, plain words, no dashes]}
+Use null for depth or edges if the description gives no clue.`;
+      const r = await sample.json(prompt, {modelTier:'quick'});
+      if(r && typeof r==='object') return {...r, source:'claude'};
+    }catch(e){ if(e && e.code==='not_granted') console.info('Claude not allowed, using keywords'); else console.warn(e); }
+  }
+  return readLocally(text, facts);
+}
+function understoodChips(p){
+  const out = [];
+  if(p.source==='none') return out;
+  if(p.product) out.push(String(p.product));
+  if(p.keep==='upper') out.push('Keep the top garment'); else if(p.keep==='lower') out.push('Keep the bottom garment');
+  if(typeof p.depth==='number') out.push(`Depth ${Math.round(p.depth*100)}%`);
+  if(p.edges) out.push({round:'Rounded edges',soft:'Soft edges',boxy:'Boxy edges'}[p.edges] || p.edges);
+  if(p.back==='plain') out.push('Plain back'+(p.backColor?` ${p.backColor}`:''));
+  if(Array.isArray(p.summary)) for(const x of p.summary.slice(0,4)) if(x && !out.includes(String(x))) out.push(String(x));
+  return out;
+}
+function renderChips(el, p){
+  const list = understoodChips(p);
+  el.innerHTML=''; el.hidden = !list.length; if(!list.length) return;
+  el.append(Object.assign(document.createElement('span'),{className:'src',textContent: p.source==='claude' ? 'Claude understood:' : 'From your description:'}));
+  for(const c of list) el.append(Object.assign(document.createElement('span'),{textContent:c}));
+}
+$('ideas').addEventListener('click', e => { const b=e.target.closest('button'); if(!b) return; const d=$('desc'); d.value = (d.value.trim() ? d.value.trim().replace(/[.]?$/,'. ') : '') + b.textContent + '.'; d.focus(); });
+
+/* ---- microphone: browser speech recognition, with a dictation tip when it is blocked ---- */
+let rec = null, recOn = false, recBase = '';
+function micMsg(t){ $('micmsg').textContent=t; $('micmsg').hidden=!t; }
+function stopMic(){ recOn=false; $('mic').setAttribute('aria-pressed','false'); $('miclive').hidden=true; try{ rec && rec.stop(); }catch(e){} }
+const DICTATE = 'The microphone is blocked in this preview. You can still speak your description: use your keyboard’s dictation (tap the mic on a phone keyboard, press Fn twice on a Mac, or Windows key + H on Windows). In the app, this button records directly.';
+$('mic').addEventListener('click', async () => {
+  if(recOn){ stopMic(); return; }
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){ micMsg(DICTATE); $('desc').focus(); return; }
+  try{
+    rec = new SR(); rec.lang = 'en-IN'; rec.interimResults = true; rec.continuous = true;
+    recBase = $('desc').value.trim() ? $('desc').value.trim()+' ' : '';
+    rec.onresult = e => { let txt=''; for(let i=0;i<e.results.length;i++) txt += e.results[i][0].transcript; $('desc').value = recBase + txt; $('mictext').textContent = 'Listening… tap the mic to stop'; };
+    rec.onerror = e => { stopMic(); micMsg(e.error==='not-allowed' || e.error==='service-not-allowed' || e.error==='audio-capture' ? DICTATE : e.error==='no-speech' ? 'No speech heard. Tap the mic and try again.' : 'Speech input stopped. Try again, or type the description.'); };
+    rec.onend = () => { if(recOn) stopMic(); };
+    rec.start(); recOn=true; micMsg(''); $('mic').setAttribute('aria-pressed','true'); $('miclive').hidden=false; $('mictext').textContent='Listening… speak now';
+  }catch(e){ stopMic(); micMsg(DICTATE); }
+});
+
+async function generate(){
+  stopMic();
+  state = 'generating'; const run = ++jobRun; hero = 0;
+  $('job').hidden=false; $('review').hidden=true; $('live').hidden=true; $('genrow').hidden=true;
+  $('err').hidden=true; $('masks').hidden=true; $('masks').innerHTML=''; $('understood1').hidden=true;
+  drawSlots();
+  const lis=[...$('steps').children]; lis.forEach(l=>l.className='');
+  const prog = p => { $('pct').textContent=Math.round(p)+'%'; $('trackfill').style.width=p+'%'; };
+  const step = async (k, p) => { if(k>0) lis[k-1].className='done'; lis[k].className='on'; prog(p); await sleep(400); if(run!==jobRun) throw 'cancel'; };
+  const fail = msg => { $('err').textContent=msg; $('err').hidden=false; lis.forEach(l=>{ if(l.className==='on') l.className=''; }); state='ready'; $('genrow').hidden=false; drawSlots(); };
+  try{
+    const tol = +$('tol').value;
+    await step(0, 4);
+    if(segState==='loading'){ lis[0].lastChild.textContent = ' Finding the product (waiting for person removal to load)'; await segReady; }
+    lis[0].lastChild.textContent = ' Finding the product in your photos';
+    /* A: cut out every photo */
+    const segs = {}, facts = [];
+    for(let i=0;i<4;i++){
+      if(!photos[i]) continue;
+      const role = ROLES[i], im = await loadImg(photos[i], 1600);
+      const seg = segment(im, tol, categories(im));
+      if(seg.person) seg.garments = garmentClusters(seg);
+      segs[role] = seg;
+      facts.push(`${NAME[role]} photo: ` + (seg.person
+        ? (seg.garments ? `a person wearing two clothing groups: upper body ${seg.garments.list[0].hex} (${Math.round(seg.garments.list[0].share*100)}%), lower body ${seg.garments.list[1].hex} (${Math.round(seg.garments.list[1].share*100)}%)` : 'a person wearing one clothing item')
+        : 'product on a plain background'));
+      prog(4+i*3); await sleep(60);
+    }
+    /* B: read the description */
+    const desc = $('desc').value;
+    await step(1, 18);
+    if(desc.trim()) lis[1].lastChild.textContent = ' Reading your description';
+    else lis[1].lastChild.textContent = ' No description given, using defaults';
+    const P = await readDescription(desc, facts.join('\n'));
+    if(run!==jobRun) return;
+    renderChips($('understood1'), P);
+    if(typeof P.depth==='number' && P.depth>=.04 && P.depth<=.8){ $('depth').value = Math.round(P.depth*100); $('depthval').textContent = $('depth').value+'%'; }
+    /* C: pick the product in each photo */
+    const got = {}; let anyPerson = false, split = null;
+    for(let i=0;i<4;i++){
+      const role = ROLES[i], seg = segs[role]; if(!seg) continue;
+      let note = '';
+      if(seg.person && seg.garments && (P.keep==='upper'||P.keep==='lower')){
+        const g = seg.garments.list.find(x=>x.pos===P.keep); components(seg, g.id); note = P.keep==='upper' ? ' · top only' : ' · bottom only';
+      }
+      const views = pickViews(seg, !photos[ROLES.indexOf(OPP[role])]);
+      const v0 = views && views[0];
+      if(!v0 || v0.frac < .008){ fail(`We couldn't find the product in the ${NAME[role]} photo. ${seg.person ? 'The person was found but no clothing or accessory on them.' : 'Use a plain background that contrasts with the product, or lower the background sensitivity.'}`); return; }
+      if(!seg.person && v0.frac > .97){ fail(`The ${NAME[role]} photo looks like all product and no background. Try a photo with plain space around the product, or raise the background sensitivity.`); return; }
+      anyPerson ||= seg.person;
+      got[role] = v0;
+      $('masks').append(drawMask(v0, NAME[role] + (seg.person ? ' · person removed' : '') + note));
+      if(views[1]){ got[OPP[role]] = views[1]; split = role; $('masks').append(drawMask(views[1], `${NAME[OPP[role]]} · found in ${NAME[role]} photo`)); }
+      $('masks').hidden=false;
+    }
+    if(!got.front && !got.back){ fail('Add a Front photo. Back, Left and Right are optional.'); return; }
+    const V = {
+      front: got.front ? {S:got.front} : {S:got.back, flip:true},
+      back:  got.back  ? {S:got.back}  : {S:got.front, flip:true},
+      left: null, right: null };
+    if(!got.back && P.back==='plain'){
+      let c = P.backColor && /^#[0-9a-f]{6}$/i.test(P.backColor) ? P.backColor : null, rgb;
+      if(c) rgb = [1,3,5].map(k=>parseInt(c.slice(k,k+2),16));
+      else { const S=got.front; let r=0,g=0,b=0,k=0; for(let i=0;i<S.w*S.h;i+=3) if(S.mask[i]){ r+=S.data[i*4]; g+=S.data[i*4+1]; b+=S.data[i*4+2]; k++; } rgb=[r/k,g/k,b/k]; }
+      V.back = {S:got.front, flip:true, plain: rgb};
+    }
+    const hull = !!(got.left || got.right);
+    if(hull){ V.left = got.left ? {S:got.left} : {S:got.right, flip:true}; V.right = got.right ? {S:got.right} : {S:got.left, flip:true}; }
+    lis[2].lastChild.textContent = hull ? ' Carving the shape from the outlines' : ' Estimating depth from the outline';
+    await step(2, 30);
+    const edge = {round:1, soft:.55, boxy:.18}[P.edges] ?? 1;
+    let blob, tris;
+    if(hull){
+      const G = carveHull(V, 96);
+      if(G.filled < 200){ fail('The outlines do not overlap into a solid shape. Check that each photo shows the side named on its slot.'); return; }
+      await step(3, 50);
+      blur(G, P.edges==='boxy' ? 1 : 2); const M = surfaceNets(G); smooth(M, P.edges==='boxy' ? 1 : 2); normals(G, M);
+      await step(4, 72);
+      paint(G, M, V);
+      await step(5, 88);
+      blob = toGLB(G, M); tris = M.T.length/3;
+    } else {
+      await step(3, 50);
+      lis[4].lastChild.textContent = ' Wrapping your photos onto the shape';
+      await step(4, 66);
+      const R = buildRelief(V, {depth: +$('depth').value/100, edge});
+      await step(5, 84);
+      blob = await toTexturedGLB(R); tris = R.tris;
+    }
+    if(modelURL) URL.revokeObjectURL(modelURL);
+    modelURL = URL.createObjectURL(blob);
+    const loaded = new Promise(r => mv.addEventListener('load', r, {once:true}));
+    mv.src = modelURL; await loaded; if(run!==jobRun) return;
+    lis[5].className='done'; prog(100); await sleep(300);
+    const nPhotos = photos.filter(Boolean).length, notes = [];
+    if(split) notes.push('front and back found in one photo');
+    if(anyPerson) notes.push('person removed');
+    notes.push(hull ? 'shape carved from the side views' : (got.back ? 'front and back photos wrapped onto the shape' : (V.back.plain ? 'front photo wrapped on, plain back' : 'front photo wrapped on, back mirrored')));
+    $('stats').textContent = `${tris.toLocaleString('en-IN')} triangles · ${(blob.size/1024/1024).toFixed(1)} MB · ${nPhotos} photo${nPhotos>1?'s':''} · ${notes.join(' · ')}`;
+    renderChips($('understood2'), P);
+    $('depthfield').hidden = hull;
+    state='review'; $('job').hidden=true; $('review').hidden=false;
+    mv.resetTurntableRotation?.(0); mv.cameraOrbit=HOME; mv.jumpCameraToGoal(); mv.autoRotate=true;
+    $('stage').classList.remove('reveal'); void $('stage').offsetWidth; $('stage').classList.add('reveal');
+    drawSlots(); $('scroll').scrollTo({top:0,behavior:'smooth'});
+    ptoast('3D preview ready. Tap to explore.');
+  }catch(e){ if(e!=='cancel'){ console.error(e); fail('Something went wrong while building the model. Try different photos or regenerate.'); } }
+}
+$('generate').addEventListener('click', generate);
+$('regen').addEventListener('click', generate);
+$('approve').addEventListener('click', () => { state='live'; $('review').hidden=true; $('live').hidden=false; drawPhone(); ptoast('Published. Customers now see the 3D model.'); });
+function backToEdit(){
+  if(state==='empty'||state==='ready') return;
+  jobRun++; closeViewer(); state='empty'; hero=0;
+  $('job').hidden=true; $('review').hidden=true; $('live').hidden=true; $('genrow').hidden=false;
+}
+$('reset').addEventListener('click', () => { backToEdit(); stopMic(); micMsg(''); $('desc').value=''; photos=[null,null,null,null]; $('f-name').value='Everyday Crew Tee'; $('f-price').value='₹1,299'; syncText(); drawSlots(); });
+
+/* fullscreen viewer inside the phone */
+let hintTimer;
+function openViewer(){
+  if(expanded || !(state==='review'||state==='live')) return;
+  expanded = true; hero = 0; drawPhone();
+  $('scroll').scrollTop = 0; $('scroll').classList.add('lock'); $('buy').hidden = true;
+  gallery.classList.add('expanded'); mv.cameraControls = true; mv.autoRotate = false; mv.resetTurntableRotation?.(0); mv.cameraOrbit = HOME; mv.jumpCameraToGoal();
+  const h=$('hint'); h.classList.remove('gone'); clearTimeout(hintTimer); hintTimer=setTimeout(()=>h.classList.add('gone'),3200);
+}
+function closeViewer(){
+  if(!expanded) return; expanded = false;
+  gallery.classList.remove('expanded'); $('scroll').classList.remove('lock'); $('buy').hidden = false;
+  mv.cameraControls = false; mv.cameraOrbit = HOME; mv.fieldOfView = 'auto'; mv.autoRotate = true;
+}
+$('open').addEventListener('click', openViewer);
+$('stage').addEventListener('click', e => { if(!expanded && !e.target.closest('button') && $('photo').classList.contains('off')) openViewer(); });
+$('close').addEventListener('click', closeViewer);
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeViewer(); });
+mv.addEventListener('camera-change', e => { if(expanded && e.detail.source==='user-interaction') $('hint').classList.add('gone'); });
+$('rview').addEventListener('click', () => { mv.resetTurntableRotation?.(0); mv.cameraOrbit=HOME; mv.cameraTarget='auto auto auto'; mv.fieldOfView='auto'; });
+$('ar').addEventListener('click', () => { if(mv.canActivateAR) mv.activateAR(); else ptoast('AR opens in the native app build'); });
+
+/* sample: a t-shirt photo with the front and back side by side */
+if(window.SAMPLE_TEE){ samples=[window.SAMPLE_TEE,null,null,null]; $('sample').disabled=false; $('sample').textContent='Use sample photo'; }
+else $('sample').textContent='Sample photo unavailable';
+syncText(); drawSlots();
+</script>
+
+</body></html>

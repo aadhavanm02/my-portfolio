@@ -45,10 +45,14 @@ export type DecisionOption = {
 
 export type DecisionItem = {
   title: string;
-  question: string;
+  hook: string;
+  before: string[];
+  turningIntro: string;
   options: DecisionOption[];
-  why: string;
-  outcome: string;
+  reasoning: string[];
+  next: string[];
+  nextList?: string[];
+  result: string[];
   media?: MediaItem[];
 };
 
@@ -109,6 +113,228 @@ export type CaseStudy = {
 
 const feedback = (question: string) =>
   `${question} Feedback is welcome on [LinkedIn](https://www.linkedin.com/in/aadhavan-m/) or by [email](mailto:aadhavanm.design@gmail.com).`;
+
+const cartAbandonmentDecisions: DecisionItem[] = [
+  {
+    title: "Why Reports became a dropdown instead of more tabs",
+    hook: "Every new feature wanted a place in the top navigation, and the top navigation only had so much room.",
+    before: [
+      "The old plugin had three tabs. As the plan grew to include Product Report, Email Logs, Integrations and Popup Templates, each report sitting as its own tab would have crowded the top bar.",
+    ],
+    turningIntro: "I explored four directions:",
+    options: [
+      {
+        title: "A tab for each report",
+        body: "One click to any report. But the top bar fills up fast, and gets worse with every new report.",
+      },
+      {
+        title: "Underline tabs inside a Reports page",
+        body: "Keeps the top bar short. But it adds a second row of navigation inside the page.",
+      },
+      {
+        title: "Pill tabs beside the table title",
+        body: "Compact and close to the data. But easy to miss, and harder to scale beyond two reports.",
+      },
+      {
+        title: "A dropdown under Reports in the top bar",
+        body: "Keeps the top bar short and groups the reports in one place. The trade-off is one extra click.",
+        chosen: true,
+      },
+    ],
+    reasoning: [
+      "In discussion with the PM and developers, we chose the dropdown. It keeps the main navigation short, and new report types can be added without touching the top bar.",
+    ],
+    next: [
+      "I designed the Reports dropdown with Email Report and Product Report, and kept the same table layout across both so they feel like one area.",
+    ],
+    result: [
+      "It shipped. The live plugin's top bar has five items: Dashboard, Follow Up Emails, Reports, Integrations and Settings.",
+    ],
+    media: [{ caption: "The four navigation versions side by side." }, { caption: "The live top bar." }],
+  },
+  {
+    title: "Why Email Logs became a full page, not a side drawer",
+    hook: "A store owner clicks on one abandoned cart. How much do they need to see, and where should it open?",
+    before: [
+      "In the new design, editing a follow-up email opened in a side drawer beside the list. Email Logs, the detailed view of one cart, needed a home too.",
+    ],
+    turningIntro: "There were two options:",
+    options: [
+      {
+        title: "A side drawer",
+        body: "Consistent with the email editor, and the list stays in view. But Email Logs holds a lot: scheduled emails, billing and shipping addresses, and the full order. In a drawer, the addresses can't sit side by side and the order table gets cramped.",
+        badge: "My first proposal",
+      },
+      {
+        title: "A full page",
+        body: "Room for every detail, with addresses side by side and a full order table. The trade-off is leaving the list and a different pattern from the email editor.",
+        chosen: true,
+      },
+    ],
+    reasoning: [
+      "I first proposed the drawer, for consistency. The PM and developers pushed for the full page, because this is a detailed report, not a quick edit. Looking at how much one cart holds, I agreed. The old plugin also showed these details on a full page, so existing users would recognise it.",
+    ],
+    next: [
+      "I redesigned Email Logs as a full page: email details first, then billing and shipping side by side, then the order items with totals.",
+    ],
+    result: [
+      "The full page shipped. It reinforced something I now ask early: is this a quick edit or a detailed read? The answer decides the pattern, not consistency alone.",
+    ],
+    media: [{ caption: "The drawer version." }, { caption: "The full page version." }],
+  },
+  {
+    title: "Why the dashboard chart always compares two numbers",
+    hook: "A chart that changes when you click a card sounds clever. But would store owners ever know to click?",
+    before: [
+      "The old Report page had six number cards and no chart at all. Store owners could see totals, but not whether recovery was improving.",
+    ],
+    turningIntro: "There were two options:",
+    options: [
+      {
+        title: "One chart that switches with the cards",
+        body: "Click any metric card and the chart shows that metric. Flexible, but the interaction is hidden. Store owners might never discover it, or not understand why the chart changed.",
+      },
+      {
+        title: "A fixed chart comparing two metrics",
+        body: "Recoverable revenue and recovered revenue, always shown together. Less flexible, but the most important story is always visible: how much was at risk, and how much came back.",
+        chosen: true,
+      },
+    ],
+    reasoning: [
+      "I chose the fixed comparison. The gap between the two lines is what a store owner actually cares about, and it shouldn't depend on finding a hidden click.",
+    ],
+    next: [
+      "I designed the chart with both lines in the brand colors, a legend, and a date range picker that updates the cards and the chart together. I explored two dashboard versions; the first, refined over a few rounds, became the final design.",
+    ],
+    result: ["It shipped. The live dashboard shows the six cards above the comparison chart."],
+    media: [{ caption: "Dashboard V1." }, { caption: "Dashboard V2." }, { caption: "The live dashboard." }],
+  },
+  {
+    title: "Why shoppers can skip the email popup",
+    hook: "The store needs a shopper's email to recover their cart. But asking for it every time they tap Add to Cart can feel like a login wall.",
+    before: [
+      "The popup asks for an email when a shopper adds to cart, so the store can follow up if they leave. A shopper who isn't logged in might see it again and again.",
+    ],
+    turningIntro: "There were two options:",
+    options: [
+      {
+        title: "Always require the email",
+        body: "The store captures more emails. But shoppers who are just browsing get frustrated, wonder why it's needed, and may leave the store altogether.",
+      },
+      {
+        title: "Let store owners make it optional",
+        body: "Shoppers can tap “No thanks” and keep shopping. The store captures fewer emails at this step.",
+        chosen: true,
+      },
+    ],
+    reasoning: [
+      "I designed it as a choice for the store owner, with an “Email field mandatory?” toggle. Skipping is safe because shoppers still give their email at checkout. By then they've chosen what to buy, so being asked feels necessary rather than annoying.",
+    ],
+    next: [
+      "When the toggle is off, the popup shows a “No thanks” link with editable text. The template list counts “No thanks” clicks, so store owners can see how many shoppers skip and decide for themselves.",
+    ],
+    result: [
+      "It shipped as part of Popup Templates in Pro. Store owners get to balance capturing emails against keeping shoppers happy, with the data to back their choice.",
+    ],
+    media: [{ caption: "The popup with the email required." }, { caption: "The popup with “No thanks.”" }],
+  },
+];
+
+const modernCartDecisions: DecisionItem[] = [
+  {
+    title: "Why I wanted free users to see Pro features, not lose them",
+    hook: "When ModernCart split into Free and Pro, some features that free users already relied on were moving behind a paywall. The question was what those users would see the next time they opened their settings.",
+    before: [
+      "The PM shared the list of which features stayed Free and which moved to Pro. Nothing was decided yet about how Pro features would appear inside the free dashboard.",
+    ],
+    turningIntro: "There were two options:",
+    options: [
+      {
+        title: "Hide Pro features completely",
+        body: "The free dashboard stays clean and simple. But a store owner who used a feature last week would open their settings and find it gone, with no explanation.",
+        chosen: true,
+        badge: "Team's choice",
+      },
+      {
+        title: "Show them locked, with a PRO badge and a short upgrade note",
+        body: "The store owner can see what moved and what Pro adds, without being blocked or pushed. The trade-off is a slightly busier screen.",
+        badge: "My proposal",
+      },
+    ],
+    reasoning: [
+      "I proposed showing them, as an option for the PM and leadership to weigh. A feature that quietly disappears feels like something was taken away. A feature that's visible but locked tells people exactly what upgrading gets them. ForceUI already used PRO badges on cards, so the pattern fit the system.",
+    ],
+    next: [
+      "I designed PRO badges, disabled fields with an inline “Upgrade now” note, an upgrade modal, and a Free vs Pro tab comparing every feature side by side.",
+    ],
+    result: [
+      "The team chose to keep the free version focused on free features, so Pro features stay out of view for free users. Both directions were on the table when that call was made, which is what I set out to do.",
+      "It reinforced how I approach this kind of work: give decision makers clear options with the reasoning behind each, knowing the right answer depends on how the business wants to position its product.",
+    ],
+    media: [{ caption: "General tab with PRO badges." }, { caption: "Upgrade modal." }, { caption: "Free vs Pro tab." }],
+  },
+  {
+    title: "Why I added product suggestions to the cart to keep shoppers browsing",
+    hook: "A shopper taps the cart icon before adding anything, maybe out of curiosity, maybe to check something. In ModernCart, all they found was a message saying their cart was empty.",
+    before: [
+      "The empty cart showed only that message, with no next step. Once items were added, the cart was just a list of what the shopper had picked.",
+    ],
+    turningIntro: "There were two options:",
+    options: [
+      {
+        title: "Keep the cart as a plain list",
+        body: "Simple, nothing to distract from checkout. But an empty cart is a dead end, and a full cart misses the moment when the shopper is most ready to buy.",
+      },
+      {
+        title: "Let the cart suggest products",
+        body: "Shoppers who open the cart are still in shopping mode, so a suggestion lets them keep going without leaving. The risk is clutter that pulls attention away from checking out.",
+        chosen: true,
+      },
+    ],
+    reasoning: [
+      "I chose to suggest products, for two reasons. For the business, every suggestion is a chance to raise the average order value. For the shopper, a suggestion turns an empty screen into something to explore: they can tap it to see the product in detail, or add it straight from the cart.",
+      "The idea came from looking at competitors. [FunnelKit Cart](https://funnelkit.com/woocommerce-cart/), one of the plugins I reviewed, already suggests products inside its side cart. I kept the suggestions small so they never take over the cart.",
+    ],
+    next: [],
+    nextList: [
+      "**Empty cart:** “Your Cart Is Empty, Let's Fix That,” with a featured product the shopper can add straight from the cart, plus a Shop Now button.",
+      "**Cart with items:** a “You might also like” carousel below the items, kept small so it never covers the cart. I designed it to show one or two products at a time, as styling options store owners can pick from.",
+    ],
+    result: [
+      "The PM and the team agreed straight away, and both shipped while I was on the team. I carried the idea through the rest of the product: the popup cart uses the same suggestions, and store owners can rewrite the suggestion titles from the Text Label tab to match their store's voice.",
+      "The cart is no longer a dead end. Whether it's empty or full, it always gives the shopper something to explore.",
+    ],
+    media: [{ caption: "Empty cart before." }, { caption: "Empty cart after." }, { caption: "Cart with the carousel." }],
+  },
+  {
+    title: "Why I proposed a popup cart for stores that want the cart front and center",
+    hook: "ModernCart had one way to open the cart: a panel sliding in from the side. But not every store wants its cart tucked at the edge of the screen.",
+    before: ["Slide-out was the only cart type."],
+    turningIntro: "While exploring new cart styles, I looked at two directions:",
+    options: [
+      {
+        title: "Keep only the slide-out",
+        body: "The shopper still sees the page behind it, so it feels light. But it's easy to glance past.",
+      },
+      {
+        title: "Add a popup that opens in the center of the page",
+        body: "It gets the shopper's full attention. The trade-off is that it covers the page while it's open.",
+        chosen: true,
+        badge: "Added alongside",
+      },
+    ],
+    reasoning: [
+      "Neither one is right for every store, so I proposed offering both and letting the store owner choose. Centered popup carts were already a familiar pattern in WooCommerce (for example, [WooCommerce Fast Cart](https://barn2.com/woocommerce-cart/) offers a lightbox cart in the middle of the screen), so store owners would recognize it.",
+    ],
+    next: [
+      "I designed the full popup set: empty, empty with suggestions, and with items and suggestions in two item styles. Each one for desktop, tablet and mobile. On smaller screens the carousel drops from two products to one so the cards stay readable.",
+    ],
+    result: [
+      "It shipped after I left, as a Cart Type setting (Slide-out or Popup). The plugin's WordPress.org listing is now named “Modern Cart: WooCommerce Side Cart & Popup Cart.”",
+    ],
+    media: [{ caption: "The popup set across three screen sizes." }, { caption: "Slide-out next to popup." }],
+  },
+];
 
 const cartAbandonment: CaseStudy = {
   slug: "cart-abandonment-recovery",
@@ -308,66 +534,7 @@ const cartAbandonment: CaseStudy = {
       nav: "Decisions",
       eyebrow: "Critical Decisions",
       title: "Four decisions that shaped the new admin",
-      items: [
-        {
-          title: "Reports became a dropdown, not more tabs",
-          question: "Every new feature wanted a spot in the top bar. Where do new reports live?",
-          options: [
-            { title: "A tab per report", body: "One click away, but the top bar fills up fast." },
-            { title: "Tabs inside a Reports page", body: "Short top bar, but a second row of navigation." },
-            { title: "Pills beside the table", body: "Close to the data, but easy to miss." },
-            { title: "A dropdown under Reports", body: "Short top bar, reports grouped. One extra click.", chosen: true },
-          ],
-          why: "It keeps the main navigation short, and new reports can be added without touching it. Decided with the PM and developers.",
-          outcome: "Shipped: five items in the live top bar.",
-          media: [{ caption: "The four navigation versions." }, { caption: "The live top bar." }],
-        },
-        {
-          title: "Email Logs became a full page, not a drawer",
-          question: "One abandoned cart holds a lot. Where should its details open?",
-          options: [
-            {
-              title: "A side drawer",
-              body: "Consistent with the email editor, but addresses and the order table get cramped.",
-              badge: "My first idea",
-            },
-            { title: "A full page", body: "Room for every detail, side by side. Breaks the drawer pattern.", chosen: true },
-          ],
-          why: "The PM and developers pushed for it: this is a detailed read, not a quick edit. Looking at how much one cart holds, I agreed.",
-          outcome: "Shipped. Now I ask early: quick edit or detailed read?",
-          media: [{ caption: "Drawer version." }, { caption: "Full page version." }],
-        },
-        {
-          title: "The dashboard chart always compares two numbers",
-          question: "A chart that switches with each card, or one story that's always visible?",
-          options: [
-            { title: "Switches with the cards", body: "Flexible, but the interaction is hidden." },
-            {
-              title: "A fixed comparison",
-              body: "Recoverable vs recovered revenue, always together.",
-              chosen: true,
-            },
-          ],
-          why: "The gap between the two lines is what store owners care about. It shouldn't depend on finding a hidden click.",
-          outcome: "Shipped: six cards above the comparison chart.",
-          media: [{ caption: "Dashboard V1." }, { caption: "Dashboard V2." }, { caption: "The live dashboard." }],
-        },
-        {
-          title: "Shoppers can skip the email popup",
-          question: "Asking for an email on every Add to Cart can feel like a login wall. Require it?",
-          options: [
-            { title: "Always required", body: "More emails, but browsers get frustrated and leave." },
-            {
-              title: "Optional, owner's choice",
-              body: "Fewer emails here. Shoppers still give one at checkout.",
-              chosen: true,
-            },
-          ],
-          why: "An “Email field mandatory?” toggle, plus a count of “No thanks” clicks so owners decide with data.",
-          outcome: "Shipped in Pro, as part of Popup Templates.",
-          media: [{ caption: "Popup with the email required." }, { caption: "Popup with “No thanks.”" }],
-        },
-      ],
+      items: cartAbandonmentDecisions,
     },
     {
       kind: "system",
@@ -658,51 +825,7 @@ const modernCart: CaseStudy = {
       nav: "Decisions",
       eyebrow: "Critical Decisions",
       title: "Three decisions that shaped ModernCart",
-      items: [
-        {
-          title: "I proposed showing Pro features, not hiding them",
-          question: "Features free users relied on were moving to Pro. What should they see next time?",
-          options: [
-            {
-              title: "Hide Pro features",
-              body: "A clean free dashboard, but features people used just vanish.",
-              chosen: true,
-              badge: "Team's choice",
-            },
-            {
-              title: "Show them locked",
-              body: "A PRO badge and upgrade note. Clear, but a busier screen.",
-              badge: "My proposal",
-            },
-          ],
-          why: "A feature that disappears feels taken away; a locked one shows what upgrading gets. I designed the badges, upgrade notes, a modal and a Free vs Pro tab.",
-          outcome: "The team kept Pro out of view. Both options were weighed, which was the goal.",
-          media: [{ caption: "General tab with PRO badges." }, { caption: "Upgrade modal." }, { caption: "Free vs Pro tab." }],
-        },
-        {
-          title: "Product suggestions turned the cart into a place to shop",
-          question: "Shoppers open the cart before adding anything. Show a message, or something to explore?",
-          options: [
-            { title: "Keep a plain list", body: "Nothing distracts from checkout, but empty carts are dead ends." },
-            { title: "Suggest products", body: "Keeps shoppers browsing. The risk is clutter.", chosen: true },
-          ],
-          why: "Bigger orders for the store, something to explore for the shopper. Inspired by [FunnelKit Cart](https://funnelkit.com/woocommerce-cart/), kept small so it never takes over.",
-          outcome: "Shipped, and reused in the popup cart.",
-          media: [{ caption: "Empty cart before." }, { caption: "Empty cart after." }, { caption: "Cart with carousel." }],
-        },
-        {
-          title: "A popup cart for stores that want it front and center",
-          question: "One slide-out panel for every store, or a choice?",
-          options: [
-            { title: "Slide-out only", body: "Feels light, but easy to glance past." },
-            { title: "Popup only", body: "Full attention, but covers the page." },
-            { title: "Offer both", body: "Let each store owner choose.", chosen: true },
-          ],
-          why: "Neither fits every store, and centered carts were already familiar in WooCommerce, like [WooCommerce Fast Cart](https://barn2.com/woocommerce-cart/).",
-          outcome: "Shipped after I left. The plugin is now named Side Cart & Popup Cart.",
-          media: [{ caption: "Popup set on three screen sizes." }, { caption: "Slide-out next to popup." }],
-        },
-      ],
+      items: modernCartDecisions,
     },
     {
       kind: "system",
