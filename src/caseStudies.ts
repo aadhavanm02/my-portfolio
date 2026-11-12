@@ -16,6 +16,8 @@ export type MediaItem = {
   caption: string;
   kind?: "image" | "video";
   src?: string;
+  // Cover frame shown before a video plays.
+  poster?: string;
   size?: [number, number];
   // Screenshots shown side by side at the same height.
   row?: MediaFrame[];
@@ -70,6 +72,16 @@ export type DecisionItem = {
   media?: MediaItem[];
 };
 
+// A process step. With a `title`, it shows as its own block with fuller text, chips and a screenshot.
+export type ProcessStep = {
+  label: string;
+  body: string;
+  title?: string;
+  details?: string[];
+  points?: string[];
+  media?: MediaItem;
+};
+
 type SectionBase = {
   id: string;
   nav: string;
@@ -107,7 +119,7 @@ export type CaseSection = SectionBase &
         tokens: Array<{ sample: "type" | "color" | "icons"; label: string; value: string }>;
         note?: CardItem;
       }
-    | { kind: "process"; steps: Array<{ label: string; body: string }>; notes?: CardItem[]; media?: MediaItem }
+    | { kind: "process"; steps: ProcessStep[]; notes?: CardItem[]; media?: MediaItem }
     | { kind: "future"; tag: string; items: CardItem[]; media?: MediaItem[] }
     | { kind: "learnings"; items: CardItem[] }
     | { kind: "outcome"; before: string; after: string; stat: Stat; feedback: string }
@@ -785,63 +797,13 @@ const modernCart: CaseStudy = {
       eyebrow: "Walkthrough",
       title: "One store, one shopper",
       intro: "Every choice in the dashboard shows up in the cart shoppers use.",
-      video: { kind: "video", caption: "Prototype walkthrough: a dashboard setting changes, and the storefront cart updates." },
-      lanes: [
-        {
-          name: "Meera",
-          role: "Store owner",
-          about: "Runs DNK, a small clothing and footwear store on WooCommerce.",
-          steps: [
-            {
-              title: "General: how it behaves",
-              body: "Behavior only. Dropdowns first, toggles below, a one-line description on every setting.",
-              media: mcShot("General: dropdowns first, a line under each setting.", "general-settings"),
-            },
-            {
-              title: "Text Label: sounds like DNK",
-              body: "Every word a shopper sees is editable, pre-filled with sensible defaults.",
-              media: mcShot("Text Label: every field starts with default text.", "text-label-fields"),
-            },
-            {
-              title: "Floating Cart Icon",
-              body: "Its own tab: position, hide when empty, and preset icons.",
-              media: mcShot("Floating Cart Icon tab.", "floating-icon-card"),
-            },
-            {
-              title: "Styling: safe to try",
-              body: "Reset buttons on colors, defaults under numbers, units inside fields.",
-              media: mcShot("Styling: a reset button beside every color.", "styling-colors"),
-            },
-          ],
-        },
-        {
-          name: "Arjun",
-          role: "Shopper",
-          about: "Shopping at DNK for a new pair of shoes.",
-          steps: [
-            {
-              title: "Opens an empty cart",
-              body: "Instead of a dead end, a product he might like, with an add button.",
-              media: mcShot("Empty cart with a suggestion.", "cart-empty-panel"),
-            },
-            {
-              title: "Adds shoes",
-              body: "The cart slides in. A free shipping bar and “You might also like” keep him browsing.",
-              media: mcShot("Side cart with the shipping bar and carousel.", "cart-one-panel"),
-            },
-            {
-              title: "Applies a coupon",
-              body: "A quiet link opens into a field, and the code becomes a removable tag.",
-              media: mcShot("An applied coupon, shown as a removable tag.", "coupon-tag-crop"),
-            },
-            {
-              title: "Checks out",
-              body: "Shipping, tax, subtotal and savings, then one clear checkout button.",
-              media: mcShot("Order summary and checkout.", "summary-card-crop"),
-            },
-          ],
-        },
-      ],
+      video: {
+        kind: "video",
+        caption: "A narrated walkthrough: Meera sets up her store's cart, then Arjun shops with it.",
+        src: "/assets/videos/modern-cart-walkthrough.mp4",
+        poster: "/assets/videos/modern-cart-walkthrough.jpg",
+      },
+      lanes: [],
     },
     {
       kind: "solution",
@@ -1003,10 +965,37 @@ const modernCart: CaseStudy = {
       eyebrow: "Process",
       title: "One week to launch, then making it better",
       steps: [
-        { label: "Week 1", body: "Rebuilt screens in ForceUI, logged 20 to 30 issues with screenshots. Launched on time." },
-        { label: "Competitors", body: "Used five competing cart plugins the way a store owner would." },
-        { label: "Tickets", body: "About 15 Jira tickets, each matched to a Figma section." },
-        { label: "Free and Pro", body: "Designed how Pro features appear to free users." },
+        {
+          label: "Week 1",
+          title: "Getting it ready to publish",
+          body: "The PM's call was simple: publish ModernCart within a week. There was no time to redesign from scratch, so the goal was to make what existed feel finished.",
+          details: [
+            "I rebuilt the screens with ForceUI components, then reviewed the developer build with the PM. I logged 20 to 30 issues in a shared Google Sheet, each with a screenshot and a note on spacing, alignment, type, color or responsiveness. Developers fixed them in parallel while I prepared the assets they needed.",
+            "The free version went live on schedule.",
+          ],
+          points: ["20 to 30 issues logged", "Screenshot on every issue", "Launched on schedule"],
+        },
+        {
+          label: "After launch",
+          title: "Learning from five competitors",
+          body: "With the product live, the question changed from “is it ready?” to “what should it do next?” The company bought licenses for five competing cart plugins. I installed each one on a demo site and used it as a store owner would, comparing settings, features and how much store owners could customize.",
+          details: [
+            "That review shaped most of what came next: preset cart icons and custom icon upload, cart position controls, style options for the cart, header and order summary, and product suggestions in the cart.",
+          ],
+          points: ["Side Cart WooCommerce", "FunnelKit Cart", "Mini Cart for WooCommerce", "Side Cart & Checkout", "Flycart"],
+        },
+        {
+          label: "Tickets",
+          title: "Turning ideas into tickets",
+          body: "I shared what I found with the team, and the PM decided what to build first. I wrote about 15 Jira tickets, one per feature, each with a description and the designs. The Figma file was organized the same way, one section per ticket, so anyone could match a design to its ticket.",
+          points: ["About 15 Jira tickets", "One Figma section per ticket"],
+        },
+        {
+          label: "Free and Pro",
+          title: "Planning the Free and Pro split",
+          body: "The team then started planning a Free and Pro version. The PM decided which features went where, and I designed how Pro features would appear to free users (Decision 1).",
+          media: mcShot("The Free vs Pro tab, comparing every feature.", "free-vs-pro"),
+        },
       ],
       notes: [
         {
@@ -1018,7 +1007,6 @@ const modernCart: CaseStudy = {
           body: "Cart openers are still shopping. Owners want control without code. Visible defaults invite experimenting.",
         },
       ],
-      media: { caption: "The Figma page organized by ticket." },
     },
     {
       kind: "future",

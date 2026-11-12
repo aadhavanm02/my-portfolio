@@ -515,9 +515,9 @@ button {
 }
 
 .project-image--modern {
-  top: -31px;
-  left: -152px;
-  width: 1393px;
+  top: -1px;
+  left: -6px;
+  width: 1247px;
 }
 
 .project-image--funnel {
@@ -1750,9 +1750,9 @@ button {
   }
 
   .project-image--modern {
-    top: -17px;
-    left: -82px;
-    width: 770px;
+    top: 0;
+    left: -1px;
+    width: 689px;
   }
 
   .project-image--funnel {
@@ -8364,9 +8364,9 @@ a.more-case:hover .more-case__link svg {
 
 .shot-pill {
   position: absolute;
-  left: 11.51%;
-  width: 14.56%;
-  height: 2.19%;
+  left: 1.16%;
+  width: 16.26%;
+  height: 2.23%;
   border-radius: 8px;
   background: rgb(240 100 52 / 8%);
   mix-blend-mode: multiply;
@@ -8376,10 +8376,10 @@ a.more-case:hover .more-case__link svg {
 
 .shot-press {
   position: absolute;
-  top: 26.93%;
-  left: 12.55%;
-  width: 12.48%;
-  height: 2.47%;
+  top: 25.55%;
+  left: 2.33%;
+  width: 13.94%;
+  height: 2.52%;
   border-radius: 6px;
   background: rgb(16 16 16 / 16%);
   mix-blend-mode: multiply;
@@ -8388,22 +8388,22 @@ a.more-case:hover .more-case__link svg {
 }
 
 @keyframes mc-cursor {
-  0% { top: 22%; left: 30%; }
-  10%, 18% { top: 8.8%; left: 18.2%; }
-  26%, 34% { top: 13.77%; left: 18.2%; }
-  42%, 50% { top: 16.25%; left: 19.5%; }
-  58%, 64% { top: 18.72%; left: 16.9%; }
-  76%, 86% { top: 28.1%; left: 19.5%; }
-  100% { top: 22%; left: 30%; }
+  0% { top: 20.53%; left: 21.82%; }
+  10%, 18% { top: 7.08%; left: 8.64%; }
+  26%, 34% { top: 12.14%; left: 8.64%; }
+  42%, 50% { top: 14.67%; left: 10.09%; }
+  58%, 64% { top: 17.18%; left: 7.18%; }
+  76%, 86% { top: 26.74%; left: 10.09%; }
+  100% { top: 20.53%; left: 21.82%; }
 }
 
 @keyframes mc-pill {
-  0%, 7% { top: 7.7%; opacity: 0; }
-  11%, 18% { top: 7.7%; opacity: 1; }
-  26%, 34% { top: 12.7%; opacity: 1; }
-  42%, 50% { top: 15.18%; opacity: 1; }
-  58%, 64% { top: 17.65%; opacity: 1; }
-  69%, 100% { top: 17.65%; opacity: 0; }
+  0%, 7% { top: 5.96%; opacity: 0; }
+  11%, 18% { top: 5.96%; opacity: 1; }
+  26%, 34% { top: 11.05%; opacity: 1; }
+  42%, 50% { top: 13.58%; opacity: 1; }
+  58%, 64% { top: 16.09%; opacity: 1; }
+  69%, 100% { top: 16.09%; opacity: 0; }
 }
 
 @keyframes mc-press {
@@ -8712,4 +8712,267 @@ a.more-case:hover .more-case__link svg {
     width: min(78%, calc(var(--a) * 340px));
     scroll-snap-align: start;
   }
+}
+
+/* ---------- Solution: text on top, screenshot full width underneath ---------- */
+.case-features .case-feature,
+.case-features .case-feature--flip {
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 28px;
+}
+
+.case-features .case-feature .case-feature__media,
+.case-features .case-feature--flip .case-feature__media {
+  order: 2;
+}
+
+.case-features .case-feature .case-feature__body {
+  max-width: 860px;
+}
+
+/* Chips get a soft outline so they stand apart from tinted backgrounds. */
+.case-tag,
+.case-feature__highlights li {
+  border: 1px solid color-mix(in srgb, var(--brand) 30%, transparent);
+}
+
+/* Screenshot backdrop: a light shade of the brand color. */
+.shot-stage {
+  background: color-mix(in srgb, var(--brand) 9%, #fff);
+}
+
+/* Groups of single screenshots: the same 4:3 backdrop for each, screenshot fitted inside. */
+.shot-group--uniform .shot:not(.shot--row) .shot-stage {
+  aspect-ratio: 4 / 3;
+  align-items: center;
+  container-type: size;
+}
+
+.shot-group--uniform .shot:not(.shot--row) .shot-stage__item {
+  flex: 0 0 auto;
+  width: min(100cqw, calc(var(--a) * 100cqh));
+}
+
+/* ---------- Process: each step as its own block ---------- */
+.case-process {
+  display: flex;
+  flex-direction: column;
+}
+
+.case-process__step {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 48px 0;
+  border-top: 1px solid var(--color-neutral-200);
+}
+
+.case-process__step:first-child {
+  padding-top: 8px;
+  border-top: 0;
+}
+
+.case-process__step h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--type-card-title-size);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--type-card-title-line);
+}
+
+.case-process__text {
+  max-width: 860px;
+  margin: 0;
+  color: var(--color-body-muted);
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+.case-process__media {
+  margin-top: 14px;
+}
+
+.case-process__media .shot-group {
+  margin: 0;
+}
+
+@media (max-width: 767px) {
+  .case-process__step {
+    padding: 32px 0;
+    gap: 10px;
+  }
+
+  .case-process__step h3 {
+    font-size: 22px;
+  }
+
+  .case-process__text {
+    font-size: 15px;
+  }
+}
+
+.shot-group--uniform .shot:not(.shot--row) .shot-stage {
+  padding: 14px;
+}
+
+/* Full-width feature placeholders and images use a wide frame now that they sit under the text. */
+.case-features .case-feature .case-feature__media .case-media-group .case-media-placeholder__frame,
+.case-features .case-feature .case-feature__media .case-media-image img {
+  aspect-ratio: 16 / 9;
+}
+
+/* ---------- Solution: each change as a boxed card ---------- */
+.case-features {
+  gap: 24px;
+}
+
+.case-features .case-feature,
+.case-features .case-feature--flip,
+.case-features .case-feature:first-child {
+  gap: 32px;
+  padding: 40px;
+  border-top: 0;
+  border-radius: var(--radius-media);
+  background: var(--color-surface);
+}
+
+/* Text on the left, before and after on the right, chips under the text. */
+.case-features .case-feature .case-feature__body {
+  display: grid;
+  max-width: none;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 14px 48px;
+}
+
+.case-feature__body > .case-feature__meta {
+  grid-column: 1 / -1;
+}
+
+.case-feature__body > h3,
+.case-feature__body > .case-feature__detail,
+.case-feature__body > .case-feature__highlights {
+  grid-column: 1;
+}
+
+.case-feature__body > .case-feature__compare {
+  grid-column: 2;
+  grid-row: 2 / span 3;
+  grid-template-columns: 1fr;
+  margin-top: 0;
+}
+
+.case-features .case-feature__after {
+  border: 1px solid color-mix(in srgb, var(--brand) 22%, transparent);
+  background: color-mix(in srgb, var(--brand) 6%, #fff);
+  box-shadow: none;
+}
+
+.case-features .case-feature__before {
+  background: #fafaf9;
+}
+
+/* ---------- Process: each step as a card, number and label on the left ---------- */
+.case-process {
+  gap: 24px;
+}
+
+.case-process__step,
+.case-process__step:first-child {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: 40px;
+  padding: 40px;
+  border-top: 0;
+  border-radius: var(--radius-media);
+  background: var(--color-surface);
+}
+
+.case-process__aside {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.case-process__num {
+  color: color-mix(in srgb, var(--brand) 55%, #fff);
+  font-family: var(--font-display);
+  font-size: 64px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+}
+
+.case-process__content {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 14px;
+}
+
+@media (max-width: 1023px) {
+  .case-features .case-feature .case-feature__body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .case-feature__body > .case-feature__compare {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .case-process__step,
+  .case-process__step:first-child {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+
+  .case-process__aside {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .case-process__num {
+    font-size: 40px;
+  }
+}
+
+@media (max-width: 767px) {
+  .case-features .case-feature,
+  .case-features .case-feature--flip,
+  .case-features .case-feature:first-child,
+  .case-process__step,
+  .case-process__step:first-child {
+    gap: 18px;
+    padding: 22px 18px;
+    border-radius: 20px;
+  }
+
+  .case-features,
+  .case-process {
+    gap: 16px;
+  }
+
+  .case-process__num {
+    font-size: 32px;
+  }
+}
+
+/* Walkthrough video */
+.case-journey__video {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.case-journey__video .case-hero-media {
+  margin: 0;
+}
+
+.case-journey__video-caption {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 14px;
+  line-height: 1.5;
 }

@@ -649,8 +649,10 @@ function MediaThumb({ item }: { item: MediaItem }) {
 
 function MediaGroup({ items }: { items: MediaItem[] }) {
   if (items.some(isShot)) {
+    // Several single screenshots side by side share one frame size, so none looks bigger than the rest.
+    const uniform = items.filter((item) => isShot(item) && !item.row).length > 1;
     return (
-      <div className="shot-group">
+      <div className={`shot-group${uniform ? " shot-group--uniform" : ""}`}>
         {items.map((item) => (
           <div className={item.row ? "shot-group__wide" : undefined} key={item.caption}>
             {isShot(item) ? <ShotMedia item={item} /> : <MediaPlaceholder item={item} />}
@@ -790,10 +792,25 @@ function JourneyView({ section }: { section: Extract<CaseSection, { kind: "journ
   const tabsId = useId();
   const lane = section.lanes[activeLane];
 
+  const video = section.video;
+
   return (
     <div className="case-journey">
-      {section.video ? <MediaGroup items={[section.video]} /> : null}
+      {video?.src ? (
+        <div className="case-journey__video">
+          <CaseHeroVideo
+            coverImage={resolveSrc(video.poster ?? video.src)}
+            title={video.caption}
+            videoSrc={resolveSrc(video.src)}
+          />
+          <p className="case-journey__video-caption">{video.caption}</p>
+        </div>
+      ) : video ? (
+        <MediaGroup items={[video]} />
+      ) : null}
 
+      {lane ? (
+        <>
       <div className="case-personas" role="tablist" aria-label="Choose a perspective">
         {section.lanes.map((item, index) => (
           <button
@@ -826,6 +843,8 @@ function JourneyView({ section }: { section: Extract<CaseSection, { kind: "journ
           </button>
         ) : null}
       </div>
+        </>
+      ) : null}
     </div>
   );
 }
@@ -1067,8 +1086,45 @@ function SystemView({ section }: { section: Extract<CaseSection, { kind: "system
 }
 
 function ProcessView({ section }: { section: Extract<CaseSection, { kind: "process" }> }) {
+  const detailed = section.steps.some((step) => step.title);
+
   return (
     <>
+      {detailed ? (
+        <div className="case-process">
+          {section.steps.map((step, index) => (
+            <article className="case-process__step" key={step.label}>
+              <div className="case-process__aside">
+                <span className="case-process__num">{pad(index)}</span>
+                <span className="case-tag">{step.label}</span>
+              </div>
+              <div className="case-process__content">
+              <h3>{step.title ?? step.label}</h3>
+              <p className="case-process__text">
+                <RichText text={step.body} />
+              </p>
+              {step.details?.map((detail) => (
+                <p className="case-process__text" key={detail}>
+                  <RichText text={detail} />
+                </p>
+              ))}
+              {step.points ? (
+                <ul className="case-feature__highlights" aria-label="Key details">
+                  {step.points.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              ) : null}
+              {step.media ? (
+                <div className="case-process__media">
+                  <MediaGroup items={[step.media]} />
+                </div>
+              ) : null}
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : (
       <ol className="case-timeline" style={{ ["--steps" as string]: section.steps.length }}>
         {section.steps.map((step, index) => (
           <li key={step.label}>
@@ -1078,6 +1134,7 @@ function ProcessView({ section }: { section: Extract<CaseSection, { kind: "proce
           </li>
         ))}
       </ol>
+      )}
 
       {section.notes ? (
         <div className="case-notes">
@@ -1819,14 +1876,8 @@ function CaseStudyPage({ project }: { project: CaseStudy }) {
       setShowTocButton(window.scrollY > 320 && !nearBottom);
     }
 
-    // While the page is moving, the rail shows the current section's name; it hides again shortly after.
-    let idleTimer = 0;
-
     function handleScroll() {
       updateActiveTopic();
-      setIsScrolling(true);
-      window.clearTimeout(idleTimer);
-      idleTimer = window.setTimeout(() => setIsScrolling(false), 1200);
     }
 
     updateActiveTopic();
@@ -1834,11 +1885,26 @@ function CaseStudyPage({ project }: { project: CaseStudy }) {
     window.addEventListener("resize", updateActiveTopic);
 
     return () => {
-      window.clearTimeout(idleTimer);
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", updateActiveTopic);
     };
   }, [isNdaUnlocked, project.slug]);
+
+  // The rail shows a section's name when you arrive in it, then hides it again after a moment,
+  // even if you keep scrolling within that section. The first section on load stays quiet.
+  const shownTopicRef = useRef(activeTopic);
+
+  useEffect(() => {
+    if (shownTopicRef.current === activeTopic) {
+      return;
+    }
+
+    shownTopicRef.current = activeTopic;
+    setIsScrolling(true);
+    const hideTimer = window.setTimeout(() => setIsScrolling(false), 1800);
+
+    return () => window.clearTimeout(hideTimer);
+  }, [activeTopic]);
 
   useEffect(() => {
     if (!isNdaUnlocked) {
