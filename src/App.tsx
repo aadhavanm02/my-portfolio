@@ -55,6 +55,7 @@ import {
   type CaseStudy,
   type DecisionItem,
   type JourneyLane,
+  type MediaFrame,
   type MediaItem,
   type Stat,
 } from "./caseStudies";
@@ -560,6 +561,61 @@ function RichText({ text }: { text: string }) {
   );
 }
 
+// ---------- Screenshots: pre-cropped images on a clean backdrop ----------
+
+function ShotLightbox({ src, caption, onClose }: { src: string; caption: string; onClose: () => void }) {
+  useEffect(() => {
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (event: globalThis.KeyboardEvent) => event.key === "Escape" && onClose();
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = previous;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [onClose]);
+
+  return (
+    <div aria-label={caption} aria-modal="true" className="shot-lightbox" onClick={onClose} role="dialog">
+      <button aria-label="Close screenshot" className="shot-lightbox__close" onClick={onClose} type="button">
+        <X aria-hidden="true" size={22} weight="bold" />
+      </button>
+      <img alt={caption} onClick={(event) => event.stopPropagation()} src={src} />
+    </div>
+  );
+}
+
+function ShotImage({ frame, caption, onOpen }: { frame: MediaFrame; caption: string; onOpen: (src: string) => void }) {
+  const src = resolveSrc(frame.src);
+  return (
+    <button aria-label={`View full size: ${frame.label ?? caption}`} className="shot-image" onClick={() => onOpen(src)} type="button">
+      <img alt={frame.label ?? caption} height={frame.size[1]} loading="lazy" src={src} width={frame.size[0]} />
+    </button>
+  );
+}
+
+function ShotMedia({ item, thumb }: { item: MediaItem; thumb?: boolean }) {
+  const [open, setOpen] = useState<string | null>(null);
+  const frames: MediaFrame[] = item.row ?? (item.src && item.size ? [{ src: item.src, size: item.size }] : []);
+
+  return (
+    <figure className={`shot${item.row ? " shot--row" : ""}${thumb ? " shot--thumb" : ""}`}>
+      <div className="shot-stage">
+        {frames.map((frame, index) => (
+          <div className="shot-stage__item" key={`${frame.src}-${index}`} style={{ ["--a" as string]: frame.size[0] / frame.size[1] }}>
+            <ShotImage caption={item.caption} frame={frame} onOpen={setOpen} />
+            {frame.label ? <span className="shot-stage__label">{frame.label}</span> : null}
+          </div>
+        ))}
+      </div>
+      <figcaption>{item.caption}</figcaption>
+      {open ? <ShotLightbox caption={item.caption} onClose={() => setOpen(null)} src={open} /> : null}
+    </figure>
+  );
+}
+
+const isShot = (item: MediaItem) => Boolean(item.row || (item.src && item.size));
+
 function MediaPlaceholder({ className = "", item }: { className?: string; item: MediaItem }) {
   return (
     <figure className={`case-media-placeholder ${className}`.trim()}>
@@ -575,6 +631,10 @@ function MediaPlaceholder({ className = "", item }: { className?: string; item: 
 }
 
 function MediaThumb({ item }: { item: MediaItem }) {
+  if (isShot(item)) {
+    return <ShotMedia item={item} thumb />;
+  }
+
   if (item.src) {
     return (
       <figure className="case-media-image case-media--thumb">
@@ -588,6 +648,18 @@ function MediaThumb({ item }: { item: MediaItem }) {
 }
 
 function MediaGroup({ items }: { items: MediaItem[] }) {
+  if (items.some(isShot)) {
+    return (
+      <div className="shot-group">
+        {items.map((item) => (
+          <div className={item.row ? "shot-group__wide" : undefined} key={item.caption}>
+            {isShot(item) ? <ShotMedia item={item} /> : <MediaPlaceholder item={item} />}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   const withImages = items.filter((item): item is MediaItem & { src: string } => Boolean(item.src));
 
   if (withImages.length === items.length && items.length > 1) {
@@ -1058,6 +1130,11 @@ function SectionBody({ section }: { section: CaseSection }) {
               </p>
             </article>
           ))}
+          {section.media ? (
+            <div className="case-future__media">
+              <MediaGroup items={section.media} />
+            </div>
+          ) : null}
         </div>
       );
     case "learnings":

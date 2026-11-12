@@ -8548,3 +8548,168 @@ a.more-case:hover .more-case__link svg {
   52%, 82% { top: 19%; left: 28%; }
   100% { top: 26%; left: 22%; }
 }
+
+/* ---------- Case study screenshots: clean backdrop, no animation ---------- */
+.shot-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 28px 20px;
+  margin: 40px 0;
+}
+
+.shot-group__wide {
+  grid-column: 1 / -1;
+}
+
+.shot {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+}
+
+.shot figcaption {
+  color: var(--color-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.shot-stage {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 20px;
+  padding: clamp(18px, 3vw, 36px);
+  border-radius: var(--radius-card);
+  background: #f2f2f0;
+}
+
+.shot-stage__item {
+  display: flex;
+  min-width: 0;
+  flex: var(--a) 1 0;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* A single screenshot keeps its shape; tall ones are capped so they don't run long. */
+.shot:not(.shot--row) .shot-stage__item {
+  flex: 0 1 auto;
+  width: min(100%, calc(var(--a) * 520px));
+}
+
+.shot-image {
+  display: block;
+  width: 100%;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow:
+    0 0 0 1px rgb(16 16 16 / 6%),
+    0 12px 32px -12px rgb(16 16 16 / 22%);
+  cursor: zoom-in;
+}
+
+.shot-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.shot-stage__label {
+  color: var(--color-ink);
+  font-size: 13px;
+  font-weight: var(--font-weight-semibold);
+  text-align: center;
+}
+
+/* Walkthrough cards: a fixed 16:10 stage, the screenshot fitted inside it. */
+.shot--thumb .shot-stage {
+  aspect-ratio: 16 / 10;
+  align-items: center;
+  padding: 16px;
+  border-radius: 16px;
+  container-type: size;
+}
+
+.shot--thumb .shot-stage__item,
+.shot--thumb:not(.shot--row) .shot-stage__item {
+  flex: 0 0 auto;
+  width: min(100cqw, calc(var(--a) * 100cqh));
+}
+
+.case-future__media {
+  grid-column: 1 / -1;
+}
+
+.case-future__media .shot-group {
+  margin: 8px 0 0;
+}
+
+/* Full-size view. */
+.shot-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  overflow: auto;
+  padding: 56px 24px 24px;
+  background: rgb(10 10 10 / 84%);
+  cursor: zoom-out;
+}
+
+.shot-lightbox img {
+  display: block;
+  width: auto;
+  max-width: min(1400px, 100%);
+  height: auto;
+  margin: auto;
+  border-radius: 12px;
+  cursor: default;
+}
+
+.shot-lightbox__close {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 14%);
+  color: #fff;
+  cursor: pointer;
+}
+
+@media (max-width: 767px) {
+  .shot figcaption {
+    font-size: 12px;
+  }
+
+  .shot-stage {
+    gap: 14px;
+    border-radius: 16px;
+  }
+
+  .shot:not(.shot--row) .shot-stage__item {
+    width: min(100%, calc(var(--a) * 400px));
+  }
+
+  /* Side-by-side screenshots scroll sideways on phones. */
+  .shot--row:not(.shot--thumb) .shot-stage {
+    justify-content: flex-start;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+
+  .shot--row:not(.shot--thumb) .shot-stage__item {
+    flex: 0 0 auto;
+    width: min(78%, calc(var(--a) * 340px));
+    scroll-snap-align: start;
+  }
+}

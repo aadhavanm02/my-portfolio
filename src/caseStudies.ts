@@ -5,10 +5,20 @@
 
 export type ProjectTone = "violet" | "peach";
 
+export type MediaFrame = {
+  src: string;
+  // Natural size in pixels, so the layout is stable before the image loads.
+  size: [number, number];
+  label?: string;
+};
+
 export type MediaItem = {
   caption: string;
   kind?: "image" | "video";
   src?: string;
+  size?: [number, number];
+  // Screenshots shown side by side at the same height.
+  row?: MediaFrame[];
 };
 
 export type CardItem = {
@@ -98,7 +108,7 @@ export type CaseSection = SectionBase &
         note?: CardItem;
       }
     | { kind: "process"; steps: Array<{ label: string; body: string }>; notes?: CardItem[]; media?: MediaItem }
-    | { kind: "future"; tag: string; items: CardItem[] }
+    | { kind: "future"; tag: string; items: CardItem[]; media?: MediaItem[] }
     | { kind: "learnings"; items: CardItem[] }
     | { kind: "outcome"; before: string; after: string; stat: Stat; feedback: string }
   );
@@ -252,6 +262,47 @@ const cartAbandonmentDecisions: DecisionItem[] = [
   },
 ];
 
+// ModernCart screenshots (public/assets/modern-cart), cropped to the part each section is about.
+const mcSizes = {
+  "general-tab": [1547, 860],
+  "general-pro": [796, 670],
+  "general-settings": [796, 300],
+  "text-label-fields": [716, 540],
+  "text-label-empty-fields": [716, 390],
+  "floating-icon-card": [940, 530],
+  "styling-colors": [676, 420],
+  "styling-width": [676, 470],
+  "upgrade-modal": [505, 825],
+  "free-vs-pro": [946, 550],
+  "cart-empty-panel": [479, 1125],
+  "cart-one-panel": [479, 1125],
+  "cart-two-panel": [479, 1125],
+  "coupon-link-crop": [479, 405],
+  "coupon-field-crop": [479, 427],
+  "coupon-tag-crop": [479, 411],
+  "summary-card-crop": [479, 337],
+  "summary-tags-crop": [479, 383],
+  "popup-empty": [1004, 865],
+  "popup-suggest": [1008, 870],
+  "popup-items": [1008, 923],
+  "popup-items-tablet-box": [1114, 1640],
+  "popup-items-mobile-box": [600, 1278],
+  "slideout-full": [2000, 1125],
+  "popup-full": [2000, 1125],
+  "live-preview": [2000, 1157],
+  "custom-icon-card": [880, 1030],
+  "icon-preview-card": [860, 1088],
+} satisfies Record<string, [number, number]>;
+
+type McShot = keyof typeof mcSizes;
+
+function mc(name: McShot, label?: string): MediaFrame {
+  return { src: `/assets/modern-cart/${name}.webp`, size: mcSizes[name], label };
+}
+
+const mcShot = (caption: string, name: McShot): MediaItem => ({ caption, ...mc(name) });
+const mcRow = (caption: string, ...row: MediaFrame[]): MediaItem => ({ caption, row });
+
 const modernCartDecisions: DecisionItem[] = [
   {
     title: "Why I wanted free users to see Pro features, not lose them",
@@ -283,7 +334,11 @@ const modernCartDecisions: DecisionItem[] = [
       "The team chose to keep the free version focused on free features, so Pro features stay out of view for free users. Both directions were on the table when that call was made, which is what I set out to do.",
       "It reinforced how I approach this kind of work: give decision makers clear options with the reasoning behind each, knowing the right answer depends on how the business wants to position its product.",
     ],
-    media: [{ caption: "General tab with PRO badges." }, { caption: "Upgrade modal." }, { caption: "Free vs Pro tab." }],
+    media: [
+      mcShot("My proposal for General: a PRO badge and an inline “Upgrade now” note on each locked setting.", "general-pro"),
+      mcShot("The upgrade modal, opened from a locked setting.", "upgrade-modal"),
+      mcShot("The Free vs Pro tab, comparing every feature.", "free-vs-pro"),
+    ],
   },
   {
     title: "Why I added product suggestions to the cart to keep shoppers browsing",
@@ -316,7 +371,14 @@ const modernCartDecisions: DecisionItem[] = [
       "The PM and the team agreed straight away, and both shipped while I was on the team. I carried the idea through the rest of the product: the popup cart uses the same suggestions, and store owners can rewrite the suggestion titles from the Text Label tab to match their store's voice.",
       "The cart is no longer a dead end. Whether it's empty or full, it always gives the shopper something to explore.",
     ],
-    media: [{ caption: "Empty cart before." }, { caption: "Empty cart after." }, { caption: "Cart with the carousel." }],
+    media: [
+      mcRow(
+        "From a dead end to something to explore.",
+        mc("popup-empty", "Empty, no suggestion"),
+        mc("cart-empty-panel", "Empty, with a suggestion"),
+        mc("cart-two-panel", "Full, with the carousel"),
+      ),
+    ],
   },
   {
     title: "Why I proposed a popup cart for stores that want the cart front and center",
@@ -344,7 +406,15 @@ const modernCartDecisions: DecisionItem[] = [
     result: [
       "It shipped after I left, as a Cart Type setting (Slide-out or Popup). The plugin's WordPress.org listing is now named “Modern Cart: WooCommerce Side Cart & Popup Cart.”",
     ],
-    media: [{ caption: "The popup set across three screen sizes." }, { caption: "Slide-out next to popup." }],
+    media: [
+      mcRow(
+        "The popup cart on desktop, tablet and mobile. On small screens the carousel drops to one product.",
+        mc("popup-items", "Desktop"),
+        mc("popup-items-tablet-box", "Tablet"),
+        mc("popup-items-mobile-box", "Mobile"),
+      ),
+      mcRow("The same cart as a slide-out and as a popup.", mc("slideout-full", "Slide-out"), mc("popup-full", "Popup")),
+    ],
   },
 ];
 
@@ -725,22 +795,22 @@ const modernCart: CaseStudy = {
             {
               title: "General: how it behaves",
               body: "Behavior only. Dropdowns first, toggles below, a one-line description on every setting.",
-              media: { caption: "General tab, annotated." },
+              media: mcShot("General: dropdowns first, a line under each setting.", "general-settings"),
             },
             {
               title: "Text Label: sounds like DNK",
               body: "Every word a shopper sees is editable, pre-filled with sensible defaults.",
-              media: { caption: "Text Label fields linked to the cart." },
+              media: mcShot("Text Label: every field starts with default text.", "text-label-fields"),
             },
             {
               title: "Floating Cart Icon",
               body: "Its own tab: position, hide when empty, and preset icons.",
-              media: { caption: "Floating Cart Icon tab." },
+              media: mcShot("Floating Cart Icon tab.", "floating-icon-card"),
             },
             {
               title: "Styling: safe to try",
               body: "Reset buttons on colors, defaults under numbers, units inside fields.",
-              media: { caption: "Styling tab, annotated." },
+              media: mcShot("Styling: a reset button beside every color.", "styling-colors"),
             },
           ],
         },
@@ -752,22 +822,22 @@ const modernCart: CaseStudy = {
             {
               title: "Opens an empty cart",
               body: "Instead of a dead end, a product he might like, with an add button.",
-              media: { caption: "Empty cart with a suggestion." },
+              media: mcShot("Empty cart with a suggestion.", "cart-empty-panel"),
             },
             {
               title: "Adds shoes",
               body: "The cart slides in. A free shipping bar and “You might also like” keep him browsing.",
-              media: { caption: "Side cart with the shipping bar and carousel." },
+              media: mcShot("Side cart with the shipping bar and carousel.", "cart-one-panel"),
             },
             {
               title: "Applies a coupon",
               body: "A quiet link opens into a field, and the code becomes a removable tag.",
-              media: { caption: "Coupon: link, field, tag." },
+              media: mcShot("An applied coupon, shown as a removable tag.", "coupon-tag-crop"),
             },
             {
               title: "Checks out",
               body: "Shipping, tax, subtotal and savings, then one clear checkout button.",
-              media: { caption: "Order summary and checkout." },
+              media: mcShot("Order summary and checkout.", "summary-card-crop"),
             },
           ],
         },
@@ -788,7 +858,7 @@ const modernCart: CaseStudy = {
           highlights: ["My Account", "General", "Text Label", "Floating Cart Icon", "Styling"],
           before: "Settings scattered across tabs.",
           after: "Five tabs, one job each: My Account, General, Text Label, Floating Cart Icon, Styling.",
-          media: { caption: "The five tabs side by side." },
+          media: mcShot("Five tabs in the sidebar, each with one job. Here, General.", "general-tab"),
         },
         {
           area: "Dashboard",
@@ -797,7 +867,11 @@ const modernCart: CaseStudy = {
           highlights: ["Cart heading", "Empty cart message", "Free shipping line", "Suggestion titles"],
           before: "Fixed wording in every store.",
           after: "Every shopper-facing word editable, with defaults filled in.",
-          media: { caption: "Default heading vs DNK's wording." },
+          media: mcRow(
+            "The Empty Cart fields in Text Label, and the empty cart they write.",
+            mc("text-label-empty-fields", "Text Label"),
+            mc("cart-empty-panel", "In the cart"),
+          ),
         },
         {
           area: "Dashboard",
@@ -806,7 +880,7 @@ const modernCart: CaseStudy = {
           highlights: ["Position", "Hide when empty", "Preset icons", "Custom upload"],
           before: "Buried inside General.",
           after: "Position, hide when empty, preset icons. Custom upload, my idea, came later.",
-          media: { caption: "Floating icon next to its tab." },
+          media: mcShot("Position, hide when empty, and preset icons in their own tab.", "floating-icon-card"),
         },
         {
           area: "Dashboard",
@@ -815,7 +889,11 @@ const modernCart: CaseStudy = {
           highlights: ["Reset on every color", "Visible defaults", "Units inside fields"],
           before: "Owners hesitated to change what they couldn't undo.",
           after: "Grouped controls, reset buttons, visible defaults, units in fields.",
-          media: { caption: "Color reset and number default, close up." },
+          media: mcRow(
+            "Reset buttons on colors, and defaults and units on number fields.",
+            mc("styling-colors", "Reset on every color"),
+            mc("styling-width", "Defaults and units"),
+          ),
         },
         {
           area: "Cart",
@@ -824,7 +902,12 @@ const modernCart: CaseStudy = {
           highlights: ["Featured product", "Shop Now button", "“You might also like” carousel"],
           before: "Empty carts were dead ends; full carts were just lists.",
           after: "A featured product when empty, a “You might also like” carousel when full.",
-          media: { caption: "Empty and full cart with suggestions." },
+          media: mcRow(
+            "A featured product when the cart is empty, then one or two suggestions below the items.",
+            mc("cart-empty-panel", "Empty"),
+            mc("cart-one-panel", "One suggestion"),
+            mc("cart-two-panel", "Two suggestions"),
+          ),
         },
         {
           area: "Cart",
@@ -833,7 +916,12 @@ const modernCart: CaseStudy = {
           highlights: ["Quiet link", "Apply button", "Removable code tag"],
           before: "A collapsible “Got a Discount Code?” row.",
           after: "A link that opens into a field, then a tag you remove in one tap.",
-          media: { caption: "Coupon field, before and after." },
+          media: mcRow(
+            "A quiet link, then a field, then a tag you remove in one tap.",
+            mc("coupon-link-crop", "A quiet link"),
+            mc("coupon-field-crop", "Opens into a field"),
+            mc("coupon-tag-crop", "Becomes a tag"),
+          ),
         },
         {
           area: "Cart",
@@ -842,7 +930,12 @@ const modernCart: CaseStudy = {
           highlights: ["Shipping", "Tax", "Subtotal", "Savings"],
           before: "No breakdown of the total.",
           after: "Shipping, tax, subtotal and savings, before checkout.",
-          media: { caption: "The order summary." },
+          media: mcRow(
+            "Two order summary styles, and several codes stacked as tags.",
+            mc("coupon-link-crop", "Simple list"),
+            mc("summary-card-crop", "Card, total in the button"),
+            mc("summary-tags-crop", "Several codes"),
+          ),
         },
         {
           area: "Cart",
@@ -851,7 +944,11 @@ const modernCart: CaseStudy = {
           highlights: ["Desktop", "Tablet", "Mobile"],
           before: "Slide-out was the only option.",
           after: "A centered popup for desktop, tablet and mobile.",
-          media: { caption: "Popup cart on three screen sizes." },
+          media: mcRow(
+            "The popup cart, empty with a suggestion and with items.",
+            mc("popup-suggest", "Empty, with a suggestion"),
+            mc("popup-items", "With items"),
+          ),
         },
       ],
       variants: {
@@ -940,6 +1037,14 @@ const modernCart: CaseStudy = {
           title: "Cart header styling",
           body: "Control over the top of the cart ([v1.0.1](https://wordpress.org/plugins/modern-cart/)).",
         },
+      ],
+      media: [
+        mcRow(
+          "How these ideas look in the plugin today.",
+          mc("live-preview", "Live preview"),
+          mc("custom-icon-card", "Custom icon upload"),
+          mc("icon-preview-card", "Icon preview"),
+        ),
       ],
     },
     {
