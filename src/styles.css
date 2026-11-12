@@ -8976,3 +8976,16 @@ a.more-case:hover .more-case__link svg {
   font-size: 14px;
   line-height: 1.5;
 }
+
+/* Expanded video: nothing floats over the player or its controls. */
+.case-video-modal {
+  z-index: 1000;
+}
+
+body.is-video-expanded .back-to-top-fab,
+body.is-video-expanded .mobile-toc-button,
+body.is-video-expanded .case-topic-nav {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}

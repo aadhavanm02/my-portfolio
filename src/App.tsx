@@ -339,9 +339,14 @@ function CaseHeroVideo({ coverImage, title, videoSrc }: { coverImage: string; ti
       }
     }
 
+    // Floating page controls (back to top, contents) hide while the video fills the screen.
+    document.body.classList.add("is-video-expanded");
     window.addEventListener("keydown", handleEscape);
 
-    return () => window.removeEventListener("keydown", handleEscape);
+    return () => {
+      document.body.classList.remove("is-video-expanded");
+      window.removeEventListener("keydown", handleEscape);
+    };
   }, [isExpanded]);
 
   function formatVideoTime(time: number) {
