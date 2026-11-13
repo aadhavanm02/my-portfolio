@@ -153,68 +153,68 @@ const feedback = (question: string) =>
 const cartAbandonmentDecisions: DecisionItem[] = [
   {
     title: "Why Reports became a dropdown instead of more tabs",
-    hook: "Every new feature wanted a place in the top navigation, and the top navigation only had so much room.",
+    hook: "Every new feature wanted a spot in the top navigation, which only had so much room.",
     before: [
-      "The old plugin had three tabs. As the plan grew to include Product Report, Email Logs, Integrations and Popup Templates, each report sitting as its own tab would have crowded the top bar.",
+      "A tab per report would crowd the top bar once Product Report, Email Logs, Integrations and Popup Templates arrived.",
     ],
-    turningIntro: "I explored four directions:",
+    turningIntro: "Four directions:",
     options: [
       {
         title: "A tab for each report",
-        body: "One click to any report. But the top bar fills up fast, and gets worse with every new report.",
+        body: "One click to any report, but the bar fills up with every new one.",
       },
       {
         title: "Underline tabs inside a Reports page",
-        body: "Keeps the top bar short. But it adds a second row of navigation inside the page.",
+        body: "A short top bar, but a second row of navigation inside the page.",
       },
       {
         title: "Pill tabs beside the table title",
-        body: "Compact and close to the data. But easy to miss, and harder to scale beyond two reports.",
+        body: "Compact and close to the data, but easy to miss and hard to scale past two.",
       },
       {
         title: "A dropdown under Reports in the top bar",
-        body: "Keeps the top bar short and groups the reports in one place. The trade-off is one extra click.",
+        body: "A short top bar with every report in one place, for one extra click.",
         chosen: true,
       },
     ],
     reasoning: [
-      "In discussion with the PM and developers, we chose the dropdown. It keeps the main navigation short, and new report types can be added without touching the top bar.",
+      "With the PM and developers, we chose the dropdown: a short main navigation that new reports never touch.",
     ],
     next: [
-      "I designed the Reports dropdown with Email Report and Product Report, and kept the same table layout across both so they feel like one area.",
+      "Both reports share one table layout, so they feel like one area.",
     ],
     result: [
-      "It shipped. The live plugin's top bar has five items: Dashboard, Follow Up Emails, Reports, Integrations and Settings.",
+      "It shipped. The live top bar has five items: Dashboard, Follow Up Emails, Reports, Integrations and Settings.",
     ],
     media: [{ caption: "The four navigation versions side by side." }, { caption: "The live top bar." }],
   },
   {
     title: "Why Email Logs became a full page, not a side drawer",
-    hook: "A store owner clicks on one abandoned cart. How much do they need to see, and where should it open?",
+    hook: "A store owner opens one abandoned cart. How much should they see, and where?",
     before: [
-      "In the new design, editing a follow-up email opened in a side drawer beside the list. Email Logs, the detailed view of one cart, needed a home too.",
+      "Email editing opened in a drawer beside the list; Email Logs, one cart's detail, needed a home too.",
     ],
-    turningIntro: "There were two options:",
+    turningIntro: "Two options:",
     options: [
       {
         title: "A side drawer",
-        body: "Consistent with the email editor, and the list stays in view. But Email Logs holds a lot: scheduled emails, billing and shipping addresses, and the full order. In a drawer, the addresses can't sit side by side and the order table gets cramped.",
+        body: "Matches the email editor and keeps the list in view, but one cart's emails, addresses and order get cramped, with no room side by side.",
         badge: "My first proposal",
       },
       {
         title: "A full page",
-        body: "Room for every detail, with addresses side by side and a full order table. The trade-off is leaving the list and a different pattern from the email editor.",
+        body: "Room for every detail, at the cost of leaving the list and breaking pattern with the editor.",
         chosen: true,
       },
     ],
     reasoning: [
-      "I first proposed the drawer, for consistency. The PM and developers pushed for the full page, because this is a detailed report, not a quick edit. Looking at how much one cart holds, I agreed. The old plugin also showed these details on a full page, so existing users would recognise it.",
+      "I proposed the drawer for consistency. The PM and developers argued this is a detailed read, not a quick edit, and seeing how much one cart holds, I agreed. The old plugin used a full page too, so existing users know it.",
     ],
     next: [
-      "I redesigned Email Logs as a full page: email details first, then billing and shipping side by side, then the order items with totals.",
+      "Email details come first, then billing and shipping side by side, then the order items with totals.",
     ],
     result: [
-      "The full page shipped. It reinforced something I now ask early: is this a quick edit or a detailed read? The answer decides the pattern, not consistency alone.",
+      "It shipped. Now I ask early: quick edit or detailed read? The answer, not consistency alone, picks the pattern.",
     ],
     media: [{ caption: "The drawer version." }, { caption: "The full page version." }],
   },
@@ -222,55 +222,55 @@ const cartAbandonmentDecisions: DecisionItem[] = [
     title: "Why the dashboard chart always compares two numbers",
     hook: "A chart that changes when you click a card sounds clever. But would store owners ever know to click?",
     before: [
-      "The old Report page had six number cards and no chart at all. Store owners could see totals, but not whether recovery was improving.",
+      "The old Report page had six numbers and no chart: totals, but no sign of whether recovery was improving.",
     ],
-    turningIntro: "There were two options:",
+    turningIntro: "Two options:",
     options: [
       {
         title: "One chart that switches with the cards",
-        body: "Click any metric card and the chart shows that metric. Flexible, but the interaction is hidden. Store owners might never discover it, or not understand why the chart changed.",
+        body: "Flexible, but hidden: owners might never find it, or wonder why the chart changed.",
       },
       {
         title: "A fixed chart comparing two metrics",
-        body: "Recoverable revenue and recovered revenue, always shown together. Less flexible, but the most important story is always visible: how much was at risk, and how much came back.",
+        body: "Recoverable and recovered revenue, always together: less flexible, but what was at risk and what came back stay in view.",
         chosen: true,
       },
     ],
     reasoning: [
-      "I chose the fixed comparison. The gap between the two lines is what a store owner actually cares about, and it shouldn't depend on finding a hidden click.",
+      "The gap between the lines is what owners care about; it shouldn't hide behind a click.",
     ],
     next: [
-      "I designed the chart with both lines in the brand colors, a legend, and a date range picker that updates the cards and the chart together. I explored two dashboard versions; the first, refined over a few rounds, became the final design.",
+      "Both lines use brand colors, with a legend and one date picker for cards and chart. The first of two dashboard versions, refined over a few rounds, became final.",
     ],
-    result: ["It shipped. The live dashboard shows the six cards above the comparison chart."],
+    result: ["It shipped: six cards above the comparison chart."],
     media: [{ caption: "Dashboard V1." }, { caption: "Dashboard V2." }, { caption: "The live dashboard." }],
   },
   {
     title: "Why shoppers can skip the email popup",
-    hook: "The store needs a shopper's email to recover their cart. But asking for it every time they tap Add to Cart can feel like a login wall.",
+    hook: "The store needs an email to recover a cart. But asking on every Add to Cart can feel like a login wall.",
     before: [
-      "The popup asks for an email when a shopper adds to cart, so the store can follow up if they leave. A shopper who isn't logged in might see it again and again.",
+      "The popup asks for an email on add to cart so the store can follow up, and logged-out shoppers might see it again and again.",
     ],
-    turningIntro: "There were two options:",
+    turningIntro: "Two options:",
     options: [
       {
         title: "Always require the email",
-        body: "The store captures more emails. But shoppers who are just browsing get frustrated, wonder why it's needed, and may leave the store altogether.",
+        body: "More emails, but browsing shoppers get frustrated and may leave.",
       },
       {
         title: "Let store owners make it optional",
-        body: "Shoppers can tap “No thanks” and keep shopping. The store captures fewer emails at this step.",
+        body: "Shoppers tap “No thanks” and keep shopping, so fewer emails come in at this step.",
         chosen: true,
       },
     ],
     reasoning: [
-      "I designed it as a choice for the store owner, with an “Email field mandatory?” toggle. Skipping is safe because shoppers still give their email at checkout. By then they've chosen what to buy, so being asked feels necessary rather than annoying.",
+      "I made it the owner's choice with an “Email field mandatory?” toggle. Skipping is safe: shoppers still give an email at checkout, where being asked feels necessary.",
     ],
     next: [
-      "When the toggle is off, the popup shows a “No thanks” link with editable text. The template list counts “No thanks” clicks, so store owners can see how many shoppers skip and decide for themselves.",
+      "With the toggle off, the popup shows an editable “No thanks” link, and the template list counts how many skip.",
     ],
     result: [
-      "It shipped as part of Popup Templates in Pro. Store owners get to balance capturing emails against keeping shoppers happy, with the data to back their choice.",
+      "It shipped in Pro's Popup Templates: owners balance emails against shopper patience, with data to decide.",
     ],
     media: [{ caption: "The popup with the email required." }, { caption: "The popup with “No thanks.”" }],
   },
@@ -446,9 +446,9 @@ const cartAbandonment: CaseStudy = {
   image: "/assets/cart-abandonment.png",
   imageClass: "project-image--cart",
   headline: "Redesigning Cart Abandonment Recovery so store owners can see what they win back",
-  hook: "The plugin's whole job is to bring back lost sales. Yet its own admin showed six numbers, no chart, and no way to export them.",
+  hook: "The plugin's whole job is to win back lost sales. Yet its own admin showed six numbers, no chart, and no way to export them.",
   summary:
-    "Cart Abandonment Recovery tracks shoppers who leave their cart, sends timed follow-up emails, and shows store owners what came back. I redesigned the whole admin on ForceUI and designed its new features: a visual dashboard, detailed reports, new recovery channels and an email capture popup.",
+    "Cart Abandonment Recovery tracks shoppers who leave their cart, sends timed follow-up emails and shows store owners what came back. I redesigned the whole admin on ForceUI and designed its new features: a visual dashboard, detailed reports, new recovery channels and an email capture popup.",
   stats: [
     { value: "300K+", label: "Active installs" },
     { value: "2 months", label: "May to June 2025" },
@@ -473,7 +473,7 @@ const cartAbandonment: CaseStudy = {
       eyebrow: "The Problem",
       title: "A recovery plugin that couldn't show what it recovered",
       intro:
-        "It worked, but the admin looked like a plain WordPress settings page. If store owners can't see the revenue it brings back, they can't trust it, tune it, or justify upgrading to Pro.",
+        "It worked, but looked like a plain WordPress settings page. If owners can't see what it recovers, they can't trust it, tune it or justify Pro.",
       pains: [
         { title: "One page, two jobs", body: "The Report tab was dashboard and report at once: six numbers, no chart." },
         { title: "Data you couldn't use", body: "No search, no filters beyond date, no export." },
@@ -483,10 +483,10 @@ const cartAbandonment: CaseStudy = {
       ],
       media: { caption: "The old Report page: six number cards and a plain table." },
       mapping: [
-        ["One page mixed the dashboard and the report", "Recovery at a glance, details one click away"],
-        ["Data was hard to track or export", "Every report searchable, filterable and exportable"],
-        ["The layout had no room for new features", "A structure that can grow"],
-        ["The UI didn't follow the design system", "Every screen in line with ForceUI"],
+        ["Dashboard and report on one page", "Recovery at a glance, details one click away"],
+        ["Data hard to track or export", "Every report searchable, filterable and exportable"],
+        ["No room for new features", "A structure that can grow"],
+        ["UI outside the design system", "Every screen on ForceUI"],
       ],
       constraints: [
         "Existing users knew the old plugin",
@@ -501,32 +501,32 @@ const cartAbandonment: CaseStudy = {
       nav: "Walkthrough",
       eyebrow: "Walkthrough",
       title: "One store owner, one shopper",
-      intro: "Recovery has two sides: the owner who watches the results, and the shopper who leaves and comes back.",
+      intro: "Recovery has two sides: the owner watching the results, and the shopper who leaves and comes back.",
       video: { kind: "video", caption: "Prototype walkthrough: Kavya checks her dashboard, edits an email, then opens one recovered cart." },
       lanes: [
         {
           name: "Kavya",
           role: "Store owner",
-          about: "Runs Leaf & Loom, a small home decor store, on Cart Abandonment Recovery Pro.",
+          about: "Runs Leaf & Loom, a small home decor store, on Pro.",
           steps: [
             {
               title: "Is it working?",
-              body: "Six stat cards and a chart comparing recoverable and recovered revenue. One date picker updates it all.",
+              body: "Six stat cards and a recoverable vs recovered revenue chart, set by one date picker.",
               media: { caption: "Dashboard, annotated." },
             },
             {
               title: "Which emails work?",
-              body: "Each template shows sent, open and click rates. Editing opens a drawer with timing, coupon and rules.",
+              body: "Each template shows sent, open and click rates; editing opens a drawer with timing, coupon and rules.",
               media: { caption: "Email list and the edit drawer." },
             },
             {
               title: "Catch emails early",
-              body: "An Add to Cart popup asks for an email, styled in Spectra, with an optional field so shoppers can skip.",
+              body: "An Add to Cart popup, styled in Spectra, asks for an email that shoppers can skip.",
               media: { caption: "Popup template and the popup." },
             },
             {
               title: "Who came back?",
-              body: "Search, filter and export the Email Report, then open one cart to see its emails, addresses and items.",
+              body: "She filters and exports the Email Report, then opens one cart's emails, addresses and items.",
               media: { caption: "Email Report and Email Logs." },
             },
           ],
@@ -538,13 +538,13 @@ const cartAbandonment: CaseStudy = {
           steps: [
             {
               title: "Adds a lamp",
-              body: "The popup asks for his email. He taps “No thanks” and keeps shopping.",
+              body: "He taps “No thanks” on the email popup and keeps shopping.",
               media: { caption: "The popup with “No thanks.”" },
             },
-            { title: "Leaves at checkout", body: "He enters his email, gets distracted, and closes the tab." },
+            { title: "Leaves at checkout", body: "He enters his email, gets distracted and closes the tab." },
             {
               title: "Comes back",
-              body: "A follow-up 30 minutes later, a discount the next day. He buys the lamp, and Kavya's recovered revenue goes up.",
+              body: "A reminder after 30 minutes, a discount the next day. He buys, and Kavya's recovered revenue rises.",
             },
           ],
         },
@@ -559,91 +559,71 @@ const cartAbandonment: CaseStudy = {
       intro: "Every change traces back to one of the four problems.",
       items: [
         {
-          area: "Structure",
           title: "Navigation built to grow",
-          detail: "The old plugin had three plain tabs: Report, Follow-Up Emails and Settings. I rebuilt the top navigation on ForceUI as Dashboard, Follow Up Emails, Reports, Integrations and Settings, with Popup Templates added for Pro. Reports became a dropdown so new report types don't crowd the top bar.",
-          highlights: ["ForceUI product bar", "Reports dropdown", "Room for new features"],
+          detail: "I rebuilt the top navigation on ForceUI: Dashboard, Follow Up Emails, Reports, Integrations, Settings, and Popup Templates for Pro. Reports is a dropdown, so new reports never crowd the bar.",
           before: "Three plain tabs: Report, Follow-Up Emails, Settings.",
-          after: "Five sections plus Popup Templates for Pro. Reports is a dropdown.",
+          after: "Five sections with room to grow.",
           media: { caption: "Old tabs vs the new top navigation." },
         },
         {
-          area: "Dashboard",
           title: "Recovery at a glance",
-          detail: "The old Report page showed six numbers and nothing else. The new Dashboard keeps the six stat cards, adds a chart comparing recoverable and recovered revenue over time, a date range picker, a Recent Follow Up Report table and a Product Report table, each with View All.",
-          highlights: ["Six stat cards", "Revenue comparison chart", "One date picker for everything", "Recent follow-ups", "Product Report"],
+          detail: "The six stat cards gain a chart of recoverable against recovered revenue, one date range picker, and Recent Follow Up Report and Product Report tables with View All.",
           before: "Six numbers and nothing else.",
-          after: "Stat cards, a revenue comparison chart, a date picker and recent report tables.",
+          after: "Numbers, trend and recent activity in one view.",
           media: { caption: "Old Report page vs the new Dashboard." },
         },
         {
-          area: "Emails",
           title: "A list that shows what works",
-          detail: "Store owners couldn't tell which emails were bringing shoppers back. The template list now shows sent count, open rate and click rate beside each template, so it's clear at a glance which email does most of the work.",
-          highlights: ["Sent count", "Open rate", "Click rate"],
+          detail: "Sent count, open rate and click rate now sit beside each template, so owners see at a glance which email brings shoppers back.",
           before: "Name, subject and timing only.",
-          after: "Sent count, open rate and click rate beside each template.",
+          after: "Results beside every template.",
           media: { caption: "Email list with the rate columns." },
         },
         {
-          area: "Emails",
           title: "Editing in a drawer",
-          detail: "The old editor was a long WordPress form on its own page. Editing now opens a drawer beside the list, with the subject, body and variables, send timing, coupon, test email and WooCommerce email style grouped together. The rule engine already existed but was missing options, so I redesigned it as a toggle that reveals a simple condition builder: rule type, operator, value, add rule.",
-          highlights: ["Subject, body and variables", "Send timing", "Auto coupon", "Test email", "Rule engine"],
+          detail: "Editing opens a drawer beside the list with subject, body and variables, timing, coupon, test email and WooCommerce email style. The rule engine lacked options, so it became a toggle revealing a simple builder: rule type, operator, value, add rule.",
           before: "A long WordPress form on its own page.",
-          after: "A drawer beside the list: content, timing, coupon, test email and a fuller rule engine.",
+          after: "Everything in a drawer, with the list still in view.",
           media: { caption: "The edit drawer with the rule engine open." },
         },
         {
-          area: "Reports",
           title: "Reports you can search and export",
-          detail: "The old cart table had bulk actions and little else. The Email Report now has search, a status filter, a date picker, Export, a country column, colored status chips and row actions to view, unsubscribe or delete. Product Report is new, showing which products are abandoned and recovered most.",
-          highlights: ["Search", "Status filter", "Export", "Status chips", "Row actions", "New Product Report"],
+          detail: "The Email Report gains search, a status filter, a date picker, Export, a country column, status chips and row actions (view, unsubscribe, delete). The new Product Report shows the most abandoned and recovered products.",
           before: "A cart table with bulk actions and little else.",
-          after: "Search, status filter, export, status chips and row actions. Product Report is new.",
+          after: "Find, filter and export anything.",
           media: { caption: "The Email Report table, annotated." },
         },
         {
-          area: "Reports",
           title: "Every detail of one cart",
-          detail: "Opening a cart shows its Email Log on a full page: the scheduled emails with their coupon and status, billing and shipping addresses side by side, and the order items with totals. It's the detailed read a store owner needs before deciding what to do next.",
-          highlights: ["Scheduled emails", "Coupon and status", "Billing and shipping", "Order items and totals"],
-          after: "A full-page Email Log: scheduled emails, billing and shipping side by side, and the order.",
+          detail: "Opening a cart shows its Email Log on a full page: scheduled emails with coupon and status, billing and shipping side by side, and the order items with totals.",
+          after: "The full story of one cart, on one page.",
           media: { caption: "The Email Logs page." },
         },
         {
-          area: "Settings",
           title: "Settings split by topic",
-          detail: "The old settings sat on one long page, with long columns of role and order status checkboxes. Settings now has a left sub-menu: General, Coupon, Email, Recovery Report, GDPR and Advanced. Tracking is a toggle, roles and statuses are multi-select fields with chips, each setting sits in its own card, and saving shows a confirmation. Notify Recovery To Admin, Recovery Report emails and GDPR are new.",
-          highlights: ["Six setting groups", "Chip multi-selects", "One card per setting", "Save confirmation", "New GDPR settings"],
+          detail: "A left sub-menu splits settings into General, Coupon, Email, Recovery Report, GDPR and Advanced, with a tracking toggle, chip multi-selects for roles and statuses, one card per setting and a save confirmation. Notify Recovery To Admin, Recovery Report emails and GDPR are new.",
           before: "One long page of checkbox columns.",
-          after: "A left sub-menu, toggles, chip multi-selects, and one card per setting. GDPR is new.",
+          after: "Six groups, one card per setting.",
           media: { caption: "Old Settings vs the new General settings." },
         },
         {
-          area: "Integrations",
           title: "More ways to reach shoppers",
-          detail: "Integrations is new. Webhook, SMS, WhatsApp and OttoKit each get their own page in a left sub-menu with an enable toggle, so store owners can follow up wherever their shoppers actually reply.",
-          highlights: ["Webhook", "SMS", "WhatsApp", "OttoKit"],
+          detail: "The new Integrations area gives Webhook, SMS, WhatsApp and OttoKit each a page and an enable toggle, so owners can follow up wherever shoppers actually reply.",
           before: "Email was the only channel.",
-          after: "Webhook, SMS, WhatsApp and OttoKit, each with its own page and toggle.",
+          after: "Four new channels, each with its own page.",
           media: { caption: "The Integrations page." },
         },
         {
-          area: "Pro",
           title: "Popup Templates",
-          detail: "A Pro feature that captures a shopper's email when they add to cart or try to leave. The list shows each template's type, emails captured, views and “No thanks” clicks. Editing opens the popup in Spectra, Brainstorm Force's page builder, while rules and coupons stay in the plugin.",
-          highlights: ["Add to cart popups", "Exit popups", "Captures and views", "“No thanks” clicks", "Designed in Spectra"],
+          detail: "A Pro feature capturing emails on add to cart or exit. The list shows each template's type, captures, views and “No thanks” clicks; editing opens in Spectra, Brainstorm Force's page builder, while rules and coupons stay in the plugin.",
           before: "No way to reach shoppers who leave before checkout.",
-          after: "Email capture on add to cart or exit, with captures, views and “No thanks” clicks tracked.",
+          after: "Emails captured before checkout, with results tracked.",
           media: { caption: "The popup template list and the popup." },
         },
         {
-          area: "Pro",
           title: "Upgrade to Pro",
-          detail: "I designed how Pro features appear to free users across the Dashboard, Follow Up Emails, Product Report, Integrations and Settings, so free users can see what upgrading adds without being blocked. All of them shipped, including the blurred Product Report on the Dashboard.",
-          highlights: ["Dashboard", "Follow Up Emails", "Product Report", "Integrations", "Settings"],
-          after: "Pro features shown to free users in five places, including a blurred Product Report. All shipped.",
+          detail: "Pro features appear to free users in five places, Dashboard, Follow Up Emails, Product Report, Integrations and Settings, without blocking anything. All shipped, including the blurred Product Report on the Dashboard.",
+          after: "Pro in view, never in the way.",
           media: { caption: "The blurred Product Report on the live Dashboard." },
         },
       ],
@@ -1081,40 +1061,39 @@ function readTime(study: CaseStudy) {
   return `${Math.max(1, Math.round(words / WORDS_PER_MINUTE))} min read`;
 }
 
-modernCart.meta.push(["Read time", readTime(modernCart)]);
 
 // Built from the "Social Feed Case Study" doc. The brand and people in the walkthrough are made up.
 const superfansDecisions: DecisionItem[] = [
   {
     title: "Why the dashboard shows posts as a grid, not a table",
-    hook: "A feed of short videos is about what you see. Our first two dashboard layouts made merchants read instead.",
+    hook: "A feed of short videos is about what you see. Our first two layouts made merchants read.",
     before: [
-      "The Superfans dashboard already had a familiar pattern from the app builder: a side panel of blocks and a properties panel for editing. The obvious start was to reuse it for Social Feed.",
+      "The app builder's block and properties panels were the obvious place to start.",
     ],
-    turningIntro: "We tried two directions before landing on a third:",
+    turningIntro: "Two directions before a third:",
     options: [
       {
         title: "Reuse the builder layout",
-        body: "Consistent with the rest of the dashboard, so merchants would feel at home. But it was built for arranging blocks, not browsing and managing a stream of videos.",
+        body: "Familiar, but made for arranging blocks, not browsing videos.",
       },
       {
         title: "A table of posts",
-        body: "A clear list with rows for each post. But video content looked flat in rows, and it didn't suit how merchants think about their feed.",
+        body: "Clear, but video looked flat in rows.",
       },
       {
-        title: "A visual layout inspired by short video apps",
-        body: "A grid of thumbnails to scan, and a single post view with a phone preview and the comments beside it. Less like the rest of the dashboard, but it matched the content.",
+        title: "A visual layout, like short video apps",
+        body: "A thumbnail grid, and a single post view with a phone preview and comments. Less like the rest of the dashboard, but true to the content.",
         chosen: true,
       },
     ],
     reasoning: [
-      "We dropped the first two and went with the visual layout. Consistency is a good default, but here the content type had to decide the layout.",
+      "Consistency is a good default, but here the content had to decide the layout.",
     ],
     next: [
-      "I designed the grid view and the single post view, and recorded the change in the version log as “Removed tabular layout to make it more visual. Added grid view and single view.”",
+      "I designed both views, logged as “Removed tabular layout to make it more visual. Added grid view and single view.”",
     ],
     result: [
-      "The grid and single post view became the base for everything that followed in the dashboard, from comments to Instagram import.",
+      "They became the base for comments, Instagram import and everything after.",
     ],
     media: [{ caption: "The early table version." }, { caption: "The grid view." }],
   },
@@ -1122,66 +1101,65 @@ const superfansDecisions: DecisionItem[] = [
     title: "Why we improved the post view instead of redesigning it",
     hook: "We found a better design. We still didn't ship it, and that was the right call.",
     before: [
-      "Opening a post in the dashboard showed the comments first. To edit the post itself, merchants had to find the menu inside the comments panel.",
+      "Posts opened on their comments; editing meant finding a menu inside the comments panel.",
     ],
-    turningIntro: "There were three options:",
+    turningIntro: "Three options:",
     options: [
       {
         title: "A YouTube Shorts style view",
-        body: "Just the video, with a menu to edit the post and a comment icon to open comments. Clean, and the team liked it. But it meant rebuilding a view that was already built and about to go live.",
+        body: "Just the video, an edit menu and a comment icon. The team liked it, but it meant rebuilding a finished view about to go live.",
       },
       {
         title: "Tabs for Edit Post and Comments",
-        body: "Easy to switch between the two jobs. But it added another layer to a simple screen.",
+        body: "Easy switching, but another layer on a simple screen.",
       },
       {
         title: "Improve the existing view",
-        body: "Keep the layout and make editing easier to reach. Less ambitious, but it could ship on time.",
+        body: "Keep the layout and bring editing within reach. Less ambitious, but it could ship on time.",
         chosen: true,
       },
     ],
     reasoning: [
-      "We chose to improve the existing view. The feature was close to release, and a bigger redesign would have delayed it for a gain we could add later.",
+      "Release was close, and a redesign would delay it for a gain we could add later.",
     ],
     next: [
-      "I added a simple header to the post: its title, when it was posted, likes and comments, and a menu for Edit, Copy Post ID, Hide and Delete. I also explored showing post metrics (CTR, unique views, likes, comments) in the same header.",
+      "I added a header with title, posted time, likes, comments and a menu (Edit, Copy Post ID, Hide, Delete), and explored adding CTR and unique views.",
     ],
-    result: ["The improved header shipped. The metrics version is a next step the team may add later."],
+    result: ["The header shipped; the metrics version may come later."],
     media: [{ caption: "The Tab exploration." }, { caption: "The YouTube Shorts exploration." }, { caption: "The shipped header." }],
   },
   {
     title: "Why reviewing reported content uses a dropdown, not tick and cross buttons",
-    hook: "I argued for the faster design. After several rounds of debate, the team chose a different one, and I designed that one.",
+    hook: "I argued for the faster design. After several rounds, the team chose another, and I designed it.",
     before: [
-      "The spec first said reported content should stay visible while it waited for review, like on Instagram and TikTok. The flow changed: reported content is now hidden automatically, and the brand reviews it afterwards. So merchants needed a quick way to decide, item by item, whether something goes back to visible or stays hidden.",
+      "Reported content was meant to stay visible until review, like on Instagram and TikTok. Then it changed to hide automatically for later review, so merchants needed a quick way to restore or keep each item hidden.",
     ],
-    turningIntro: "There were two options:",
+    turningIntro: "Two options:",
     options: [
       {
         title: "Tick and cross buttons",
-        body: "A tick makes the item visible and marks it as reviewed; a cross hides it. One click per item, which is fast for a long list. But icons on their own can be read in different ways.",
+        body: "A tick restores and marks reviewed; a cross hides. Fast for long lists, but icons alone can be misread.",
         badge: "My proposal",
       },
       {
         title: "A dropdown",
-        body: "Each choice is written out in words. One extra click per item, but nothing to guess.",
+        body: "Each choice written out in words. One more click per item, but nothing to guess.",
         chosen: true,
         badge: "Team's choice",
       },
     ],
     reasoning: [
-      "We discussed it over several rounds. The PM's point was that the buttons didn't clearly say what each action does, and our design didn't show the current status of a reported item. A status dropdown on hover solved both: the action is written out, and the status is always visible. The team went with the dropdown.",
+      "The PM's point: the buttons didn't say what they do, and the item's status wasn't shown. A status dropdown on hover solved both.",
     ],
-    next: ["I updated the moderation designs to match the PM's prototype:"],
+    next: ["I matched the moderation designs to the PM's prototype:"],
     nextList: [
       "A status dropdown on hover instead of buttons",
       "Two sections instead of three",
-      "Report reasons as plain labels instead of colored tags, which pulled attention and needed a legend",
-      "A button in the review popup that opens the post in the feed, so merchants can see the comments around it",
+      "Report reasons as plain labels, not colored tags that pulled focus and needed a legend",
+      "A review popup button that opens the post in the feed, with its comments",
     ],
     result: [
-      "The PM signed off on the updated design the next day, and the dropdown version shipped.",
-      "A tick could mean “reviewed” or “visible”, and a written label removes that guess, even if it costs one more click.",
+      "The PM signed off the next day and it shipped. A tick could mean “reviewed” or “visible”; a label removes the guess.",
     ],
     media: [{ caption: "The tick and cross exploration." }, { caption: "The shipped dropdown." }],
   },
@@ -1198,9 +1176,9 @@ const superfansSocialFeed: CaseStudy = {
   image: "/assets/superfans-dashboard.png",
   imageClass: "project-image--superfans",
   headline: "How I designed Social Feed so brand apps became a place to watch, post and shop",
-  hook: "Shoppers spend hours scrolling videos on Instagram and TikTok. Superfans wanted that same feed inside every brand's own app, where every video could be shopped.",
+  hook: "Shoppers spend hours scrolling videos on Instagram and TikTok. Superfans wanted that feed in every brand's own app, with every video shoppable.",
   summary:
-    "Superfans is a mobile app platform for Shopify and Shopify Plus brands. Social Feed adds a short video feed to a brand's app: shoppers watch, like, comment, buy tagged products and post their own content, while merchants publish posts, bring in their Instagram videos, and moderate what their community shares. I designed both sides of the feature, from the first wireframes to design QA on the built product.",
+    "Superfans is a mobile app platform for Shopify and Shopify Plus brands. Social Feed adds a short video feed to brand apps: shoppers watch, comment, buy tagged products and post, while merchants publish, import Instagram videos and moderate. I designed both sides, from first wireframes to design QA.",
   stats: [
     { value: "10 months", label: "January to October 2026" },
     { value: "2 sides", label: "Shopper app and merchant dashboard" },
@@ -1225,45 +1203,42 @@ const superfansSocialFeed: CaseStudy = {
       eyebrow: "The Problem",
       title: "Brands were selling on social platforms, not in their own apps",
       intro:
-        "Brands on Superfans have their own shopping apps, but much of their selling and engagement happens elsewhere. They post videos on Instagram and TikTok, run live sales on social platforms, and send shoppers back and forth between apps. Inside their own app, there was no place for that kind of content.",
-      goalsIntro: "Social Feed was part of a wider Community push at Superfans. The product spec set three goals for it:",
+        "Brands on Superfans have their own apps, but their videos, live sales and engagement live on Instagram and TikTok, with no place for that content in their app.",
+      goalsIntro: "Social Feed was part of a wider Community push, with three goals:",
       goals: [
-        { title: "Bring shoppers back every day", body: "With fresh content from the brand." },
-        {
-          title: "Collect first hand data",
-          body: "From shoppers, through interactive blocks in the feed such as quizzes and preference pickers.",
-        },
-        { title: "Connect content to sales", body: "So every video can lead to a product or a collection." },
+        { title: "Bring shoppers back every day", body: "With fresh brand content." },
+        { title: "Collect first hand data", body: "Through quizzes and preference pickers in the feed." },
+        { title: "Connect content to sales", body: "So every video leads to a product or a collection." },
       ],
       pains: [
         {
           title: "For shoppers",
-          body: "Brand apps were built for buying, not browsing. No feed to watch, nothing to comment on, no way to share their own look.",
+          body: "Brand apps were built for buying: nothing to watch, comment on or share.",
         },
         {
           title: "For merchants",
-          body: "Fresh video for one more channel takes time, and once shoppers can post, merchants need ways to review and control it.",
+          body: "Video for another channel takes time, and shopper posts need review and control.",
         },
         {
           title: "For the product",
-          body: "Video, comments, posting, moderation and access all had to fit an app and dashboard brands used every day.",
+          body: "Everything had to fit apps and a dashboard brands used daily.",
         },
       ],
       note: {
         title: "What competitors offered",
-        body: "Tapcart, a competing app platform, offers shoppable video mainly through third party integrations such as Tolstoy's “For You” feed and Yotpo's shoppable Instagram gallery. That content is curated by the brand, and shoppers don't post or comment inside the app. We set out to build a native feed that works as a community, where shoppers take part.",
+        body: "Tapcart, a competitor, offers shoppable video mostly via integrations like Tolstoy's “For You” feed and Yotpo's Instagram gallery: brand-curated, with no shopper posts or comments. Ours is native and social.",
       },
       mapping: [
-        ["Brand apps had no place for video content", "Bring a shoppable video feed into the app"],
-        ["Merchants lacked time to create new content", "Let them reuse their Instagram videos"],
-        ["Shopper posts and comments needed control", "Give merchants moderation and access tools"],
-        ["Social features are new to brand apps", "Introduce the feed clearly to shoppers"],
+        ["No video in brand apps", "A shoppable feed in the app"],
+        ["No time for new content", "Reuse Instagram videos"],
+        ["Shopper posts need control", "Moderation and access tools"],
+        ["Social is new to brand apps", "A clear introduction"],
       ],
       constraints: [
-        "Fit existing brand apps and the Superfans dashboard",
-        "Work on both iOS and Android",
-        "Merchants control anything shoppers post",
-        "Ship parts while others were still in design",
+        "Fit existing apps and the dashboard",
+        "Work on iOS and Android",
+        "Merchants control shopper posts",
+        "Ship parts while others were in design",
       ],
     },
     {
@@ -1273,7 +1248,7 @@ const superfansSocialFeed: CaseStudy = {
       eyebrow: "Walkthrough",
       title: "One brand, one shopper",
       intro:
-        "Riya manages the app for Thread & Care, a scrubs brand on Superfans. Karan is a nurse who shops with them. Both are made up for this story.",
+        "Riya runs the app for Thread & Care, a scrubs brand; Karan, a nurse, shops with them. Both are made up.",
       video: {
         kind: "video",
         caption: "Prototype walkthrough: a merchant imports an Instagram video, then a shopper watches it, comments and buys the tagged product.",
@@ -1282,26 +1257,26 @@ const superfansSocialFeed: CaseStudy = {
         {
           name: "Riya",
           role: "Merchant",
-          about: "Fills the feed and keeps it safe from the Superfans dashboard.",
+          about: "Fills the feed and keeps it safe.",
           steps: [
             {
               title: "Brings in Instagram videos",
-              body: "Links the brand's account, opens the import window and picks two recent videos from Your Posts, without creating anything new.",
+              body: "Links the brand's account and imports two recent videos from Your Posts.",
               media: { caption: "Link Account and the Instagram import modal." },
             },
             {
-              title: "Publishes a post of her own",
-              body: "Adds a video, writes a description, tags the sweatshirt and sets it visible, with a phone preview beside the form.",
+              title: "Publishes her own post",
+              body: "Adds a video, tags the sweatshirt and sets it visible, with a live phone preview.",
               media: { caption: "New Post panel with the phone preview." },
             },
             {
-              title: "Sees everything at a glance",
-              body: "The grid shows every post; opening one shows the video beside its comments, with likes and a menu to edit, hide or delete.",
+              title: "Sees every post",
+              body: "Each post opens from the grid beside its comments, with edit, hide and delete.",
               media: { caption: "Grid view and the single post view." },
             },
             {
               title: "Keeps the feed safe",
-              body: "A reported comment is hidden automatically. She reviews it in the Reported tab and decides who can see the feed at all.",
+              body: "A reported comment hides automatically; she reviews it and sets who can see the feed.",
               media: { caption: "Reported tab, review modal and Feed Access Controls." },
             },
           ],
@@ -1309,26 +1284,26 @@ const superfansSocialFeed: CaseStudy = {
         {
           name: "Karan",
           role: "Shopper",
-          about: "A nurse who shops with Thread & Care in their app.",
+          about: "Shops in the Thread & Care app.",
           steps: [
             {
               title: "Finds the feed",
-              body: "A new Feed tab sits in the bottom bar, and a short hint shows him he can swipe up for more.",
+              body: "A Feed tab in the bottom bar, with a hint to swipe up.",
               media: { caption: "Feed tab with the swipe up hint." },
             },
             {
               title: "Watches and shops",
-              body: "A video shows the sweatshirt he's been eyeing, tagged right on it. He taps the tag and adds it to his cart.",
+              body: "He taps the tag on a sweatshirt he's been eyeing and adds it to his cart.",
               media: { caption: "Feed video with the product tag." },
             },
             {
               title: "Joins the conversation",
-              body: "Asks about sizing and replies to another shopper. A notification later brings him back to his highlighted reply.",
+              body: "He asks about sizing; a notification later returns him to his highlighted reply.",
               media: { caption: "Comments sheet and the highlighted comment." },
             },
             {
               title: "Posts his own video",
-              body: "A week later he posts a video of his new sweatshirt from the product page, with the product already tagged.",
+              body: "A week later he posts from the product page, sweatshirt already tagged.",
               media: { caption: "Posting from the product page." },
             },
           ],
@@ -1342,133 +1317,105 @@ const superfansSocialFeed: CaseStudy = {
       eyebrow: "Solution",
       title: "What I designed, and the problem each part solves",
       intro:
-        "Every part traces back to one of four goals: bring video into the app, save merchants time, keep shopper content under control, and introduce something new clearly.",
+        "Each part traces back to one of the goals above.",
       items: [
         {
-          area: "App",
           title: "A feed one tap away",
           detail:
-            "Brand apps had no place for video. I added a Feed tab to the bottom bar, next to Home, Cart, Wishlist and Account, with a full screen vertical feed shoppers swipe through, like the apps they already use every day.",
-          after: "A Feed tab with a full screen vertical video feed.",
-          highlights: ["Feed tab", "Full screen", "Vertical video"],
+            "A Feed tab beside Home, Cart, Wishlist and Account opens a full screen vertical feed, swiped like the apps shoppers already use.",
+          after: "Video, one tap away.",
           media: { caption: "Bottom bar with the Feed tab, and the feed screen." },
         },
         {
-          area: "App",
           title: "Videos you can shop",
           detail:
-            "A video that can't be bought from is just entertainment. Each post can carry a product tag, so shoppers go from watching to the product page in one tap. Likes, comments, a caption that expands, and play and pause sit on the video.",
-          after: "From watching to the product page in one tap.",
-          highlights: ["Product tag", "Likes and comments", "Expandable caption", "Play and pause"],
+            "A product tag on each post takes shoppers to the product page in one tap, with likes, comments, an expandable caption, and play and pause on the video.",
+          after: "Watching leads straight to buying.",
           media: { caption: "A feed video, annotated." },
         },
         {
-          area: "App",
           title: "Comments that feel complete",
           detail:
-            "Comments are where a community forms, so I designed the full set: replies, editing, deleting with confirmation, reporting with a reason, an empty state and avatar variations. When a notification opens a comment, it's highlighted after a moment, with a back button to return.",
-          after: "A complete comments system, down to notifications.",
-          highlights: ["Replies", "Edit and delete", "Report with reason", "Highlighted from notifications"],
+            "Comments are where a community forms, so I designed the full set: replies, edit, delete with confirmation, report with a reason, an empty state and avatar variations, plus a highlight and back button when opened from a notification.",
+          after: "Complete, down to notifications.",
           media: { caption: "Comments sheet, report flow and highlighted comment." },
         },
         {
-          area: "Posting",
           title: "Posting your own content",
           detail:
-            "Shoppers needed a simple way to share. The posting flow covers picking media (with clear messages for unsupported or oversized files), writing a caption, tagging one or more products, previewing and posting, then what happens next: under review, rejected, posted, edited, deleted, or failed to upload. First time and returning users get slightly different flows.",
-          after: "A full posting flow, with every state after posting covered.",
-          highlights: ["Multiple product tags", "Under review", "Upload failed", "First time flow"],
+            "Shoppers pick media (with messages for unsupported or oversized files), caption it, tag products, preview and post, with every state after covered, from under review and rejected to edited, deleted and failed upload. First timers get a slightly different flow.",
+          after: "Every step and state, covered.",
           media: { caption: "The posting flow from file picker to posted." },
         },
         {
-          area: "Posting",
           title: "Posting from a product page",
           detail:
-            "The best moment to post about a product is when you're looking at it. A feed icon on the product page lets shoppers post with that product already tagged.",
-          after: "Share a product right where you're looking at it.",
-          highlights: ["Feed icon on the product page", "Product pre-tagged"],
+            "A feed icon on the product page opens posting with that product tagged, right when shoppers are looking at it.",
+          after: "Share right where you shop.",
           media: { caption: "Product page with the feed icon, then the posting screen." },
         },
         {
-          area: "Onboarding",
           title: "Introducing the feed",
           detail:
-            "A feed is new in a shopping app, so shoppers need to discover it. I designed a swipe up hint, an “Introducing Social Feed” sheet, a feed section on the product page, onboarding prompts, and a banner explaining what they can do: explore, engage, shop and share.",
-          after: "Light entry points that explain the feed where shoppers already are.",
-          highlights: ["Swipe up hint", "Intro sheet", "Feed section on the PDP", "Feature banner"],
+            "Shoppers discover the feed through a swipe up hint, an “Introducing Social Feed” sheet, a feed section on the product page, onboarding prompts, and a banner covering explore, engage, shop and share.",
+          after: "Light entry points where shoppers already are.",
           media: { caption: "Onboarding sheet and the feature banner." },
         },
         {
-          area: "App",
           title: "Interactive blocks in the feed",
           detail:
-            "One of the spec's goals was collecting first hand data. Interactive blocks fill a slot in the feed like a video, so shoppers swipe into them the same way: a single choice poll (“What matters most in your scrubs?”) that shows how others voted, and a this or that question with two product images. They're built as custom blocks for each brand, based on what it wants to learn.",
-          after: "First hand data, collected inside the feed itself.",
-          highlights: ["Single choice poll", "This or that", "Custom per brand"],
+            "Blocks fill a feed slot like a video to collect first hand data: a single choice poll (“What matters most in your scrubs?”) showing how others voted, and a this or that with two product images, custom for each brand.",
+          after: "Data collected inside the feed.",
           media: { caption: "The poll and the this or that block in the feed." },
         },
         {
-          area: "Dashboard",
           title: "Posts as a visual grid",
           detail:
-            "Video posts are visual, so they're shown as a grid of thumbnails, with a single post view that puts the video next to its comments. More in Decision 1.",
-          before: "The app builder's block layout, then a table of posts.",
-          after: "A grid of thumbnails and a single post view beside its comments.",
-          highlights: ["Grid view", "Single post view", "Phone preview"],
+            "Video is visual, so posts show as a thumbnail grid, with a single post view beside the comments. More in Decision 1.",
+          before: "The app builder's block layout, then a table.",
+          after: "A grid and a single post view.",
           media: { caption: "Grid view and single post view." },
         },
         {
-          area: "Dashboard",
           title: "Creating and editing posts",
           detail:
-            "The New Post panel covers media upload, description, redirection, likes and comments on or off, and visibility (hidden, visible or conditional), with a live phone preview. Loading and error states cover slow or failed uploads.",
-          after: "Everything about a post in one panel, with a live preview.",
-          highlights: ["Redirection", "Likes and comments toggles", "Conditional visibility", "Live preview"],
+            "The New Post panel covers media, description, redirection, likes and comments toggles, and hidden, visible or conditional visibility, with a live phone preview and upload error states.",
+          after: "Everything about a post in one panel.",
           media: { caption: "New Post panel with the preview." },
         },
         {
-          area: "Dashboard",
           title: "Reusing Instagram content",
           detail:
-            "Merchants shouldn't have to create content twice. They can link their Instagram account and import posts from All, Your Posts or Tagged Posts, picking several at once.",
-          after: "Existing Instagram videos fill the feed in a few clicks.",
-          highlights: ["Link account", "Your and tagged posts", "Multi-select"],
+            "Merchants link Instagram and import several posts at once from All, Your Posts or Tagged Posts, so nothing is made twice.",
+          after: "The feed filled in a few clicks.",
           media: { caption: "Link Account, then the import modal." },
         },
         {
-          area: "Dashboard",
           title: "Managing comments",
           detail:
-            "Merchants can reply to shoppers, and edit or delete their own comments, from the dashboard. Reported comments show how many reports they've had and why.",
-          after: "Merchants take part in the conversation and see what's been reported.",
-          highlights: ["Reply", "Edit and delete", "Report counts and reasons"],
+            "Merchants reply to shoppers, edit or delete their own comments, and see each comment's report count and reasons.",
+          after: "Merchants join the conversation.",
           media: { caption: "Comments in the single post view, and report details." },
         },
         {
-          area: "Moderation",
           title: "Moderation",
           detail:
-            "Once shoppers can post, merchants need to review what's shared. Reported content is hidden automatically until it's reviewed. Feed Moderation has a Reported tab with bulk select, a Reviewed tab, and a review step where merchants make content visible again or keep it hidden. More in Decision 3.",
-          after: "A review queue where reported content waits hidden until a merchant decides.",
-          highlights: ["Auto hidden", "Reported tab", "Bulk select", "Reviewed tab"],
+            "Reported content hides until reviewed. Feed Moderation has a Reported tab with bulk select, a Reviewed tab, and a step to restore it or keep it hidden. More in Decision 3.",
+          after: "Hidden until a merchant decides.",
           media: { caption: "Reported tab and the review modal." },
         },
         {
-          area: "Access",
           title: "Who can see the feed",
           detail:
-            "Some brands want the feed open to everyone, others only to certain customers. Feed Access Controls lets merchants choose Everyone, Everyone except specific customers, or Only specific customers, using customer segments. Restricted shoppers see clear states in the app: post restricted, comment restricted, or both.",
-          after: "Brands decide who can view, post and comment, and the app explains it.",
-          highlights: ["Everyone", "Everyone except", "Only specific customers", "Restricted states"],
+            "Feed Access Controls uses customer segments: Everyone, Everyone except specific customers, or Only specific customers. Restricted shoppers see post restricted, comment restricted, or both.",
+          after: "Brands choose who joins in.",
           media: { caption: "Access control options and the restricted views in the app." },
         },
         {
-          area: "After build",
           title: "Design QA",
           detail:
-            "I led design QA on the built product: reviewing each area against the designs, logging issues with screenshots and the matching design, and working with developers until they were fixed. It ran across the app, the dashboard, shopper posting, moderation and feed settings.",
-          after: "Every area reviewed against the designs before it was called done.",
-          highlights: ["App", "Dashboard", "Posting", "Moderation", "Feed settings"],
+            "I led design QA across the app, dashboard, posting, moderation and feed settings, logging each issue with a screenshot and the matching design until fixed. Most were visual: spacing, alignment and mismatched states.",
+          after: "Every area checked before it was called done.",
           media: { caption: "A few rows from a QA feedback sheet." },
         },
       ],
@@ -1487,27 +1434,21 @@ const superfansSocialFeed: CaseStudy = {
       nav: "Process",
       eyebrow: "Process",
       title: "How it came together: ten months, five stages",
-      intro:
-        "Social Feed didn't arrive in one release. It grew in stages, each building on the last, while earlier parts were already being built.",
       steps: [
-        { label: "Shopper feed", body: "January to June: three app versions before the June version was marked ready for development." },
-        { label: "Dashboard", body: "February to September: from the first layouts to the grid, comments, Instagram import and post properties." },
-        { label: "Shoppers posting", body: "June and July: the posting flow, posting from the product page, and onboarding." },
-        { label: "Moderation and access", body: "July to September: reported content, reviews, feed settings and who can see the feed." },
-        { label: "Design QA", body: "October: reviewing the built product area by area." },
+        { label: "Shopper feed", body: "January to June: three app versions; June's went to development." },
+        { label: "Dashboard", body: "February to September: first layouts to grid, comments, Instagram import and post properties." },
+        { label: "Shoppers posting", body: "June and July: posting, posting from the product page, and onboarding." },
+        { label: "Moderation and access", body: "July to September: reports, reviews, feed settings and access." },
+        { label: "Design QA", body: "October: the built product, area by area." },
       ],
       notes: [
         {
           title: "Where the idea came from",
-          body: "Instagram Reels and TikTok, where brands show products inside a stream of videos. The PM's spec split the work into two releases: first a brand-run feed with imports, likes, comments and reporting, then shopper posting with the moderation it needs. It also fixed rules like vertical 9:16 media, 3 to 60 second videos and a 500 character comment limit.",
+          body: "Instagram Reels and TikTok. The spec split it into two releases, a brand-run feed with imports, likes, comments and reporting, then shopper posting with moderation, with rules like 9:16 media, 3 to 60 second videos and 500 character comments.",
         },
         {
           title: "Versions and reviews",
-          body: "Every change was reviewed by the design team, the PM and the CEO, with a version log on the canvas. The dashboard, posting flow, moderation and access controls took the most iterations; access controls moved from three radio options, which felt repetitive, to the live dropdown.",
-        },
-        {
-          title: "Design QA",
-          body: "Once each area was built, I reviewed it against the designs and logged every issue with a screenshot and the matching design for developers to fix. Most issues were visual: spacing, alignment and states that didn't match.",
+          body: "The design team, PM and CEO reviewed every change in a version log. Dashboard, posting, moderation and access took the most rounds; access went from three repetitive radio options to a dropdown.",
         },
       ],
       media: { caption: "The version log cards from the dashboard." },
@@ -1522,15 +1463,15 @@ const superfansSocialFeed: CaseStudy = {
       items: [
         {
           title: "Post metrics for merchants",
-          body: "CTR, unique views, likes and comments in the post header, so merchants see which videos actually lead to sales.",
+          body: "CTR, unique views, likes and comments in the post header, to show which videos sell.",
         },
         {
           title: "More ways to take part",
-          body: "Polls, order ratings and open questions as custom blocks, for more engagement and more first hand data.",
+          body: "Polls, order ratings and open questions as custom blocks.",
         },
         {
           title: "A cleaner post view",
-          body: "The YouTube Shorts style post view we liked but didn't ship is worth revisiting now that the feature is live.",
+          body: "Revisit the YouTube Shorts style view now the feature is live.",
         },
       ],
     },
@@ -1541,11 +1482,11 @@ const superfansSocialFeed: CaseStudy = {
       eyebrow: "Learnings",
       title: "What this project taught me",
       items: [
-        { title: "Let the content decide the layout.", body: "Short videos needed a visual grid, not the builder layout or a table." },
-        { title: "Shipping on time is part of the design.", body: "We improved the post view and saved the better idea for later." },
-        { title: "Every social feature needs a safety feature.", body: "Shopper posting worked because merchants could review and control it." },
-        { title: "Disagree, then commit.", body: "A labelled dropdown cost a click but removed the guesswork, so I designed it." },
-        { title: "Design isn't done at handoff.", body: "Reviewing the built product caught the details that make it feel finished." },
+        { title: "Let the content decide the layout.", body: "Short videos needed a grid, not a builder or a table." },
+        { title: "Shipping on time is part of the design.", body: "We improved the post view and saved the better idea." },
+        { title: "Every social feature needs a safety feature.", body: "Shopper posting worked because merchants could control it." },
+        { title: "Disagree, then commit.", body: "A labelled dropdown cost a click but removed the guess." },
+        { title: "Design isn't done at handoff.", body: "QA caught the details that make it feel finished." },
       ],
     },
     {
@@ -1563,3 +1504,5 @@ const superfansSocialFeed: CaseStudy = {
 };
 
 export const caseStudies: CaseStudy[] = [superfansSocialFeed, cartAbandonment, modernCart];
+
+caseStudies.forEach((study) => study.meta.push(["Read time", readTime(study)]));
