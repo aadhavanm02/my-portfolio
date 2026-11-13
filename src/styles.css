@@ -9066,3 +9066,108 @@ body.is-video-expanded .case-topic-nav {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+
+/* ---------- Key facts: stats and details share one rounded table ---------- */
+.case-facts {
+  overflow: hidden;
+  margin-top: 48px;
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+
+.case-facts .case-stats {
+  margin: 0;
+  border-radius: 0;
+  background: none;
+}
+
+.case-facts .case-meta {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-flow: row;
+  gap: 0;
+  margin: 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.case-facts .case-meta div {
+  padding: 24px;
+}
+
+.case-facts .case-meta div:not(:nth-child(4n + 1)) {
+  border-left: 1px solid var(--color-border);
+}
+
+.case-facts .case-meta div:nth-child(n + 5) {
+  border-top: 1px solid var(--color-border);
+}
+
+@media (max-width: 1199px) {
+  .case-facts .case-meta {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .case-facts .case-meta div:not(:nth-child(4n + 1)) {
+    border-left: 0;
+  }
+
+  .case-facts .case-meta div:nth-child(even) {
+    border-left: 1px solid var(--color-border);
+  }
+
+  .case-facts .case-meta div:nth-child(n + 3) {
+    border-top: 1px solid var(--color-border);
+  }
+}
+
+@media (max-width: 767px) {
+  .case-facts {
+    margin-top: 28px;
+    border-radius: 18px;
+  }
+
+  .case-facts .case-meta div {
+    padding: 14px 12px;
+  }
+}
+
+/* Details row reads like the stats: the value leads, a small label sits under it. */
+.case-facts .case-meta div {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  gap: 6px;
+  padding: 24px;
+}
+
+.case-facts .case-meta dt {
+  margin: 0;
+  color: var(--color-muted);
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: var(--font-weight-regular, 400);
+  line-height: 1.4;
+}
+
+.case-facts .case-meta dd {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+@media (max-width: 767px) {
+  .case-facts .case-meta div {
+    gap: 4px;
+    padding: 14px 12px;
+  }
+
+  .case-facts .case-meta dt {
+    font-size: 12px;
+    line-height: 1.35;
+  }
+
+  .case-facts .case-meta dd {
+    font-size: 16px;
+  }
+}

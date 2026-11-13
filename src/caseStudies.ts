@@ -452,11 +452,10 @@ const cartAbandonment: CaseStudy = {
   stats: [
     { value: "300K+", label: "Active installs" },
     { value: "2 months", label: "May to June 2025" },
-    { value: "Solo", label: "Only designer, with a PM and developers" },
     { value: "4", label: "Key decisions, all shipped" },
   ],
   meta: [
-    ["Role", "Product Designer"],
+    ["Role, with a PM and developers", "Product Designer"],
     ["Platform", "WooCommerce plugin"],
     ["Design system", "ForceUI"],
     ["Scope", "Admin redesign, new features, Upgrade to Pro"],
@@ -736,11 +735,10 @@ const modernCart: CaseStudy = {
   stats: [
     { value: "50K+", label: "Active installs on [WordPress.org](https://wordpress.org/plugins/modern-cart/)" },
     { value: "1 week", label: "From unreleased build to launch" },
-    { value: "Solo", label: "Only designer, with a PM and developers" },
     { value: "~15", label: "Feature tickets after launch" },
   ],
   meta: [
-    ["Role", "Product Designer"],
+    ["Role, with a PM and developers", "Product Designer"],
     ["Timeline", "April to May 2025"],
     ["Design system", "ForceUI"],
     ["Scope", "Dashboard, shopper cart, new features"],
@@ -1183,13 +1181,12 @@ const superfansSocialFeed: CaseStudy = {
     { value: "10 months", label: "January to October 2026" },
     { value: "2 sides", label: "Shopper app and merchant dashboard" },
     { value: "3", label: "Key decisions, all shipped" },
-    { value: "Shipped", label: "On iOS, Android and the dashboard" },
   ],
   meta: [
-    ["Role", "Product Designer, from the start"],
-    ["Team", "A PM and developers"],
+    ["Role from the start, with a PM and developers", "Product Designer"],
     ["Platform", "iOS, Android and the dashboard"],
     ["Scope", "App, dashboard and design QA"],
+    ["Status", "Shipped"],
   ],
   hero: {
     caption: "The shopper's feed on a phone, next to the merchant's Social Feed dashboard.",
@@ -1505,4 +1502,4 @@ const superfansSocialFeed: CaseStudy = {
 
 export const caseStudies: CaseStudy[] = [superfansSocialFeed, cartAbandonment, modernCart];
 
-caseStudies.forEach((study) => study.meta.push(["Read time", readTime(study)]));
+caseStudies.forEach((study) => study.stats.push({ value: readTime(study).replace(" read", ""), label: "Read time" }));

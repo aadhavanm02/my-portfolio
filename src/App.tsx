@@ -2090,15 +2090,17 @@ function CaseStudyPage({ project }: { project: CaseStudy }) {
               <img alt={project.hero.caption} src={heroCover} />
             </figure>
           )}
-          <StatStrip stats={project.stats} />
-          <dl className="case-meta">
-            {project.meta.map(([label, value]) => (
-              <div key={label}>
-                <dt>{label}</dt>
-                <dd>{value}</dd>
-              </div>
-            ))}
-          </dl>
+          <div className="case-facts">
+            <StatStrip stats={project.stats} />
+            <dl className="case-meta">
+              {project.meta.map(([label, value]) => (
+                <div key={label}>
+                  <dt>{label}</dt>
+                  <dd>{value}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
         </section>
 
         {beforeSections.map((section) => renderSection(section))}
