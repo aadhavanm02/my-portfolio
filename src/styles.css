@@ -8989,3 +8989,31 @@ body.is-video-expanded .case-topic-nav {
   opacity: 0;
   pointer-events: none;
 }
+
+/* Video controls fade out while playing and idle; moving or tapping brings them back. */
+.case-video__player--started.case-video__player--idle .case-video__controls,
+.case-video__player--expanded.case-video__player--idle .case-video__controls {
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+}
+
+.case-video__player--idle {
+  cursor: none;
+}
+
+.case-video-modal__close {
+  transition: opacity 180ms ease;
+}
+
+.case-video-modal--idle .case-video-modal__close {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* The walkthrough video keeps its own 16:9 shape at every size, so nothing is cropped. */
+.case-journey__video .case-hero-media,
+.case-journey__video .case-hero-media.case-video {
+  height: auto;
+  aspect-ratio: 16 / 9;
+}

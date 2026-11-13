@@ -294,8 +294,24 @@ function CaseHeroVideo({ coverImage, title, videoSrc }: { coverImage: string; ti
   const [currentTime, setCurrentTime] = useState(0);
   const [volume, setVolume] = useState(0.85);
   const [playbackRate, setPlaybackRate] = useState(1);
+  // While playing, the controls fade out after a few quiet seconds; any movement brings them back.
+  const [isIdle, setIsIdle] = useState(false);
+  const idleTimerRef = useRef(0);
 
   const activeVideoRef = activePlayer === "expanded" ? expandedVideoRef : inlineVideoRef;
+
+  const wakeControls = useCallback(() => {
+    setIsIdle(false);
+    window.clearTimeout(idleTimerRef.current);
+    if (isPlaying) {
+      idleTimerRef.current = window.setTimeout(() => setIsIdle(true), 2500);
+    }
+  }, [isPlaying]);
+
+  useEffect(() => {
+    wakeControls();
+    return () => window.clearTimeout(idleTimerRef.current);
+  }, [wakeControls, isExpanded]);
 
   useEffect(() => {
     const video = activeVideoRef.current;
@@ -439,7 +455,15 @@ function CaseHeroVideo({ coverImage, title, videoSrc }: { coverImage: string; ti
     const showCover = mode === "inline" && !hasStarted;
 
     return (
-      <div className={`case-video__player case-video__player--${mode}${hasStarted ? " case-video__player--started" : ""}`}>
+      <div
+        className={`case-video__player case-video__player--${mode}${hasStarted ? " case-video__player--started" : ""}${
+          isIdle && isPlaying ? " case-video__player--idle" : ""
+        }`}
+        onFocus={wakeControls}
+        onKeyDown={wakeControls}
+        onPointerDown={wakeControls}
+        onPointerMove={wakeControls}
+      >
         <video
           aria-label={`${title} video walkthrough`}
           onEnded={() => setIsPlaying(false)}
@@ -513,7 +537,7 @@ function CaseHeroVideo({ coverImage, title, videoSrc }: { coverImage: string; ti
       {renderVideoPlayer("inline")}
 
       {isExpanded ? (
-        <div className="case-video-modal" role="presentation">
+        <div className={`case-video-modal${isIdle && isPlaying ? " case-video-modal--idle" : ""}`} role="presentation">
           <div aria-label={`${title} expanded video player`} className="case-video-modal__dialog" role="dialog">
             <button
               aria-label="Close expanded video"
