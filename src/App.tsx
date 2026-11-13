@@ -632,13 +632,13 @@ function ShotMedia({ item, thumb }: { item: MediaItem; thumb?: boolean }) {
       <div className="shot-stage">
         {frames.map((frame, index) => (
           <div className="shot-stage__item" key={`${frame.src}-${index}`} style={{ ["--a" as string]: frame.size[0] / frame.size[1] }}>
-            <ShotImage caption={item.caption} frame={frame} onOpen={setOpen} />
+            <ShotImage caption={item.alt ?? item.caption} frame={frame} onOpen={setOpen} />
             {frame.label ? <span className="shot-stage__label">{frame.label}</span> : null}
           </div>
         ))}
       </div>
-      <figcaption>{item.caption}</figcaption>
-      {open ? <ShotLightbox caption={item.caption} onClose={() => setOpen(null)} src={open} /> : null}
+      {item.caption ? <figcaption>{item.caption}</figcaption> : null}
+      {open ? <ShotLightbox caption={item.alt ?? item.caption} onClose={() => setOpen(null)} src={open} /> : null}
     </figure>
   );
 }
@@ -682,8 +682,8 @@ function MediaGroup({ items }: { items: MediaItem[] }) {
     const uniform = items.filter((item) => isShot(item) && !item.row).length > 1;
     return (
       <div className={`shot-group${uniform ? " shot-group--uniform" : ""}`}>
-        {items.map((item) => (
-          <div className={item.row ? "shot-group__wide" : undefined} key={item.caption}>
+        {items.map((item, index) => (
+          <div className={item.row ? "shot-group__wide" : undefined} key={`${item.alt ?? item.caption}-${index}`}>
             {isShot(item) ? <ShotMedia item={item} /> : <MediaPlaceholder item={item} />}
           </div>
         ))}
@@ -829,10 +829,10 @@ function JourneyView({ section }: { section: Extract<CaseSection, { kind: "journ
         <div className="case-journey__video">
           <CaseHeroVideo
             coverImage={resolveSrc(video.poster ?? video.src)}
-            title={video.caption}
+            title={video.alt ?? video.caption}
             videoSrc={resolveSrc(video.src)}
           />
-          <p className="case-journey__video-caption">{video.caption}</p>
+          {video.caption ? <p className="case-journey__video-caption">{video.caption}</p> : null}
         </div>
       ) : video ? (
         <MediaGroup items={[video]} />
@@ -891,7 +891,7 @@ function SolutionView({ section }: { section: Extract<CaseSection, { kind: "solu
             <div className="case-feature__body">
               <div className="case-feature__meta">
                 <span className="case-index">{pad(index)}</span>
-                <span className="case-tag">{item.area}</span>
+                {item.area ? <span className="case-tag">{item.area}</span> : null}
               </div>
               <h3>{item.title}</h3>
               <p className="case-feature__detail">{item.detail}</p>
@@ -1140,7 +1140,9 @@ function ProcessView({ section }: { section: Extract<CaseSection, { kind: "proce
               {step.points ? (
                 <ul className="case-feature__highlights" aria-label="Key details">
                   {step.points.map((point) => (
-                    <li key={point}>{point}</li>
+                    <li key={point}>
+                      <RichText text={point} />
+                    </li>
                   ))}
                 </ul>
               ) : null}
@@ -2078,7 +2080,7 @@ function CaseStudyPage({ project }: { project: CaseStudy }) {
           </a>
           <h1>{project.headline}</h1>
           <div className="case-lead">
-            <p>{project.hook}</p>
+            <p className="case-lead__hook">{project.hook}</p>
             <p>{project.summary}</p>
           </div>
           {project.hero.kind === "video" && project.hero.src ? (

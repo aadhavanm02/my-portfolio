@@ -18,6 +18,8 @@ export type MediaItem = {
   src?: string;
   // Cover frame shown before a video plays.
   poster?: string;
+  // Describes the media for screen readers when no visible caption is shown.
+  alt?: string;
   size?: [number, number];
   // Screenshots shown side by side at the same height.
   row?: MediaFrame[];
@@ -41,7 +43,7 @@ export type JourneyLane = {
 };
 
 export type ChangeItem = {
-  area: string;
+  area?: string;
   title: string;
   // The fuller story of the change, shown as the main paragraph.
   detail: string;
@@ -312,39 +314,39 @@ function mc(name: McShot, label?: string): MediaFrame {
   return { src: `/assets/modern-cart/${name}.webp`, size: mcSizes[name], label };
 }
 
-const mcShot = (caption: string, name: McShot): MediaItem => ({ caption, ...mc(name) });
-const mcRow = (caption: string, ...row: MediaFrame[]): MediaItem => ({ caption, row });
+const mcShot = (alt: string, name: McShot): MediaItem => ({ caption: "", alt, ...mc(name) });
+const mcRow = (alt: string, ...row: MediaFrame[]): MediaItem => ({ caption: "", alt, row });
 
 const modernCartDecisions: DecisionItem[] = [
   {
     title: "Why I wanted free users to see Pro features, not lose them",
-    hook: "When ModernCart split into Free and Pro, some features that free users already relied on were moving behind a paywall. The question was what those users would see the next time they opened their settings.",
+    hook: "When ModernCart split into Free and Pro, features free users relied on moved behind a paywall. What would they see next time they opened settings?",
     before: [
-      "The PM shared the list of which features stayed Free and which moved to Pro. Nothing was decided yet about how Pro features would appear inside the free dashboard.",
+      "Which features went Pro was set; how they'd appear to free users was not.",
     ],
-    turningIntro: "There were two options:",
+    turningIntro: "Two options:",
     options: [
       {
         title: "Hide Pro features completely",
-        body: "The free dashboard stays clean and simple. But a store owner who used a feature last week would open their settings and find it gone, with no explanation.",
+        body: "Clean and simple, but a feature used last week would just vanish, with no explanation.",
         chosen: true,
         badge: "Team's choice",
       },
       {
-        title: "Show them locked, with a PRO badge and a short upgrade note",
-        body: "The store owner can see what moved and what Pro adds, without being blocked or pushed. The trade-off is a slightly busier screen.",
+        title: "Show them locked, with a PRO badge and upgrade note",
+        body: "Owners see what moved and what Pro adds, without being blocked. The cost: a slightly busier screen.",
         badge: "My proposal",
       },
     ],
     reasoning: [
-      "I proposed showing them, as an option for the PM and leadership to weigh. A feature that quietly disappears feels like something was taken away. A feature that's visible but locked tells people exactly what upgrading gets them. ForceUI already used PRO badges on cards, so the pattern fit the system.",
+      "I proposed showing them, for the PM and leadership to weigh. A missing feature feels taken away; a locked one shows what upgrading gets you. ForceUI already had PRO badges.",
     ],
     next: [
-      "I designed PRO badges, disabled fields with an inline “Upgrade now” note, an upgrade modal, and a Free vs Pro tab comparing every feature side by side.",
+      "I designed PRO badges, disabled fields with an inline “Upgrade now” note, an upgrade modal and a Free vs Pro tab.",
     ],
     result: [
-      "The team chose to keep the free version focused on free features, so Pro features stay out of view for free users. Both directions were on the table when that call was made, which is what I set out to do.",
-      "It reinforced how I approach this kind of work: give decision makers clear options with the reasoning behind each, knowing the right answer depends on how the business wants to position its product.",
+      "The team kept the free version focused on free features, so Pro stays hidden. Both options were weighed, which was my goal.",
+      "The lesson: bring clear options and reasons; the right call depends on how the business positions its product.",
     ],
     media: [
       mcShot("My proposal for General: a PRO badge and an inline “Upgrade now” note on each locked setting.", "general-pro"),
@@ -354,34 +356,34 @@ const modernCartDecisions: DecisionItem[] = [
   },
   {
     title: "Why I added product suggestions to the cart to keep shoppers browsing",
-    hook: "A shopper taps the cart icon before adding anything, maybe out of curiosity, maybe to check something. In ModernCart, all they found was a message saying their cart was empty.",
+    hook: "A shopper opens the cart before adding anything. In ModernCart, all they found was an “empty cart” message.",
     before: [
-      "The empty cart showed only that message, with no next step. Once items were added, the cart was just a list of what the shopper had picked.",
+      "Empty, a dead end. Full, just a list of picks.",
     ],
-    turningIntro: "There were two options:",
+    turningIntro: "Two options:",
     options: [
       {
         title: "Keep the cart as a plain list",
-        body: "Simple, nothing to distract from checkout. But an empty cart is a dead end, and a full cart misses the moment when the shopper is most ready to buy.",
+        body: "No distractions, but empty is a dead end and full misses the moment shoppers are most ready to buy.",
       },
       {
         title: "Let the cart suggest products",
-        body: "Shoppers who open the cart are still in shopping mode, so a suggestion lets them keep going without leaving. The risk is clutter that pulls attention away from checking out.",
+        body: "Shoppers opening the cart are still shopping, so a suggestion keeps them going. The risk: clutter near checkout.",
         chosen: true,
       },
     ],
     reasoning: [
-      "I chose to suggest products, for two reasons. For the business, every suggestion is a chance to raise the average order value. For the shopper, a suggestion turns an empty screen into something to explore: they can tap it to see the product in detail, or add it straight from the cart.",
-      "The idea came from looking at competitors. [FunnelKit Cart](https://funnelkit.com/woocommerce-cart/), one of the plugins I reviewed, already suggests products inside its side cart. I kept the suggestions small so they never take over the cart.",
+      "I chose suggestions for two reasons. For the business, each one can raise the average order value. For the shopper, an empty screen becomes something to explore: tap to see the product, or add it straight from the cart.",
+      "The idea came from the competitor review: [FunnelKit Cart](https://funnelkit.com/woocommerce-cart/) already suggests products in its side cart. I kept suggestions small so they never take over.",
     ],
     next: [],
     nextList: [
-      "**Empty cart:** “Your Cart Is Empty, Let's Fix That,” with a featured product the shopper can add straight from the cart, plus a Shop Now button.",
-      "**Cart with items:** a “You might also like” carousel below the items, kept small so it never covers the cart. I designed it to show one or two products at a time, as styling options store owners can pick from.",
+      "**Empty cart:** “Your Cart Is Empty, Let's Fix That,” a featured product to add in one tap, and a Shop Now button.",
+      "**Cart with items:** a small “You might also like” carousel below the items, showing one or two products as a style owners can pick.",
     ],
     result: [
-      "The PM and the team agreed straight away, and both shipped while I was on the team. I carried the idea through the rest of the product: the popup cart uses the same suggestions, and store owners can rewrite the suggestion titles from the Text Label tab to match their store's voice.",
-      "The cart is no longer a dead end. Whether it's empty or full, it always gives the shopper something to explore.",
+      "The team agreed straight away; both shipped while I was there. The popup cart reuses them, and owners can rename them in Text Label.",
+      "Empty or full, the cart always gives shoppers something to explore.",
     ],
     media: [
       mcRow(
@@ -394,29 +396,29 @@ const modernCartDecisions: DecisionItem[] = [
   },
   {
     title: "Why I proposed a popup cart for stores that want the cart front and center",
-    hook: "ModernCart had one way to open the cart: a panel sliding in from the side. But not every store wants its cart tucked at the edge of the screen.",
+    hook: "ModernCart opened one way: a panel sliding in from the side. Not every store wants its cart at the edge.",
     before: ["Slide-out was the only cart type."],
-    turningIntro: "While exploring new cart styles, I looked at two directions:",
+    turningIntro: "Exploring new cart styles, I weighed two directions:",
     options: [
       {
         title: "Keep only the slide-out",
-        body: "The shopper still sees the page behind it, so it feels light. But it's easy to glance past.",
+        body: "Light, with the page still visible. But easy to glance past.",
       },
       {
         title: "Add a popup that opens in the center of the page",
-        body: "It gets the shopper's full attention. The trade-off is that it covers the page while it's open.",
+        body: "Full attention, but it covers the page while open.",
         chosen: true,
         badge: "Added alongside",
       },
     ],
     reasoning: [
-      "Neither one is right for every store, so I proposed offering both and letting the store owner choose. Centered popup carts were already a familiar pattern in WooCommerce (for example, [WooCommerce Fast Cart](https://barn2.com/woocommerce-cart/) offers a lightbox cart in the middle of the screen), so store owners would recognize it.",
+      "Neither suits every store, so I proposed both and let owners choose. Centered popups were already familiar in WooCommerce, like the lightbox cart in [WooCommerce Fast Cart](https://barn2.com/woocommerce-cart/).",
     ],
     next: [
-      "I designed the full popup set: empty, empty with suggestions, and with items and suggestions in two item styles. Each one for desktop, tablet and mobile. On smaller screens the carousel drops from two products to one so the cards stay readable.",
+      "I designed the full popup set (empty, empty with suggestions, and items with suggestions in two item styles) for desktop, tablet and mobile. On small screens the carousel drops to one product.",
     ],
     result: [
-      "It shipped after I left, as a Cart Type setting (Slide-out or Popup). The plugin's WordPress.org listing is now named “Modern Cart: WooCommerce Side Cart & Popup Cart.”",
+      "It shipped after I left as a Cart Type setting: Slide-out or Popup. The WordPress.org listing is now “Modern Cart: WooCommerce Side Cart & Popup Cart.”",
     ],
     media: [
       mcRow(
@@ -775,7 +777,7 @@ const modernCart: CaseStudy = {
       eyebrow: "The Problem",
       title: "Built, but not ready for the people using it",
       intro:
-        "WooCommerce's default cart sends shoppers to a separate page right when they're about to buy. Side carts fix that, and competitors already sold them. A better cart meant more checkouts and bigger orders.",
+        "WooCommerce's default cart pulls shoppers to a new page right before they buy. Side carts fix that, and competitors already sold them. A better cart meant more checkouts and bigger orders.",
       pains: [
         { title: "Scattered settings", body: "Related options split across tabs; floating cart settings hidden in General." },
         { title: "Off the design system", body: "Spacing, type and colors didn't follow ForceUI." },
@@ -783,9 +785,9 @@ const modernCart: CaseStudy = {
         { title: "Just a list", body: "A full cart gave shoppers no reason to keep browsing." },
       ],
       mapping: [
-        ["Settings felt scattered, with no clear structure", "Settings organized around what owners need"],
-        ["An empty cart offered no next step", "An empty cart that helps shoppers find something"],
-        ["The UI did not follow the design system", "Every screen in line with ForceUI"],
+        ["Scattered settings, no clear structure", "Settings grouped around owners' tasks"],
+        ["An empty cart with no next step", "An empty cart that suggests something"],
+        ["UI off the design system", "Every screen on ForceUI"],
       ],
       constraints: [
         "One week to launch",
@@ -803,7 +805,8 @@ const modernCart: CaseStudy = {
       intro: "Every choice in the dashboard shows up in the cart shoppers use.",
       video: {
         kind: "video",
-        caption: "A narrated walkthrough: Meera sets up her store's cart, then Arjun shops with it.",
+        caption: "",
+        alt: "ModernCart walkthrough: Meera sets up her store's cart, then Arjun shops with it.",
         src: "/assets/videos/modern-cart-walkthrough.mp4",
         poster: "/assets/videos/modern-cart-walkthrough.jpg",
       },
@@ -818,21 +821,17 @@ const modernCart: CaseStudy = {
       intro: "Every change traces back to one of the three problems.",
       items: [
         {
-          area: "Dashboard",
           title: "Settings grouped by task",
-          detail: "Store owners had to hunt for settings across tabs. I split the dashboard into five tabs, each with one job: My Account for the plan and license, General for how the cart behaves, Text Label for what it says, Floating Cart Icon for the icon shoppers see on every page, and Styling for how it looks. In General, dropdowns come first and toggles below, so the page reads in one pass.",
-          highlights: ["My Account", "General", "Text Label", "Floating Cart Icon", "Styling"],
+          detail: "Five tabs, one job each: plan and license, behavior, wording, the floating icon and looks. In General, dropdowns sit above toggles, so it reads in one pass.",
           before: "Settings scattered across tabs.",
-          after: "Five tabs, one job each: My Account, General, Text Label, Floating Cart Icon, Styling.",
+          after: "Five tabs, one job each.",
           media: mcShot("Five tabs in the sidebar, each with one job. Here, General.", "general-tab"),
         },
         {
-          area: "Dashboard",
           title: "Cart text that sounds like the store",
-          detail: "The cart's wording was fixed, so it couldn't sound like the store it lived in. In Text Label, every word a shopper sees is editable, from the cart heading to the empty cart message. Each field starts filled with sensible default text, so store owners only change what they care about.",
-          highlights: ["Cart heading", "Empty cart message", "Free shipping line", "Suggestion titles"],
+          detail: "Every word shoppers see, from the heading to the empty cart message, is editable and pre-filled, so owners only change what matters.",
           before: "Fixed wording in every store.",
-          after: "Every shopper-facing word editable, with defaults filled in.",
+          after: "Every word editable, defaults filled in.",
           media: mcRow(
             "The Empty Cart fields in Text Label, and the empty cart they write.",
             mc("text-label-empty-fields", "Text Label"),
@@ -840,21 +839,17 @@ const modernCart: CaseStudy = {
           ),
         },
         {
-          area: "Dashboard",
           title: "The floating cart in its own tab",
-          detail: "The floating cart icon is what shoppers see on every page, but its settings were buried inside General. It now has its own tab with position, hide when empty, and a set of preset icons. Custom icon upload was my idea too, and the team built it later.",
-          highlights: ["Position", "Hide when empty", "Preset icons", "Custom upload"],
+          detail: "The icon shows on every page, so it got its own tab: position, hide when empty and preset icons. Custom upload, also my idea, came later.",
           before: "Buried inside General.",
-          after: "Position, hide when empty, preset icons. Custom upload, my idea, came later.",
+          after: "Its own tab, with custom upload later.",
           media: mcShot("Position, hide when empty, and preset icons in their own tab.", "floating-icon-card"),
         },
         {
-          area: "Dashboard",
           title: "Styling that's safe to try",
-          detail: "Store owners hesitate to change colors and sizes when they're not sure they can undo it. Styling is grouped into Colors, Icon Style, Width and Miscellaneous. Every color has a reset button, number fields show their default underneath, and units like px, % and ms sit inside the field.",
-          highlights: ["Reset on every color", "Visible defaults", "Units inside fields"],
+          detail: "Styling now groups Colors, Icon Style, Width and Miscellaneous, with a reset on every color, defaults under numbers and units (px, %, ms) inside fields.",
           before: "Owners hesitated to change what they couldn't undo.",
-          after: "Grouped controls, reset buttons, visible defaults, units in fields.",
+          after: "Grouped, resettable, defaults in view.",
           media: mcRow(
             "Reset buttons on colors, and defaults and units on number fields.",
             mc("styling-colors", "Reset on every color"),
@@ -862,12 +857,10 @@ const modernCart: CaseStudy = {
           ),
         },
         {
-          area: "Cart",
           title: "Product suggestions",
-          detail: "An empty cart was a dead end, and a full cart gave shoppers no reason to keep browsing. The empty cart now shows a featured product and a Shop Now button, and a full cart shows a “You might also like” carousel below the items, kept small so it never covers the cart.",
-          highlights: ["Featured product", "Shop Now button", "“You might also like” carousel"],
+          detail: "An empty cart now offers a featured product and Shop Now; a full one, a small “You might also like” carousel that never covers the items.",
           before: "Empty carts were dead ends; full carts were just lists.",
-          after: "A featured product when empty, a “You might also like” carousel when full.",
+          after: "Something to explore, empty or full.",
           media: mcRow(
             "A featured product when the cart is empty, then one or two suggestions below the items.",
             mc("cart-empty-panel", "Empty"),
@@ -876,12 +869,10 @@ const modernCart: CaseStudy = {
           ),
         },
         {
-          area: "Cart",
           title: "A clearer coupon field",
-          detail: "My first version was a collapsible “Got a Discount Code?” row. It worked, but it didn't feel like applying anything. Now “Apply Coupon Code” stays a link until it's needed, opens into a field with an Apply button, and shows the applied code as a tag that can be removed in one tap.",
-          highlights: ["Quiet link", "Apply button", "Removable code tag"],
+          detail: "My first version didn't feel like applying anything. Now “Apply Coupon Code” is a link that opens into a field, and the code becomes a tag you remove in one tap.",
           before: "A collapsible “Got a Discount Code?” row.",
-          after: "A link that opens into a field, then a tag you remove in one tap.",
+          after: "Link, field, removable tag.",
           media: mcRow(
             "A quiet link, then a field, then a tag you remove in one tap.",
             mc("coupon-link-crop", "A quiet link"),
@@ -890,12 +881,10 @@ const modernCart: CaseStudy = {
           ),
         },
         {
-          area: "Cart",
           title: "A complete order summary",
-          detail: "Shoppers couldn't see what made up their total. The order summary now lays out shipping, tax, subtotal and savings, so the total never comes as a surprise at checkout, and the checkout button is the one clear next step.",
-          highlights: ["Shipping", "Tax", "Subtotal", "Savings"],
+          detail: "Shipping, tax, subtotal and savings now show before checkout, with one clear button.",
           before: "No breakdown of the total.",
-          after: "Shipping, tax, subtotal and savings, before checkout.",
+          after: "The full breakdown, before checkout.",
           media: mcRow(
             "Two order summary styles, and several codes stacked as tags.",
             mc("coupon-link-crop", "Simple list"),
@@ -904,12 +893,10 @@ const modernCart: CaseStudy = {
           ),
         },
         {
-          area: "Cart",
           title: "A popup cart",
-          detail: "Some stores want the cart front and center, not at the edge of the screen. I designed a second cart type that opens in the middle of the page, with the full set of states for desktop, tablet and mobile.",
-          highlights: ["Desktop", "Tablet", "Mobile"],
+          detail: "For stores that want the cart front and center: a second cart type that opens mid-page, in every state for desktop, tablet and mobile.",
           before: "Slide-out was the only option.",
-          after: "A centered popup for desktop, tablet and mobile.",
+          after: "A centered popup on every screen.",
           media: mcRow(
             "The popup cart, empty with a suggestion and with items.",
             mc("popup-suggest", "Empty, with a suggestion"),
@@ -945,7 +932,7 @@ const modernCart: CaseStudy = {
       eyebrow: "Design System",
       title: "Built on ForceUI, a system I helped create",
       intro:
-        "Every screen comes from ForceUI, shared in Figma and React. One rule kept them in sync: nobody changes a component alone. Changes go through a ticket.",
+        "Every screen uses ForceUI, shared in Figma and React. One rule kept both in sync: no one changes a component alone; changes go through a ticket.",
       levels: [
         { title: "Atoms", body: "Toggles, buttons, badges" },
         { title: "Molecules", body: "Every settings row" },
@@ -959,7 +946,7 @@ const modernCart: CaseStudy = {
       ],
       note: {
         title: "The one rule I bent",
-        body: "Number fields needed their unit (px, %, ms) inside. I designed a unit badge into the input; it shipped as plain text, still inside the field.",
+        body: "Number fields needed their unit (px, %, ms) inside. I designed a unit badge; it shipped as plain text, still inside the field.",
       },
     },
     {
@@ -972,32 +959,36 @@ const modernCart: CaseStudy = {
         {
           label: "Week 1",
           title: "Getting it ready to publish",
-          body: "The PM's call was simple: publish ModernCart within a week. There was no time to redesign from scratch, so the goal was to make what existed feel finished.",
+          body: "The PM's call: publish within a week. No time to redesign, so the goal was to make what existed feel finished.",
           details: [
-            "I rebuilt the screens with ForceUI components, then reviewed the developer build with the PM. I logged 20 to 30 issues in a shared Google Sheet, each with a screenshot and a note on spacing, alignment, type, color or responsiveness. Developers fixed them in parallel while I prepared the assets they needed.",
-            "The free version went live on schedule.",
+            "I rebuilt screens with ForceUI and reviewed the build with the PM, logging 20 to 30 issues in a shared Google Sheet, each with a screenshot and a note on spacing, alignment, type, color or responsiveness. Developers fixed them in parallel while I prepared assets.",
           ],
-          points: ["20 to 30 issues logged", "Screenshot on every issue", "Launched on schedule"],
+          points: ["Launched on schedule"],
         },
         {
           label: "After launch",
           title: "Learning from five competitors",
-          body: "With the product live, the question changed from “is it ready?” to “what should it do next?” The company bought licenses for five competing cart plugins. I installed each one on a demo site and used it as a store owner would, comparing settings, features and how much store owners could customize.",
+          body: "Once live, the question became “what next?” The company bought five competing cart plugins, and I used each on a demo site as a store owner would, comparing settings, features and customization.",
           details: [
-            "That review shaped most of what came next: preset cart icons and custom icon upload, cart position controls, style options for the cart, header and order summary, and product suggestions in the cart.",
+            "That review shaped most of what followed: preset icons and custom upload, cart position, styles for the cart, header and order summary, and product suggestions.",
           ],
-          points: ["Side Cart WooCommerce", "FunnelKit Cart", "Mini Cart for WooCommerce", "Side Cart & Checkout", "Flycart"],
+          points: [
+            "[Side Cart WooCommerce](https://wordpress.org/plugins/side-cart-woocommerce/)",
+            "[FunnelKit Cart](https://funnelkit.com/woocommerce-cart/)",
+            "[Mini Cart for WooCommerce](https://wordpress.org/plugins/mini-cart-for-woocommerce/)",
+            "[Side Cart & Checkout](https://woocommerce.com/products/side-cart-checkout/)",
+            "[Flycart](https://wordpress.org/plugins/woo-fly-cart/)",
+          ],
         },
         {
           label: "Tickets",
           title: "Turning ideas into tickets",
-          body: "I shared what I found with the team, and the PM decided what to build first. I wrote about 15 Jira tickets, one per feature, each with a description and the designs. The Figma file was organized the same way, one section per ticket, so anyone could match a design to its ticket.",
-          points: ["About 15 Jira tickets", "One Figma section per ticket"],
+          body: "I shared findings and the PM set priorities. I wrote about 15 Jira tickets, one per feature with a description and designs, and organized Figma the same way, one section per ticket.",
         },
         {
           label: "Free and Pro",
           title: "Planning the Free and Pro split",
-          body: "The team then started planning a Free and Pro version. The PM decided which features went where, and I designed how Pro features would appear to free users (Decision 1).",
+          body: "Next came Free and Pro. The PM decided what went where; I designed how Pro appears to free users (Decision 1).",
           media: mcShot("The Free vs Pro tab, comparing every feature.", "free-vs-pro"),
         },
       ],
@@ -1065,6 +1056,32 @@ const modernCart: CaseStudy = {
     },
   ],
 };
+
+// Read time: every word a reader sees in the case study, at an average adult reading speed.
+// Keys whose text never shows on the case study page (home card, image descriptions, internal ids).
+const READ_SKIP = new Set([
+  "slug", "tone", "image", "imageClass", "src", "poster", "kind", "id", "sample", "size", "nav", "alt",
+  "cardTitle", "cardSummary", "proof", "caption",
+]);
+const WORDS_PER_MINUTE = 238;
+
+function readTime(study: CaseStudy) {
+  const parts: string[] = [];
+  const collect = (value: unknown, key: string) => {
+    if (typeof value === "string") {
+      if (!READ_SKIP.has(key)) parts.push(value.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1").replace(/\*\*/g, ""));
+    } else if (Array.isArray(value)) {
+      value.forEach((item) => collect(item, key));
+    } else if (value && typeof value === "object") {
+      Object.entries(value).forEach(([childKey, child]) => collect(child, childKey));
+    }
+  };
+  collect(study, "");
+  const words = parts.join(" ").split(/\s+/).filter(Boolean).length;
+  return `${Math.max(1, Math.round(words / WORDS_PER_MINUTE))} min read`;
+}
+
+modernCart.meta.push(["Read time", readTime(modernCart)]);
 
 // Built from the "Social Feed Case Study" doc. The brand and people in the walkthrough are made up.
 const superfansDecisions: DecisionItem[] = [

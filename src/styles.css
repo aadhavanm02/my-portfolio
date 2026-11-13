@@ -9017,3 +9017,53 @@ body.is-video-expanded .case-topic-nav {
   height: auto;
   aspect-ratio: 16 / 9;
 }
+
+/* ---------- Visual-first: body text uses the full width it has ---------- */
+.case-section-heading span,
+.case-goals__intro,
+.case-flow__body > p,
+.case-flow__body > ul,
+.case-flow__result p,
+.case-feedback,
+.case-features .case-feature .case-feature__body,
+.case-process__text {
+  max-width: none;
+}
+
+/* Details row: one column per item on desktop, so a fifth item (read time) fits on the same line. */
+@media (min-width: 1200px) {
+  .case-meta {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+  }
+}
+
+/* Boxed cards: the card padding is the only spacing around screenshots, so every side reads 40px. */
+.case-feature__media .shot-group,
+.case-decision__media .shot-group {
+  margin: 0;
+}
+
+/* Hero hook: the same panel as the "one rule I bent" note. */
+.case-lead p.case-lead__hook {
+  padding: 24px 28px;
+  border-left: 3px solid var(--color-peach-400);
+  border-radius: 0 var(--radius-card) var(--radius-card) 0;
+  background: var(--color-surface);
+}
+
+/* Competitor chips link out to each plugin. */
+.case-feature__highlights li a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.case-feature__highlights li a::after {
+  content: " ↗";
+}
+
+.case-feature__highlights li a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
