@@ -198,7 +198,7 @@ const cartAbandonmentDecisions: DecisionItem[] = [
     options: [
       {
         title: "A side drawer",
-        body: "Matches the email editor and keeps the list in view, but one cart's emails, addresses and order get cramped, with no room side by side.",
+        body: "Matches the email editor and keeps the list in view, but a cart's emails, addresses and order get cramped.",
         badge: "My first proposal",
       },
       {
@@ -249,13 +249,13 @@ const cartAbandonmentDecisions: DecisionItem[] = [
     title: "Why shoppers can skip the email popup",
     hook: "The store needs an email to recover a cart. But asking on every Add to Cart can feel like a login wall.",
     before: [
-      "The popup asks for an email on add to cart so the store can follow up, and logged-out shoppers might see it again and again.",
+      "The add to cart popup asks for an email for follow-ups; logged-out shoppers may see it repeatedly.",
     ],
     turningIntro: "Two options:",
     options: [
       {
         title: "Always require the email",
-        body: "More emails, but browsing shoppers get frustrated and may leave.",
+        body: "More emails, but annoyed shoppers may leave.",
       },
       {
         title: "Let store owners make it optional",
@@ -526,7 +526,7 @@ const cartAbandonment: CaseStudy = {
             },
             {
               title: "Who came back?",
-              body: "She filters and exports the Email Report, then opens one cart's emails, addresses and items.",
+              body: "She filters and exports the Email Report, then opens a cart's emails, addresses, items.",
               media: { caption: "Email Report and Email Logs." },
             },
           ],
@@ -665,7 +665,7 @@ const cartAbandonment: CaseStudy = {
       steps: [
         { label: "Research", body: "Studied YITH, VillaTheme and other recovery plugins on a Figma board." },
         { label: "Feature list", body: "Ideas went into a shared sheet; the team chose. That became my brief." },
-        { label: "Full design", body: "I designed the whole admin first." },
+        { label: "Full design", body: "I designed it all first." },
         { label: "Phase 1", body: "Dashboard, emails, Reports, Integrations and Settings." },
         { label: "Phase 2", body: "Popup Templates." },
       ],
@@ -702,7 +702,7 @@ const cartAbandonment: CaseStudy = {
       items: [
         { title: "Let the content choose the pattern.", body: "A detailed read and a quick edit need different homes." },
         { title: "Reuse what the company does well.", body: "Spectra beat rebuilding a popup editor." },
-        { title: "Respect the shopper's patience.", body: "The optional email came from imagining the tenth popup." },
+        { title: "Respect the shopper's patience.", body: "Imagining the tenth popup made email optional." },
         { title: "A visible gap beats a clever interaction.", body: "The chart always shows what was at risk and what came back." },
       ],
     },
@@ -1115,7 +1115,7 @@ const superfansDecisions: DecisionItem[] = [
       },
       {
         title: "Improve the existing view",
-        body: "Keep the layout and bring editing within reach. Less ambitious, but it could ship on time.",
+        body: "Keep the layout, bring editing within reach. Less ambitious, but on time.",
         chosen: true,
       },
     ],
@@ -1129,7 +1129,7 @@ const superfansDecisions: DecisionItem[] = [
     media: [{ caption: "The Tab exploration." }, { caption: "The YouTube Shorts exploration." }, { caption: "The shipped header." }],
   },
   {
-    title: "Why reviewing reported content uses a dropdown, not tick and cross buttons",
+    title: "Why moderation uses a dropdown, not tick and cross buttons",
     hook: "I argued for the faster design. After several rounds, the team chose another, and I designed it.",
     before: [
       "Reported content was meant to stay visible until review, like on Instagram and TikTok. Then it changed to hide automatically for later review, so merchants needed a quick way to restore or keep each item hidden.",
@@ -1149,7 +1149,7 @@ const superfansDecisions: DecisionItem[] = [
       },
     ],
     reasoning: [
-      "The PM's point: the buttons didn't say what they do, and the item's status wasn't shown. A status dropdown on hover solved both.",
+      "The PM's point: the buttons didn't say what they do, and status wasn't shown. A hover status dropdown solved both.",
     ],
     next: ["I matched the moderation designs to the PM's prototype:"],
     nextList: [
@@ -1159,7 +1159,7 @@ const superfansDecisions: DecisionItem[] = [
       "A review popup button that opens the post in the feed, with its comments",
     ],
     result: [
-      "The PM signed off the next day and it shipped. A tick could mean “reviewed” or “visible”; a label removes the guess.",
+      "Signed off the next day and shipped. A tick could mean “reviewed” or “visible”; a label removes the guess.",
     ],
     media: [{ caption: "The tick and cross exploration." }, { caption: "The shipped dropdown." }],
   },
@@ -1276,7 +1276,7 @@ const superfansSocialFeed: CaseStudy = {
             },
             {
               title: "Keeps the feed safe",
-              body: "A reported comment hides automatically; she reviews it and sets who can see the feed.",
+              body: "A reported comment hides automatically; she reviews it and sets feed access.",
               media: { caption: "Reported tab, review modal and Feed Access Controls." },
             },
           ],
@@ -1364,7 +1364,7 @@ const superfansSocialFeed: CaseStudy = {
         {
           title: "Interactive blocks in the feed",
           detail:
-            "Blocks fill a feed slot like a video to collect first hand data: a single choice poll (“What matters most in your scrubs?”) showing how others voted, and a this or that with two product images, custom for each brand.",
+            "Blocks fill a feed slot to collect first hand data: a single choice poll (“What matters most in your scrubs?”) showing how others voted, and a this or that with two product images, custom per brand.",
           after: "Data collected inside the feed.",
           media: { caption: "The poll and the this or that block in the feed." },
         },
@@ -1407,7 +1407,7 @@ const superfansSocialFeed: CaseStudy = {
         {
           title: "Who can see the feed",
           detail:
-            "Feed Access Controls uses customer segments: Everyone, Everyone except specific customers, or Only specific customers. Restricted shoppers see post restricted, comment restricted, or both.",
+            "Feed Access Controls uses customer segments: Everyone, Everyone except specific customers, or Only specific customers. Restricted shoppers can't post, comment, or both.",
           after: "Brands choose who joins in.",
           media: { caption: "Access control options and the restricted views in the app." },
         },
@@ -1444,7 +1444,7 @@ const superfansSocialFeed: CaseStudy = {
       notes: [
         {
           title: "Where the idea came from",
-          body: "Instagram Reels and TikTok. The spec split it into two releases, a brand-run feed with imports, likes, comments and reporting, then shopper posting with moderation, with rules like 9:16 media, 3 to 60 second videos and 500 character comments.",
+          body: "Instagram Reels and TikTok. The spec split it in two releases, a brand-run feed with imports, likes, comments and reporting, then shopper posting with moderation, with rules like 9:16 media, 3–60s videos and 500 character comments.",
         },
         {
           title: "Versions and reviews",
@@ -1463,7 +1463,7 @@ const superfansSocialFeed: CaseStudy = {
       items: [
         {
           title: "Post metrics for merchants",
-          body: "CTR, unique views, likes and comments in the post header, to show which videos sell.",
+          body: "CTR, unique views, likes and comments in the post header, showing what sells.",
         },
         {
           title: "More ways to take part",
@@ -1484,8 +1484,8 @@ const superfansSocialFeed: CaseStudy = {
       items: [
         { title: "Let the content decide the layout.", body: "Short videos needed a grid, not a builder or a table." },
         { title: "Shipping on time is part of the design.", body: "We improved the post view and saved the better idea." },
-        { title: "Every social feature needs a safety feature.", body: "Shopper posting worked because merchants could control it." },
-        { title: "Disagree, then commit.", body: "A labelled dropdown cost a click but removed the guess." },
+        { title: "Every social feature needs a safety feature.", body: "Shopper posting worked with merchant control." },
+        { title: "Disagree, then commit.", body: "The dropdown cost a click but removed the guess." },
         { title: "Design isn't done at handoff.", body: "QA caught the details that make it feel finished." },
       ],
     },
@@ -1498,7 +1498,7 @@ const superfansSocialFeed: CaseStudy = {
       before: "Brand apps built only for buying",
       after: "Videos to shop, comments, shopper posts and tools to keep it safe",
       stat: { value: "Shipped", label: "Across the app and the dashboard, in ten months" },
-      feedback: feedback("If you've designed social or community features, how would you approach moderation for brand communities?"),
+      feedback: feedback("If you've designed community features, how would you moderate brand communities?"),
     },
   ],
 };
