@@ -592,40 +592,101 @@ function RichText({ text }: { text: string }) {
 
 // ---------- Screenshots: pre-cropped images on a clean backdrop ----------
 
-function ShotLightbox({ src, caption, onClose }: { src: string; caption: string; onClose: () => void }) {
+// The full view opens on the cropped area you clicked, then zooms out to the whole screenshot.
+const reduceMotion = () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function cropTransform(crop: [number, number, number, number]) {
+  const [x, y, w, h] = crop;
+  const scale = Math.min(1 / w, 1 / h);
+  // Centre the crop, but never pull a screenshot edge inside the frame.
+  const limit = ((scale - 1) / 2) * 100;
+  const clamp = (value: number) => Math.max(-limit, Math.min(limit, value));
+  const dx = clamp((0.5 - (x + w / 2)) * 100 * scale);
+  const dy = clamp((0.5 - (y + h / 2)) * 100 * scale);
+  return `translate(${dx}%, ${dy}%) scale(${scale})`;
+}
+
+// On phone-sized screens the full screenshot would be too small to read, so the crop stays.
+const FULL_SHOT_MIN_WIDTH = 768;
+
+function ShotLightbox({ frame, caption, onClose }: { frame: MediaFrame; caption: string; onClose: () => void }) {
+  const full = typeof window !== "undefined" && window.innerWidth >= FULL_SHOT_MIN_WIDTH ? frame.full : undefined;
+  const src = resolveSrc(full?.src ?? frame.src);
+  const [w, h] = full?.size ?? frame.size;
+  const [loaded, setLoaded] = useState(false);
+  const [zoomedOut, setZoomedOut] = useState(!full || reduceMotion());
+
   useEffect(() => {
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    // Floating page controls hide while the screenshot fills the screen, as they do for the video.
+    document.body.classList.add("is-video-expanded");
     const onKey = (event: globalThis.KeyboardEvent) => event.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = previous;
+      document.body.classList.remove("is-video-expanded");
       window.removeEventListener("keydown", onKey);
     };
   }, [onClose]);
+
+  // Once the full screenshot is in, hold the crop for a beat so the eye finds it, then zoom out.
+  useEffect(() => {
+    if (!loaded || zoomedOut) return;
+    const timer = window.setTimeout(() => setZoomedOut(true), 120);
+    return () => window.clearTimeout(timer);
+  }, [loaded, zoomedOut]);
 
   return (
     <div aria-label={caption} aria-modal="true" className="shot-lightbox" onClick={onClose} role="dialog">
       <button aria-label="Close screenshot" className="shot-lightbox__close" onClick={onClose} type="button">
         <X aria-hidden="true" size={22} weight="bold" />
       </button>
-      <img alt={caption} onClick={(event) => event.stopPropagation()} src={src} />
+      <div
+        className={`shot-lightbox__frame${loaded ? " is-loaded" : ""}`}
+        onClick={(event) => event.stopPropagation()}
+        style={{ ["--w" as string]: `${w}px`, ["--a" as string]: w / h }}
+      >
+        <img
+          alt={caption}
+          className={zoomedOut ? "is-out" : undefined}
+          height={h}
+          onLoad={() => setLoaded(true)}
+          ref={(node) => {
+            if (node?.complete && node.naturalWidth && !loaded) setLoaded(true);
+          }}
+          src={src}
+          style={zoomedOut || !full ? undefined : { transform: cropTransform(full.crop) }}
+          width={w}
+        />
+      </div>
     </div>
   );
 }
 
-function ShotImage({ frame, caption, onOpen }: { frame: MediaFrame; caption: string; onOpen: (src: string) => void }) {
+function ShotImage({ frame, caption, onOpen }: { frame: MediaFrame; caption: string; onOpen: (frame: MediaFrame) => void }) {
   const src = resolveSrc(frame.src);
+  // Start fetching the full screenshot on hover or focus, so it is ready by the click.
+  const preload = () => {
+    if (frame.full && window.innerWidth >= FULL_SHOT_MIN_WIDTH) new Image().src = resolveSrc(frame.full.src);
+  };
   return (
-    <button aria-label={`View full size: ${frame.label ?? caption}`} className="shot-image" onClick={() => onOpen(src)} type="button">
+    <button
+      aria-label={`View full size: ${frame.label ?? caption}`}
+      className="shot-image"
+      onClick={() => onOpen(frame)}
+      onFocus={preload}
+      onPointerEnter={preload}
+      type="button"
+    >
       <img alt={frame.label ?? caption} height={frame.size[1]} loading="lazy" src={src} width={frame.size[0]} />
     </button>
   );
 }
 
 function ShotMedia({ item, thumb }: { item: MediaItem; thumb?: boolean }) {
-  const [open, setOpen] = useState<string | null>(null);
-  const frames: MediaFrame[] = item.row ?? (item.src && item.size ? [{ src: item.src, size: item.size }] : []);
+  const [open, setOpen] = useState<MediaFrame | null>(null);
+  const frames: MediaFrame[] = item.row ?? (item.src && item.size ? [{ src: item.src, size: item.size, full: item.full }] : []);
 
   return (
     <figure className={`shot${item.row ? " shot--row" : ""}${thumb ? " shot--thumb" : ""}`}>
@@ -638,7 +699,7 @@ function ShotMedia({ item, thumb }: { item: MediaItem; thumb?: boolean }) {
         ))}
       </div>
       {item.caption ? <figcaption>{item.caption}</figcaption> : null}
-      {open ? <ShotLightbox caption={item.alt ?? item.caption} onClose={() => setOpen(null)} src={open} /> : null}
+      {open ? <ShotLightbox caption={open.label ?? item.alt ?? item.caption} frame={open} onClose={() => setOpen(null)} /> : null}
     </figure>
   );
 }

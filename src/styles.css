@@ -8348,7 +8348,8 @@ a.more-case:hover .more-case__link svg {
   84%, 100% { opacity: 0; transform: scale(1); }
 }
 
-/* ModernCart: hover down the settings menu, then press Request Support. */
+/* ModernCart: hover down the settings menu, then press Unlock Pro Features in the top bar.
+   Positions are fractions of the General page screenshot (1546 x 2000). */
 .shot-motion--modern .shot-cursor {
   animation: mc-cursor 11s cubic-bezier(0.45, 0, 0.2, 1) infinite;
 }
@@ -8363,9 +8364,9 @@ a.more-case:hover .more-case__link svg {
 
 .shot-pill {
   position: absolute;
-  left: 1.16%;
-  width: 16.26%;
-  height: 2.23%;
+  left: 1.42%;
+  width: 17.21%;
+  height: 2.4%;
   border-radius: 8px;
   background: rgb(240 100 52 / 8%);
   mix-blend-mode: multiply;
@@ -8375,51 +8376,53 @@ a.more-case:hover .more-case__link svg {
 
 .shot-press {
   position: absolute;
-  top: 25.55%;
-  left: 2.33%;
-  width: 13.94%;
-  height: 2.52%;
+  top: 2.7%;
+  left: 18.24%;
+  width: 12.55%;
+  height: 1.8%;
   border-radius: 6px;
-  background: rgb(16 16 16 / 16%);
+  background: rgb(240 100 52 / 14%);
   mix-blend-mode: multiply;
   opacity: 0;
   animation: mc-press 11s ease infinite;
 }
 
 @keyframes mc-cursor {
-  0% { top: 20.53%; left: 21.82%; }
-  10%, 18% { top: 7.08%; left: 8.64%; }
-  26%, 34% { top: 12.14%; left: 8.64%; }
-  42%, 50% { top: 14.67%; left: 10.09%; }
-  58%, 64% { top: 17.18%; left: 7.18%; }
-  76%, 86% { top: 26.74%; left: 10.09%; }
-  100% { top: 20.53%; left: 21.82%; }
+  0% { top: 24%; left: 33%; }
+  10%, 18% { top: 7.5%; left: 6.47%; }
+  26%, 32% { top: 10.3%; left: 6.47%; }
+  40%, 46% { top: 13.2%; left: 6.47%; }
+  54%, 60% { top: 16.2%; left: 6.47%; }
+  66%, 70% { top: 19.1%; left: 6.47%; }
+  80%, 90% { top: 3.6%; left: 24.45%; }
+  100% { top: 24%; left: 33%; }
 }
 
 @keyframes mc-pill {
-  0%, 7% { top: 5.96%; opacity: 0; }
-  11%, 18% { top: 5.96%; opacity: 1; }
-  26%, 34% { top: 11.05%; opacity: 1; }
-  42%, 50% { top: 13.58%; opacity: 1; }
-  58%, 64% { top: 16.09%; opacity: 1; }
-  69%, 100% { top: 16.09%; opacity: 0; }
+  0%, 7% { top: 6.3%; opacity: 0; }
+  11%, 18% { top: 6.3%; opacity: 1; }
+  26%, 32% { top: 9.1%; opacity: 1; }
+  40%, 46% { top: 12%; opacity: 1; }
+  54%, 60% { top: 15%; opacity: 1; }
+  66%, 70% { top: 17.9%; opacity: 1; }
+  75%, 100% { top: 17.9%; opacity: 0; }
 }
 
 @keyframes mc-press {
-  0%, 77% { opacity: 0; }
-  79%, 82% { opacity: 1; }
-  86%, 100% { opacity: 0; }
+  0%, 82% { opacity: 0; }
+  84%, 88% { opacity: 1; }
+  92%, 100% { opacity: 0; }
 }
 
 @keyframes shot-click-mc {
-  0%, 77%, 81%, 100% { transform: scale(1); }
-  79% { transform: scale(0.82); }
+  0%, 82%, 86%, 100% { transform: scale(1); }
+  84% { transform: scale(0.82); }
 }
 
 @keyframes shot-ripple-mc {
-  0%, 77% { opacity: 0; transform: scale(0); }
-  78% { opacity: 1; transform: scale(0.2); }
-  86%, 100% { opacity: 0; transform: scale(1); }
+  0%, 82% { opacity: 0; transform: scale(0); }
+  83% { opacity: 1; transform: scale(0.2); }
+  91%, 100% { opacity: 0; transform: scale(1); }
 }
 
 /* Cart Abandonment: a hover line scrubbing along the revenue chart. */
@@ -8603,12 +8606,10 @@ a.more-case:hover .more-case__link svg {
   width: 100%;
   padding: 0;
   overflow: hidden;
-  border: 0;
+  border: 1px solid rgb(16 16 16 / 12%);
   border-radius: 10px;
   background: #fff;
-  box-shadow:
-    0 0 0 1px rgb(16 16 16 / 6%),
-    0 12px 32px -12px rgb(16 16 16 / 22%);
+  box-shadow: 0 12px 32px -12px rgb(16 16 16 / 22%);
   cursor: zoom-in;
 }
 
@@ -8658,16 +8659,46 @@ a.more-case:hover .more-case__link svg {
   padding: 56px 24px 24px;
   background: rgb(10 10 10 / 84%);
   cursor: zoom-out;
+  animation: shot-lightbox-in 0.2s ease;
 }
 
-.shot-lightbox img {
-  display: block;
-  width: auto;
-  max-width: min(1400px, 100%);
-  height: auto;
+/* The whole screenshot fits the screen; the frame clips the zoom so it reads as a camera pulling back. */
+.shot-lightbox__frame {
+  position: relative;
+  width: min(var(--w), 100%, calc((100dvh - 80px) * var(--a)));
+  max-width: 1400px;
+  aspect-ratio: var(--a);
   margin: auto;
+  overflow: hidden;
   border-radius: 12px;
+  background: #fff;
   cursor: default;
+  opacity: 0;
+  transform: scale(0.97);
+  transition: opacity 0.2s ease, transform 0.3s ease;
+}
+
+.shot-lightbox__frame.is-loaded {
+  opacity: 1;
+  transform: none;
+}
+
+.shot-lightbox__frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transform-origin: center;
+}
+
+.shot-lightbox__frame img.is-out {
+  transition: transform 0.75s cubic-bezier(0.22, 0.8, 0.24, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shot-lightbox__frame,
+  .shot-lightbox__frame img.is-out {
+    transition: none;
+  }
 }
 
 .shot-lightbox__close {
@@ -9170,4 +9201,8 @@ body.is-video-expanded .case-topic-nav {
   .case-facts .case-meta dd {
     font-size: 16px;
   }
+}
+
+@keyframes shot-lightbox-in {
+  from { opacity: 0; }
 }

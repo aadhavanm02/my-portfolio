@@ -5,11 +5,20 @@
 
 export type ProjectTone = "violet" | "peach";
 
+// The uncropped screenshot behind a crop: the full view opens on the crop, then zooms out to this.
+export type FullShot = {
+  src: string;
+  size: [number, number];
+  // Where the crop sits in the full screenshot, as fractions: x, y, width, height.
+  crop: [number, number, number, number];
+};
+
 export type MediaFrame = {
   src: string;
   // Natural size in pixels, so the layout is stable before the image loads.
   size: [number, number];
   label?: string;
+  full?: FullShot;
 };
 
 export type MediaItem = {
@@ -23,6 +32,7 @@ export type MediaItem = {
   size?: [number, number];
   // Screenshots shown side by side at the same height.
   row?: MediaFrame[];
+  full?: FullShot;
 };
 
 export type CardItem = {
@@ -278,31 +288,31 @@ const cartAbandonmentDecisions: DecisionItem[] = [
 
 // ModernCart screenshots (public/assets/modern-cart), cropped to the part each section is about.
 const mcSizes = {
-  "general-tab": [1547, 860],
-  "general-pro": [1592, 1340],
+  "general-tab": [1546, 860],
+  "general-pro": [948, 682],
   "general-settings": [1592, 600],
   "text-label-fields": [1432, 1080],
-  "text-label-empty-fields": [1432, 780],
-  "floating-icon-card": [1880, 1060],
-  "styling-colors": [1352, 840],
-  "styling-width": [1352, 940],
-  "upgrade-modal": [1010, 1650],
-  "free-vs-pro": [1892, 1100],
-  "cart-empty-panel": [958, 2250],
-  "cart-one-panel": [958, 2250],
-  "cart-two-panel": [958, 2250],
-  "coupon-link-crop": [958, 810],
-  "coupon-field-crop": [958, 854],
-  "coupon-tag-crop": [958, 822],
-  "summary-card-crop": [958, 674],
-  "summary-tags-crop": [958, 766],
-  "popup-empty": [2008, 1730],
-  "popup-suggest": [2016, 1740],
-  "popup-items": [2016, 1846],
+  "text-label-empty-fields": [800, 394],
+  "floating-icon-card": [1280, 622],
+  "styling-colors": [862, 454],
+  "styling-width": [862, 520],
+  "upgrade-modal": [701, 995],
+  "free-vs-pro": [904, 526],
+  "cart-empty-panel": [531, 1250],
+  "cart-one-panel": [531, 1250],
+  "cart-two-panel": [531, 1250],
+  "coupon-link-crop": [531, 438],
+  "coupon-field-crop": [531, 464],
+  "coupon-tag-crop": [531, 447],
+  "summary-card-crop": [531, 377],
+  "summary-tags-crop": [531, 427],
+  "popup-empty": [1162, 1000],
+  "popup-suggest": [1162, 1000],
+  "popup-items": [1093, 1001],
   "popup-items-tablet-box": [2228, 3280],
   "popup-items-mobile-box": [1200, 2556],
-  "slideout-full": [2000, 1125],
-  "popup-full": [2000, 1125],
+  "slideout-full": [2000, 1250],
+  "popup-full": [2000, 1250],
   "live-preview": [2000, 1157],
   "custom-icon-card": [1760, 2060],
   "icon-preview-card": [1720, 2176],
@@ -310,8 +320,42 @@ const mcSizes = {
 
 type McShot = keyof typeof mcSizes;
 
+// Bumped whenever the ModernCart screenshots are replaced, so browsers fetch the new files instead of cached ones.
+const MC_VERSION = "2026-11-17c";
+
+// Full screenshots behind the crops, and each crop's box in pixels (x, y, width, height).
+const CART_X = 1469; // left edge of the slide-out cart in storefront screenshots
+const mcFull: Partial<Record<McShot, [string, [number, number], [number, number, number, number]]>> = {
+  "general-tab": ["full/general", [1546, 2000], [0, 0, 1546, 860]],
+  "general-pro": ["full/general", [1546, 2000], [452, 420, 948, 682]],
+  "text-label-empty-fields": ["full/text-label", [1313, 2000], [388, 1370, 800, 394]],
+  "floating-icon-card": ["full/floating", [2000, 1248], [560, 252, 1280, 622]],
+  "styling-colors": ["full/styling", [1371, 2000], [392, 182, 862, 454]],
+  "styling-width": ["full/styling", [1371, 2000], [392, 1452, 862, 520]],
+  "upgrade-modal": ["full/upgrade-modal", [2000, 1250], [687, 127, 701, 995]],
+  "free-vs-pro": ["full/free-vs-pro", [959, 2000], [20, 86, 904, 526]],
+  "cart-empty-panel": ["full/cart-empty", [2000, 1250], [CART_X, 0, 531, 1250]],
+  "cart-one-panel": ["slideout-full", [2000, 1250], [CART_X, 0, 531, 1250]],
+  "cart-two-panel": ["full/cart-two", [2000, 1250], [CART_X, 0, 531, 1250]],
+  "coupon-link-crop": ["full/coupon-link", [2000, 1250], [CART_X, 812, 531, 438]],
+  "coupon-field-crop": ["full/coupon-field", [2000, 1250], [CART_X, 786, 531, 464]],
+  "coupon-tag-crop": ["full/coupon-tag", [2000, 1250], [CART_X, 803, 531, 447]],
+  "summary-card-crop": ["full/summary-card", [2000, 1250], [CART_X, 873, 531, 377]],
+  "summary-tags-crop": ["full/summary-tags", [2000, 1250], [CART_X, 823, 531, 427]],
+  "popup-empty": ["full/popup-empty", [2000, 1250], [419, 125, 1162, 1000]],
+  "popup-suggest": ["full/popup-suggest", [2000, 1250], [419, 125, 1162, 1000]],
+  "popup-items": ["popup-full", [2000, 1250], [452, 124, 1093, 1001]],
+};
+
+function mcFullShot(name: McShot): FullShot | undefined {
+  const entry = mcFull[name];
+  if (!entry) return undefined;
+  const [file, [w, h], [x, y, cw, ch]] = entry;
+  return { src: `/assets/modern-cart/${file}.webp?v=${MC_VERSION}`, size: [w, h], crop: [x / w, y / h, cw / w, ch / h] };
+}
+
 function mc(name: McShot, label?: string): MediaFrame {
-  return { src: `/assets/modern-cart/${name}.webp`, size: mcSizes[name], label };
+  return { src: `/assets/modern-cart/${name}.webp?v=${MC_VERSION}`, size: mcSizes[name], label, full: mcFullShot(name) };
 }
 
 const mcShot = (alt: string, name: McShot): MediaItem => ({ caption: "", alt, ...mc(name) });
@@ -726,7 +770,7 @@ const modernCart: CaseStudy = {
     "Took an unreleased side cart plugin to launch in one week, then turned the cart from a dead end into a place shoppers keep browsing.",
   proof: "50K+ active installs. Ready to launch in one week.",
   tone: "peach",
-  image: "/assets/modern-cart.png",
+  image: "/assets/modern-cart.png?v=2026-11-17c",
   imageClass: "project-image--modern",
   headline: "Redesigning ModernCart so its cart stopped being a dead end",
   hook: "ModernCart had been built by developers and left unreleased. Then the PM made the call: it goes live in one week.",
@@ -745,7 +789,7 @@ const modernCart: CaseStudy = {
   ],
   hero: {
     caption: "The finished side cart open on DNK's storefront, next to the ModernCart dashboard.",
-    src: "/assets/modern-cart.png",
+    src: "/assets/modern-cart.png?v=2026-11-17c",
   },
   sections: [
     {
@@ -785,8 +829,8 @@ const modernCart: CaseStudy = {
         kind: "video",
         caption: "",
         alt: "ModernCart walkthrough: Meera sets up her store's cart, then Arjun shops with it.",
-        src: "/assets/videos/modern-cart-walkthrough.mp4",
-        poster: "/assets/videos/modern-cart-walkthrough.jpg",
+        src: "/assets/videos/modern-cart-walkthrough.mp4?v=2026-11-17c",
+        poster: "/assets/videos/modern-cart-walkthrough.jpg?v=2026-11-17c",
       },
       lanes: [],
     },
