@@ -1369,7 +1369,7 @@ function Header() {
             </a>
           ))}
         </div>
-        <a className="button button--large" href={assetPath("/Aadhavan-M-Resume.pdf")}>
+        <a className="button button--large" download="Aadhavan-M-Resume.pdf" href={assetPath("/Aadhavan-M-Resume.pdf")}>
           Download Resume
         </a>
       </nav>
@@ -1391,7 +1391,7 @@ function Header() {
             {link}
           </a>
         ))}
-        <a className="button" href={assetPath("/Aadhavan-M-Resume.pdf")} onClick={closeMenu}>
+        <a className="button" download="Aadhavan-M-Resume.pdf" href={assetPath("/Aadhavan-M-Resume.pdf")} onClick={closeMenu}>
           Download Resume
         </a>
       </nav>
