@@ -957,7 +957,14 @@ function SolutionView({ section }: { section: Extract<CaseSection, { kind: "solu
                 {item.area ? <span className="case-tag">{item.area}</span> : null}
               </div>
               <h3>{item.title}</h3>
-              <p className="case-feature__detail">{item.detail}</p>
+              <p className="case-feature__detail">
+                <RichText text={item.detail} />
+              </p>
+              {item.details?.map((text) => (
+                <p className="case-feature__detail" key={text}>
+                  <RichText text={text} />
+                </p>
+              ))}
 
               <div className={`case-feature__compare${item.before ? "" : " case-feature__compare--single"}`}>
                 {item.before ? (
@@ -1340,6 +1347,20 @@ function CaseSectionContent({ section }: { section: CaseSection }) {
           <span>
             <RichText text={section.intro} />
           </span>
+        ) : null}
+        {section.story ? (
+          <div className="case-story">
+            {section.story.map((block, index) => (
+              <div className="case-story__block" key={block.label ?? index}>
+                {block.label ? <h3>{block.label}</h3> : null}
+                {(Array.isArray(block.text) ? block.text : [block.text]).map((text) => (
+                  <p key={text}>
+                    <RichText text={text} />
+                  </p>
+                ))}
+              </div>
+            ))}
+          </div>
         ) : null}
       </div>
 
@@ -2146,6 +2167,11 @@ function CaseStudyPage({ project }: { project: CaseStudy }) {
           <div className="case-lead">
             <p className="case-lead__hook">{project.hook}</p>
             <p>{project.summary}</p>
+            {project.lead?.map((text) => (
+              <p key={text}>
+                <RichText text={text} />
+              </p>
+            ))}
           </div>
           {project.hero.kind === "video" && project.hero.src ? (
             <CaseHeroVideo coverImage={resolveSrc(project.image)} title={project.cardTitle} videoSrc={resolveSrc(project.hero.src)} />

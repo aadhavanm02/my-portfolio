@@ -9291,3 +9291,36 @@ body.is-video-expanded .case-topic-nav {
 .case-learnings {
   border: 0;
 }
+
+/* Longer write-up under a section intro. */
+.case-story {
+  display: grid;
+  gap: 28px;
+  margin-top: 32px;
+}
+
+.case-story__block h3 {
+  margin: 0 0 10px;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.35;
+}
+
+.case-section-heading .case-story p {
+  margin: 0 0 12px;
+  color: var(--color-body-muted);
+  font-family: inherit;
+  font-size: var(--type-body-size);
+  font-weight: inherit;
+  line-height: var(--type-body-line);
+  text-transform: none;
+}
+
+.case-story p:last-child {
+  margin-bottom: 0;
+}
+
+.case-feature__detail + .case-feature__detail {
+  margin-top: 12px;
+}
