@@ -689,16 +689,18 @@ function ShotMedia({ item, thumb }: { item: MediaItem; thumb?: boolean }) {
   const frames: MediaFrame[] = item.row ?? (item.src && item.size ? [{ src: item.src, size: item.size, full: item.full }] : []);
 
   return (
-    <figure className={`shot${item.row ? " shot--row" : ""}${thumb ? " shot--thumb" : ""}`}>
+    <figure className={`shot${item.row ? " shot--row" : ""}${item.stack ? " shot--stack" : ""}${thumb ? " shot--thumb" : ""}`}>
       <div className="shot-stage">
-        {frames.map((frame, index) => (
-          <div className="shot-stage__item" key={`${frame.src}-${index}`} style={{ ["--a" as string]: frame.size[0] / frame.size[1] }}>
-            <ShotImage caption={item.alt ?? item.caption} frame={frame} onOpen={setOpen} />
-            {frame.label ? <span className="shot-stage__label">{frame.label}</span> : null}
-          </div>
-        ))}
+        <div className="shot-stage__frames">
+          {frames.map((frame, index) => (
+            <div className="shot-stage__item" key={`${frame.src}-${index}`} style={{ ["--a" as string]: frame.size[0] / frame.size[1] }}>
+              <ShotImage caption={item.alt ?? item.caption} frame={frame} onOpen={setOpen} />
+              {frame.label ? <span className="shot-stage__label">{frame.label}</span> : null}
+            </div>
+          ))}
+        </div>
+        {item.caption ? <figcaption className="shot-stage__caption">{item.caption}</figcaption> : null}
       </div>
-      {item.caption ? <figcaption>{item.caption}</figcaption> : null}
       {open ? <ShotLightbox caption={open.label ?? item.alt ?? item.caption} frame={open} onClose={() => setOpen(null)} /> : null}
     </figure>
   );
@@ -740,11 +742,11 @@ function MediaThumb({ item }: { item: MediaItem }) {
 function MediaGroup({ items }: { items: MediaItem[] }) {
   if (items.some(isShot)) {
     // Several single screenshots side by side share one frame size, so none looks bigger than the rest.
-    const uniform = items.filter((item) => isShot(item) && !item.row).length > 1;
+    const uniform = items.filter((item) => isShot(item) && !item.row && !item.wide).length > 1;
     return (
       <div className={`shot-group${uniform ? " shot-group--uniform" : ""}`}>
         {items.map((item, index) => (
-          <div className={item.row ? "shot-group__wide" : undefined} key={`${item.alt ?? item.caption}-${index}`}>
+          <div className={item.row || item.wide ? "shot-group__wide" : undefined} key={`${item.alt ?? item.caption}-${index}`}>
             {isShot(item) ? <ShotMedia item={item} /> : <MediaPlaceholder item={item} />}
           </div>
         ))}
@@ -1580,12 +1582,12 @@ const cursorIcon = (
 );
 
 // Chart curve positions sampled from the Cart Abandonment screenshot (natural pixels).
+// The orange (recoverable) curve in the Dashboard screenshot (1945 x 2000), sampled where the card shows it.
 const cartCurve: [number, number][] = [
-  [260, 1040], [300, 1018], [340, 999], [380, 988], [420, 985], [460, 986], [500, 989], [540, 988],
-  [580, 985], [620, 983], [660, 986], [700, 995], [740, 1013], [780, 1035], [820, 1056], [860, 1074],
-  [900, 1084], [940, 1086], [980, 1076], [1020, 1054], [1060, 1023], [1100, 990],
+  [180, 704], [220, 676], [260, 660], [300, 656], [340, 660], [380, 660], [420, 656], [460, 656],
+  [500, 667], [540, 688], [580, 711], [620, 728], [660, 732], [700, 722], [740, 692], [780, 657],
 ];
-const cartImage = { width: 2756, height: 2872, yellowOffset: 146 };
+const cartImage = { width: 1945, height: 2000, yellowOffset: 109 };
 
 function curveY(x: number) {
   for (let i = 1; i < cartCurve.length; i++) {
@@ -1600,7 +1602,8 @@ function curveY(x: number) {
   return cartCurve[cartCurve.length - 1][1];
 }
 
-const chartValue = (y: number) => Math.round(((1090 - y) / 112.25) * 1000 + 2000);
+// The 2k gridline sits at y 719 and each 1k step is 79px.
+const chartValue = (y: number) => Math.round(((719 - y) / 79) * 1000 + 2000);
 const money = (n: number) => `$${n.toLocaleString("en-US")}`;
 
 function CartChartMotion() {
@@ -1640,7 +1643,7 @@ function CartChartMotion() {
 
   const orangeY = curveY(x);
   const yellowY = orangeY + cartImage.yellowOffset;
-  const day = Math.round(1 + (x - 195) / (2408 / 29));
+  const day = Math.round(1 + (x - 137) / (1698 / 29));
   const pctX = (x / cartImage.width) * 100;
   const pct = (y: number) => `${(y / cartImage.height) * 100}%`;
 
@@ -1649,10 +1652,10 @@ function CartChartMotion() {
       {/* Phones crop the card above the chart, so they hover the stat cards instead. */}
       <span className="shot-stat" />
       <span className="shot-cursor shot-cursor--stat">{cursorIcon}</span>
-      <span className="shot-chart__line" style={{ left: `${pctX}%`, top: pct(750), height: pct(560) }} />
+      <span className="shot-chart__line" style={{ left: `${pctX}%`, top: pct(470), height: pct(410) }} />
       <span className="shot-chart__dot shot-chart__dot--orange" style={{ left: `${pctX}%`, top: pct(orangeY) }} />
       <span className="shot-chart__dot shot-chart__dot--yellow" style={{ left: `${pctX}%`, top: pct(yellowY) }} />
-      <span className="shot-chart__tip" style={{ left: `${pctX}%`, top: pct(orangeY - 150) }}>
+      <span className="shot-chart__tip" style={{ left: `${pctX}%`, top: pct(orangeY - 106) }}>
         <b>Day {day}</b>
         <span>
           <i className="is-orange" /> {money(chartValue(orangeY))}
@@ -2153,14 +2156,16 @@ function CaseStudyPage({ project }: { project: CaseStudy }) {
           )}
           <div className="case-facts">
             <StatStrip stats={project.stats} />
-            <dl className="case-meta">
-              {project.meta.map(([label, value]) => (
-                <div key={label}>
-                  <dt>{label}</dt>
-                  <dd>{value}</dd>
-                </div>
-              ))}
-            </dl>
+            {project.meta.length ? (
+              <dl className="case-meta">
+                {project.meta.map(([label, value]) => (
+                  <div key={label}>
+                    <dt>{label}</dt>
+                    <dd>{value}</dd>
+                  </div>
+                ))}
+              </dl>
+            ) : null}
           </div>
         </section>
 

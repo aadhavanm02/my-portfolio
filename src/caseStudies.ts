@@ -32,6 +32,10 @@ export type MediaItem = {
   size?: [number, number];
   // Screenshots shown side by side at the same height.
   row?: MediaFrame[];
+  // Stack the row's screenshots one above the other, each at full width.
+  stack?: boolean;
+  // Take the full width of a group instead of sharing a row.
+  wide?: boolean;
   full?: FullShot;
 };
 
@@ -160,6 +164,103 @@ export type CaseStudy = {
 const feedback = (question: string) =>
   `${question} Feedback is welcome on [LinkedIn](https://www.linkedin.com/in/aadhavan-m/) or by [email](mailto:aadhavanm.design@gmail.com).`;
 
+// ---------- Cart Abandonment screenshots ----------
+// Bumped whenever these screenshots are replaced, so browsers fetch the new files.
+const CA_VERSION = "2026-11-18";
+
+const caSizes = {
+  "dashboard-overview": [1945, 1010],
+  dashboard: [1945, 2000],
+  "email-list": [2000, 560],
+  "rule-engine": [1065, 522],
+  "email-drawer": [2000, 1347],
+  "settings-general": [2000, 1140],
+  "integrations-webhook": [2000, 780],
+  "integrations-ottokit": [2000, 720],
+  "nav-per-report": [2000, 330],
+  "nav-page-tabs": [2000, 330],
+  "nav-pill-tabs": [2000, 330],
+  "nav-dropdown": [2000, 330],
+  "topbar-live": [1100, 360],
+  "email-report": [2000, 1180],
+  "email-report-top": [2000, 720],
+  "email-logs": [2000, 1110],
+  "logs-full-page": [2000, 1511],
+  "logs-drawer": [2000, 1220],
+  "dashboard-switch": [2000, 990],
+  "dashboard-v1": [1911, 950],
+  "dashboard-v2-order": [2000, 660],
+  "dashboard-v2-revenue": [2000, 660],
+  "popup-no-thanks": [865, 1380],
+  "popup-required": [865, 1260],
+  "popups-list": [2000, 470],
+  "popup-preview": [825, 464],
+  "spectra-editor": [2000, 1251],
+  "pro-dashboard": [905, 465],
+  "pro-emails": [2000, 590],
+  "old-report": [2000, 1548],
+  "old-tabs": [1100, 360],
+  "old-report-cards": [1766, 630],
+  "old-email-list": [1760, 700],
+  "old-cart": [1766, 840],
+  "old-editor": [1760, 1060],
+  "popup-in-plugin": [865, 1460],
+  "popup-rules": [1093, 1347],
+} satisfies Record<string, [number, number]>;
+
+type CaShot = keyof typeof caSizes;
+
+// Full screenshots behind the crops, and each crop's box in pixels (x, y, width, height).
+const caFull: Partial<Record<CaShot, [string, [number, number], [number, number, number, number]]>> = {
+  "dashboard-overview": ["full/dashboard", [1945, 2000], [0, 0, 1945, 1010]],
+  "email-list": ["full/email-list", [2000, 1347], [0, 0, 2000, 560]],
+  "rule-engine": ["full/rule-engine", [2000, 1347], [920, 268, 1065, 522]],
+  "settings-general": ["full/settings-general", [2000, 1347], [0, 0, 2000, 1140]],
+  "integrations-webhook": ["full/integrations-webhook", [2000, 1347], [0, 0, 2000, 780]],
+  "integrations-ottokit": ["full/integrations-ottokit", [2000, 1347], [0, 0, 2000, 720]],
+  "nav-per-report": ["full/nav-per-report", [2000, 1511], [0, 0, 2000, 330]],
+  "nav-page-tabs": ["full/nav-page-tabs", [2000, 1347], [0, 0, 2000, 330]],
+  "nav-pill-tabs": ["full/nav-pill-tabs", [2000, 1347], [0, 0, 2000, 330]],
+  "nav-dropdown": ["full/nav-dropdown", [2000, 1347], [0, 0, 2000, 330]],
+  "logs-drawer": ["full/logs-drawer", [2000, 1698], [0, 0, 2000, 1220]],
+  "topbar-live": ["full/topbar-live", [2000, 1347], [0, 0, 1100, 360]],
+  "email-report": ["full/email-report", [2000, 1347], [0, 0, 2000, 1180]],
+  "email-report-top": ["full/email-report-top", [2000, 1347], [0, 0, 2000, 720]],
+  "email-logs": ["full/email-logs", [2000, 1906], [0, 0, 2000, 1110]],
+  "dashboard-switch": ["full/dashboard-switch", [2000, 1572], [0, 0, 2000, 990]],
+  "dashboard-v1": ["full/dashboard-v1", [1911, 2000], [0, 0, 1911, 950]],
+  "dashboard-v2-order": ["full/dashboard-v2-order", [2000, 1347], [0, 0, 2000, 660]],
+  "dashboard-v2-revenue": ["full/dashboard-v2-revenue", [2000, 1347], [0, 0, 2000, 660]],
+  "popup-no-thanks": ["full/popup-no-thanks", [1689, 2000], [795, 60, 865, 1380]],
+  "popup-required": ["full/popup-required", [1689, 2000], [795, 160, 865, 1260]],
+  "popup-in-plugin": ["full/popup-in-plugin", [1689, 2000], [795, 0, 865, 1460]],
+  "popup-rules": ["full/popup-rules", [2000, 1347], [907, 0, 1093, 1347]],
+  "old-tabs": ["full/old-tabs", [2000, 699], [0, 0, 1100, 360]],
+  "old-report-cards": ["full/old-report-cards", [2000, 1547], [234, 200, 1766, 630]],
+  "old-email-list": ["full/old-email-list", [2000, 824], [240, 0, 1760, 700]],
+  "old-editor": ["full/old-editor", [2000, 1336], [240, 0, 1760, 1060]],
+  "old-cart": ["full/old-cart", [2000, 1551], [234, 40, 1766, 840]],
+  "pro-dashboard": ["full/pro-dashboard", [1916, 2000], [970, 1030, 905, 465]],
+  "pro-emails": ["full/pro-emails", [2000, 1349], [0, 0, 2000, 590]],
+  "popups-list": ["full/popups-list", [2000, 1347], [0, 0, 2000, 470]],
+  "popup-preview": ["full/popup-preview", [1689, 2000], [815, 128, 825, 464]],
+};
+
+function ca(name: CaShot, label?: string): MediaFrame {
+  const entry = caFull[name];
+  const full: FullShot | undefined = entry
+    ? {
+        src: `/assets/cart-abandonment/${entry[0]}.webp?v=${CA_VERSION}`,
+        size: entry[1],
+        crop: [entry[2][0] / entry[1][0], entry[2][1] / entry[1][1], entry[2][2] / entry[1][0], entry[2][3] / entry[1][1]],
+      }
+    : undefined;
+  return { src: `/assets/cart-abandonment/${name}.webp?v=${CA_VERSION}`, size: caSizes[name], label, full };
+}
+
+const caShot = (alt: string, name: CaShot): MediaItem => ({ caption: "", alt, ...ca(name) });
+const caRow = (alt: string, ...row: MediaFrame[]): MediaItem => ({ caption: "", alt, row });
+
 const cartAbandonmentDecisions: DecisionItem[] = [
   {
     title: "Why Reports became a dropdown instead of more tabs",
@@ -196,7 +297,13 @@ const cartAbandonmentDecisions: DecisionItem[] = [
     result: [
       "It shipped. The live top bar has five items: Dashboard, Follow Up Emails, Reports, Integrations and Settings.",
     ],
-    media: [{ caption: "The four navigation versions side by side." }, { caption: "The live top bar." }],
+    media: [
+      { caption: "A tab for each report.", alt: "Top bar with Email Logs and Product Report as separate tabs.", ...ca("nav-per-report"), wide: true },
+      { caption: "Underline tabs inside a Reports page.", alt: "Email Reports and Product Reports tabs above the table card.", ...ca("nav-page-tabs"), wide: true },
+      { caption: "Pill tabs beside the table title.", alt: "Emails Report and Product Report pill tabs inside the table card.", ...ca("nav-pill-tabs"), wide: true },
+      { caption: "A dropdown under Reports.", alt: "Reports dropdown open with Email Report and Product Report.", ...ca("nav-dropdown"), wide: true },
+      { caption: "The live top bar, with Reports open.", alt: "The live top bar with the Reports dropdown showing Follow Up and Product.", ...ca("topbar-live"), wide: true },
+    ],
   },
   {
     title: "Why Email Logs became a full page, not a side drawer",
@@ -226,7 +333,7 @@ const cartAbandonmentDecisions: DecisionItem[] = [
     result: [
       "It shipped. Now I ask early: quick edit or detailed read? The answer, not consistency alone, picks the pattern.",
     ],
-    media: [{ caption: "The drawer version." }, { caption: "The full page version." }],
+    media: [{ caption: "The drawer version.", alt: "Email Log in a side drawer beside the list: addresses, order items and scheduled emails.", ...ca("logs-drawer") }, { caption: "The full page version.", alt: "Email Logs on a full page: scheduled emails, billing and shipping, order items.", ...ca("logs-full-page") }],
   },
   {
     title: "Why the dashboard chart always compares two numbers",
@@ -253,7 +360,10 @@ const cartAbandonmentDecisions: DecisionItem[] = [
       "Both lines use brand colors, with a legend and one date picker for cards and chart. The first of two dashboard versions, refined over a few rounds, became final.",
     ],
     result: ["It shipped: six cards above the comparison chart."],
-    media: [{ caption: "Dashboard V1." }, { caption: "Dashboard V2." }, { caption: "The live dashboard." }],
+    media: [
+      { caption: "The rejected idea: the chart follows the selected card.", alt: "Recoverable Orders card selected, with a single-line chart below.", ...ca("dashboard-switch"), wide: true },
+      caRow("Dashboard V1, a fixed two-line comparison, and V2 with Order and Revenue tabs beside a compact chart.", ca("dashboard-v1", "V1: a fixed two-line comparison"), ca("dashboard-v2-order", "V2: Order tab"), ca("dashboard-v2-revenue", "V2: Revenue tab")),
+      { caption: "The live dashboard.", alt: "The live Dashboard.", ...ca("dashboard"), wide: true }],
   },
   {
     title: "Why shoppers can skip the email popup",
@@ -282,7 +392,10 @@ const cartAbandonmentDecisions: DecisionItem[] = [
     result: [
       "It shipped in Pro's Popup Templates: owners balance emails against shopper patience, with data to decide.",
     ],
-    media: [{ caption: "The popup with the email required." }, { caption: "The popup with “No thanks.”" }],
+    media: [
+      { caption: "The popup with the email required.", alt: "Popup settings with Email Address Is Mandatory turned on.", ...ca("popup-required") },
+      { caption: "The popup with “No thanks.”", alt: "Popup settings with the email optional and a No Thanks text field.", ...ca("popup-no-thanks") },
+    ],
   },
 ];
 
@@ -487,7 +600,7 @@ const cartAbandonment: CaseStudy = {
     "A full admin redesign so store owners can finally see the sales the plugin wins back, plus the new features planned for it.",
   proof: "300K+ active installs. Redesigned end to end on ForceUI.",
   tone: "peach",
-  image: "/assets/cart-abandonment.png",
+  image: "/assets/cart-abandonment.png?v=2026-11-17",
   imageClass: "project-image--cart",
   headline: "Redesigning Cart Abandonment Recovery so store owners can see what they win back",
   hook: "The plugin's whole job is to win back lost sales. Yet its own admin showed six numbers, no chart, and no way to export them.",
@@ -496,17 +609,13 @@ const cartAbandonment: CaseStudy = {
   stats: [
     { value: "300K+", label: "Active installs" },
     { value: "2 months", label: "May to June 2025" },
-    { value: "4", label: "Key decisions, all shipped" },
+    { value: "Product Designer", label: "Role, with a PM and developers" },
+    { value: "WooCommerce", label: "Platform, a WordPress plugin" },
   ],
-  meta: [
-    ["Role, with a PM and developers", "Product Designer"],
-    ["Platform", "WooCommerce plugin"],
-    ["Design system", "ForceUI"],
-    ["Scope", "Admin redesign, new features, Upgrade to Pro"],
-  ],
+  meta: [],
   hero: {
     caption: "The new Dashboard, with the six stat cards and the revenue comparison chart.",
-    src: "/assets/cart-abandonment.png",
+    src: "/assets/cart-abandonment.png?v=2026-11-17",
   },
   sections: [
     {
@@ -524,7 +633,7 @@ const cartAbandonment: CaseStudy = {
         { title: "One long settings page", body: "Long columns of checkboxes for roles and order statuses." },
         { title: "No room to grow", body: "SMS, WhatsApp, product reports and popups had nowhere to go." },
       ],
-      media: { caption: "The old Report page: six number cards and a plain table." },
+      media: caShot("The old Report page: six number cards and a plain table.", "old-report"),
       mapping: [
         ["Dashboard and report on one page", "Recovery at a glance, details one click away"],
         ["Data hard to track or export", "Every report searchable, filterable and exportable"],
@@ -545,53 +654,14 @@ const cartAbandonment: CaseStudy = {
       eyebrow: "Walkthrough",
       title: "One store owner, one shopper",
       intro: "Recovery has two sides: the owner watching the results, and the shopper who leaves and comes back.",
-      video: { kind: "video", caption: "Prototype walkthrough: Kavya checks her dashboard, edits an email, then opens one recovered cart." },
-      lanes: [
-        {
-          name: "Kavya",
-          role: "Store owner",
-          about: "Runs Leaf & Loom, a small home decor store, on Pro.",
-          steps: [
-            {
-              title: "Is it working?",
-              body: "Six stat cards and a recoverable vs recovered revenue chart, set by one date picker.",
-              media: { caption: "Dashboard, annotated." },
-            },
-            {
-              title: "Which emails work?",
-              body: "Each template shows sent, open and click rates; editing opens a drawer with timing, coupon and rules.",
-              media: { caption: "Email list and the edit drawer." },
-            },
-            {
-              title: "Catch emails early",
-              body: "An Add to Cart popup, styled in Spectra, asks for an email that shoppers can skip.",
-              media: { caption: "Popup template and the popup." },
-            },
-            {
-              title: "Who came back?",
-              body: "She filters and exports the Email Report, then opens a cart's emails, addresses, items.",
-              media: { caption: "Email Report and Email Logs." },
-            },
-          ],
-        },
-        {
-          name: "Rohan",
-          role: "Shopper",
-          about: "Browsing Leaf & Loom for a new lamp.",
-          steps: [
-            {
-              title: "Adds a lamp",
-              body: "He taps “No thanks” on the email popup and keeps shopping.",
-              media: { caption: "The popup with “No thanks.”" },
-            },
-            { title: "Leaves at checkout", body: "He enters his email, gets distracted and closes the tab." },
-            {
-              title: "Comes back",
-              body: "A reminder after 30 minutes, a discount the next day. He buys, and Kavya's recovered revenue rises.",
-            },
-          ],
-        },
-      ],
+      video: {
+        kind: "video",
+        caption: "",
+        alt: "Cart Abandonment Recovery walkthrough: Kavya sets up her store's recovery, then Rohan leaves and comes back.",
+        src: "/assets/videos/cart-abandonment-walkthrough.mp4?v=2026-11-17",
+        poster: "/assets/videos/cart-abandonment-walkthrough.jpg?v=2026-11-17",
+      },
+      lanes: [],
     },
     {
       kind: "solution",
@@ -606,68 +676,68 @@ const cartAbandonment: CaseStudy = {
           detail: "I rebuilt the top navigation on ForceUI: Dashboard, Follow Up Emails, Reports, Integrations, Settings, and Popup Templates for Pro. Reports is a dropdown, so new reports never crowd the bar.",
           before: "Three plain tabs: Report, Follow-Up Emails, Settings.",
           after: "Five sections with room to grow.",
-          media: { caption: "Old tabs vs the new top navigation." },
+          media: { ...caRow("Old tabs vs the new top navigation.", ca("old-tabs", "Before: three plain tabs"), ca("topbar-live", "After: the new top navigation, with Reports open")), caption: "", stack: true },
         },
         {
           title: "Recovery at a glance",
           detail: "The six stat cards gain a chart of recoverable against recovered revenue, one date range picker, and Recent Follow Up Report and Product Report tables with View All.",
           before: "Six numbers and nothing else.",
           after: "Numbers, trend and recent activity in one view.",
-          media: { caption: "Old Report page vs the new Dashboard." },
+          media: { ...caRow("Old Report page vs the new Dashboard.", ca("old-report-cards", "Before"), ca("dashboard-overview", "After")), caption: "" },
         },
         {
           title: "A list that shows what works",
           detail: "Sent count, open rate and click rate now sit beside each template, so owners see at a glance which email brings shoppers back.",
           before: "Name, subject and timing only.",
           after: "Results beside every template.",
-          media: { caption: "Email list with the rate columns." },
+          media: { ...caRow("The old Follow-Up Emails list vs the new list with sent, open, click, conversion and unsubscribe rates.", ca("old-email-list", "Before"), ca("email-list", "After")), caption: "" },
         },
         {
           title: "Editing in a drawer",
           detail: "Editing opens a drawer beside the list with subject, body and variables, timing, coupon, test email and WooCommerce email style. The rule engine lacked options, so it became a toggle revealing a simple builder: rule type, operator, value, add rule.",
           before: "A long WordPress form on its own page.",
           after: "Everything in a drawer, with the list still in view.",
-          media: { caption: "The edit drawer with the rule engine open." },
+          media: caShot("The edit drawer with the rule engine turned on.", "rule-engine"),
         },
         {
           title: "Reports you can search and export",
           detail: "The Email Report gains search, a status filter, a date picker, Export, a country column, status chips and row actions (view, unsubscribe, delete). The new Product Report shows the most abandoned and recovered products.",
           before: "A cart table with bulk actions and little else.",
           after: "Find, filter and export anything.",
-          media: { caption: "The Email Report table, annotated." },
+          media: caShot("The Follow Up Reports table with search, the status filter open, a date picker and Export.", "email-report"),
         },
         {
           title: "Every detail of one cart",
           detail: "Opening a cart shows its Email Log on a full page: scheduled emails with coupon and status, billing and shipping side by side, and the order items with totals.",
           after: "The full story of one cart, on one page.",
-          media: { caption: "The Email Logs page." },
+          media: { ...caRow("The old cart detail page vs the new Email Logs page.", ca("old-cart", "Before"), ca("email-logs", "After")), caption: "" },
         },
         {
           title: "Settings split by topic",
           detail: "A left sub-menu splits settings into General, Coupon, Email, Recovery Report, GDPR and Advanced, with a tracking toggle, chip multi-selects for roles and statuses, one card per setting and a save confirmation. Notify Recovery To Admin, Recovery Report emails and GDPR are new.",
           before: "One long page of checkbox columns.",
           after: "Six groups, one card per setting.",
-          media: { caption: "Old Settings vs the new General settings." },
+          media: caShot("General settings: a sub-menu by topic, one card per setting and a save confirmation.", "settings-general"),
         },
         {
           title: "More ways to reach shoppers",
           detail: "The new Integrations area gives Webhook, SMS, WhatsApp and OttoKit each a page and an enable toggle, so owners can follow up wherever shoppers actually reply.",
           before: "Email was the only channel.",
           after: "Four new channels, each with its own page.",
-          media: { caption: "The Integrations page." },
+          media: { ...caRow("Integrations: the Webhook page with its sub-menu, and the OttoKit page.", ca("integrations-webhook", "Webhook"), ca("integrations-ottokit", "OttoKit")), caption: "" },
         },
         {
           title: "Popup Templates",
           detail: "A Pro feature capturing emails on add to cart or exit. The list shows each template's type, captures, views and “No thanks” clicks; editing opens in Spectra, Brainstorm Force's page builder, while rules and coupons stay in the plugin.",
           before: "No way to reach shoppers who leave before checkout.",
           after: "Emails captured before checkout, with results tracked.",
-          media: { caption: "The popup template list and the popup." },
+          media: { ...caRow("The Popups list, and the drawer where rules and coupons stay.", ca("popups-list", "Popups list"), ca("popup-rules", "Rules and coupons")), caption: "" },
         },
         {
           title: "Upgrade to Pro",
-          detail: "Pro features appear to free users in five places, Dashboard, Follow Up Emails, Product Report, Integrations and Settings, without blocking anything. All shipped, including the blurred Product Report on the Dashboard.",
+          detail: "Pro features appear to free users in five places, Dashboard, Follow Up Emails, Product Report, Integrations and Settings, without blocking anything. All shipped: a Pro card where the Product Report sits on the Dashboard, and PRO badges with blurred numbers in Follow Up Emails.",
           after: "Pro in view, never in the way.",
-          media: { caption: "The blurred Product Report on the live Dashboard." },
+          media: { ...caRow("The free Dashboard's Pro card and the Follow Up Emails list with blurred Pro columns.", ca("pro-dashboard", "Dashboard"), ca("pro-emails", "Follow Up Emails")), caption: "" },
         },
       ],
     },
@@ -706,19 +776,41 @@ const cartAbandonment: CaseStudy = {
       eyebrow: "Process",
       title: "Planned up front, designed in phases",
       steps: [
-        { label: "Research", body: "Studied YITH, VillaTheme and other recovery plugins on a Figma board." },
-        { label: "Feature list", body: "Ideas went into a shared sheet; the team chose. That became my brief." },
-        { label: "Full design", body: "I designed it all first." },
-        { label: "Phase 1", body: "Dashboard, emails, Reports, Integrations and Settings." },
-        { label: "Phase 2", body: "Popup Templates." },
-      ],
-      notes: [
         {
-          title: "Where the plan changed",
-          body: "I first designed popup editing inside the plugin. The team chose to open popups in Spectra, Brainstorm Force's page builder, which already does visual editing well. The plugin keeps the rules and coupons.",
+          label: "Research",
+          title: "Learning from other recovery plugins",
+          body: "Before designing, I studied how YITH, VillaTheme and other cart recovery plugins handle dashboards, reports and follow-up emails, collecting them on one Figma board.",
+          media: caShot("Where we started: the old plugin's email editor, a long WordPress form.", "old-editor"),
+        },
+        {
+          label: "Feature list",
+          title: "Agreeing on what to build",
+          body: "Ideas went into a shared sheet and the team chose what made the cut. That list became my brief, agreed up front with the PM and developers.",
+          media: { ...caRow("Two features that made the list: new recovery channels and the email capture popup.", ca("integrations-webhook", "New channels"), ca("popups-list", "Email capture popup")), caption: "" },
+        },
+        {
+          label: "Full design",
+          title: "Designing it all first",
+          body: "I designed the whole admin before any build started, so every page shared one navigation, one layout and one set of ForceUI patterns.",
+          media: caShot("The Dashboard, designed with the rest of the admin before the build began.", "dashboard-overview"),
+        },
+        {
+          label: "Phase 1",
+          title: "Shipping the core admin",
+          body: "The first release covered what owners use every day.",
+          points: ["Dashboard", "Follow Up Emails", "Reports", "Integrations", "Settings"],
+          media: { ...caRow("Phase 1 screens: the Follow Up Reports table and General settings.", ca("email-report-top", "Reports"), ca("settings-general", "Settings")), caption: "" },
+        },
+        {
+          label: "Phase 2",
+          title: "Popup Templates, and where the plan changed",
+          body: "I first designed popup editing inside the plugin: a drawer with a live preview, text, colors and the “No thanks” option. The team chose to open popups in Spectra, Brainstorm Force's page builder, which already does visual editing well. The plugin keeps the rules and coupons.",
+          media: {
+            ...caRow("My in-plugin popup editor beside the Spectra editor that shipped.", ca("popup-in-plugin", "My first version, in the plugin"), ca("spectra-editor", "Shipped, in Spectra")),
+            caption: "",
+          },
         },
       ],
-      media: { caption: "A slice of the References board." },
     },
     {
       kind: "future",
@@ -780,13 +872,9 @@ const modernCart: CaseStudy = {
     { value: "50K+", label: "Active installs on [WordPress.org](https://wordpress.org/plugins/modern-cart/)" },
     { value: "1 week", label: "From unreleased build to launch" },
     { value: "~15", label: "Feature tickets after launch" },
+    { value: "Product Designer", label: "Role, with a PM and developers" },
   ],
-  meta: [
-    ["Role, with a PM and developers", "Product Designer"],
-    ["Timeline", "April to May 2025"],
-    ["Design system", "ForceUI"],
-    ["Scope", "Dashboard, shopper cart, new features"],
-  ],
+  meta: [],
   hero: {
     caption: "The finished side cart open on DNK's storefront, next to the ModernCart dashboard.",
     src: "/assets/modern-cart.png?v=2026-11-17c",
@@ -986,6 +1074,7 @@ const modernCart: CaseStudy = {
             "I rebuilt screens with ForceUI and reviewed the build with the PM, logging 20 to 30 issues in a shared Google Sheet, each with a screenshot and a note on spacing, alignment, type, color or responsiveness. Developers fixed them in parallel while I prepared assets.",
           ],
           points: ["Launched on schedule"],
+          media: mcShot("The General tab, rebuilt with ForceUI for launch.", "general-tab"),
         },
         {
           label: "After launch",
@@ -1001,11 +1090,13 @@ const modernCart: CaseStudy = {
             "[Side Cart & Checkout](https://woocommerce.com/products/side-cart-checkout/)",
             "[Flycart](https://wordpress.org/plugins/woo-fly-cart/)",
           ],
+          media: mcRow("What the review led to: preset icons and cart styling.", mc("floating-icon-card", "Preset icons"), mc("styling-colors", "Cart styling")),
         },
         {
           label: "Tickets",
           title: "Turning ideas into tickets",
           body: "I shared findings and the PM set priorities. I wrote about 15 Jira tickets, one per feature with a description and designs, and organized Figma the same way, one section per ticket.",
+          media: mcRow("One ticket's designs: the coupon field in its three states.", mc("coupon-link-crop", "Link"), mc("coupon-field-crop", "Field"), mc("coupon-tag-crop", "Tag")),
         },
         {
           label: "Free and Pro",
@@ -1078,31 +1169,6 @@ const modernCart: CaseStudy = {
     },
   ],
 };
-
-// Read time: every word a reader sees in the case study, at an average adult reading speed.
-// Keys whose text never shows on the case study page (home card, image descriptions, internal ids).
-const READ_SKIP = new Set([
-  "slug", "tone", "image", "imageClass", "src", "poster", "kind", "id", "sample", "size", "nav", "alt",
-  "cardTitle", "cardSummary", "proof", "caption",
-]);
-const WORDS_PER_MINUTE = 238;
-
-function readTime(study: CaseStudy) {
-  const parts: string[] = [];
-  const collect = (value: unknown, key: string) => {
-    if (typeof value === "string") {
-      if (!READ_SKIP.has(key)) parts.push(value.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1").replace(/\*\*/g, ""));
-    } else if (Array.isArray(value)) {
-      value.forEach((item) => collect(item, key));
-    } else if (value && typeof value === "object") {
-      Object.entries(value).forEach(([childKey, child]) => collect(child, childKey));
-    }
-  };
-  collect(study, "");
-  const words = parts.join(" ").split(/\s+/).filter(Boolean).length;
-  return `${Math.max(1, Math.round(words / WORDS_PER_MINUTE))} min read`;
-}
-
 
 // Built from the "Social Feed Case Study" doc. The brand and people in the walkthrough are made up.
 const superfansDecisions: DecisionItem[] = [
@@ -1224,14 +1290,10 @@ const superfansSocialFeed: CaseStudy = {
   stats: [
     { value: "10 months", label: "January to October 2026" },
     { value: "2 sides", label: "Shopper app and merchant dashboard" },
-    { value: "3", label: "Key decisions, all shipped" },
+    { value: "iOS, Android", label: "Platforms, plus the merchant dashboard" },
+    { value: "Product Designer", label: "Role from the start, with a PM and developers" },
   ],
-  meta: [
-    ["Role from the start, with a PM and developers", "Product Designer"],
-    ["Platform", "iOS, Android and the dashboard"],
-    ["Scope", "App, dashboard and design QA"],
-    ["Status", "Shipped"],
-  ],
+  meta: [],
   hero: {
     caption: "The shopper's feed on a phone, next to the merchant's Social Feed dashboard.",
     src: "/assets/superfans-dashboard.png",
@@ -1546,4 +1608,3 @@ const superfansSocialFeed: CaseStudy = {
 
 export const caseStudies: CaseStudy[] = [superfansSocialFeed, cartAbandonment, modernCart];
 
-caseStudies.forEach((study) => study.stats.push({ value: readTime(study).replace(" read", ""), label: "Read time" }));

@@ -8520,10 +8520,10 @@ a.more-case:hover .more-case__link svg {
 
   .shot-stat {
     position: absolute;
-    top: 14%;
+    top: 11.6%;
     display: block;
-    width: 15.06%;
-    height: 6.9%;
+    width: 14.8%;
+    height: 7%;
     border: 1.5px solid #f06434;
     border-radius: 6px;
     background: rgb(240 100 52 / 6%);
@@ -8538,17 +8538,17 @@ a.more-case:hover .more-case__link svg {
 }
 
 @keyframes ca-stat {
-  0%, 6% { left: 3.63%; opacity: 0; }
-  12%, 40% { left: 3.63%; opacity: 1; }
-  52%, 82% { left: 19.34%; opacity: 1; }
-  90%, 100% { left: 19.34%; opacity: 0; }
+  0%, 6% { left: 3.86%; opacity: 0; }
+  12%, 40% { left: 3.86%; opacity: 1; }
+  52%, 82% { left: 19.38%; opacity: 1; }
+  90%, 100% { left: 19.38%; opacity: 0; }
 }
 
 @keyframes ca-cursor {
-  0% { top: 26%; left: 22%; }
-  12%, 40% { top: 19%; left: 13%; }
-  52%, 82% { top: 19%; left: 28%; }
-  100% { top: 26%; left: 22%; }
+  0% { top: 23%; left: 22%; }
+  12%, 40% { top: 16%; left: 12%; }
+  52%, 82% { top: 16%; left: 27%; }
+  100% { top: 23%; left: 22%; }
 }
 
 /* ---------- Case study screenshots: clean backdrop, no animation ---------- */
@@ -8579,12 +8579,30 @@ a.more-case:hover .more-case__link svg {
 
 .shot-stage {
   display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 20px;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
   padding: clamp(18px, 3vw, 36px);
   border-radius: var(--radius-card);
   background: #f2f2f0;
+}
+
+.shot-stage__frames {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 20px;
+}
+
+/* Captions sit inside the backdrop, under the screenshot, like the per-image labels. */
+.shot .shot-stage__caption {
+  max-width: 640px;
+  color: var(--color-ink);
+  font-size: 13px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.45;
+  text-align: center;
 }
 
 .shot-stage__item {
@@ -8628,10 +8646,13 @@ a.more-case:hover .more-case__link svg {
 
 /* Walkthrough cards: a fixed 16:10 stage, the screenshot fitted inside it. */
 .shot--thumb .shot-stage {
-  aspect-ratio: 16 / 10;
-  align-items: center;
   padding: 16px;
   border-radius: 16px;
+}
+
+.shot--thumb .shot-stage__frames {
+  aspect-ratio: 16 / 10;
+  align-items: center;
   container-type: size;
 }
 
@@ -8722,8 +8743,11 @@ a.more-case:hover .more-case__link svg {
   }
 
   .shot-stage {
-    gap: 14px;
     border-radius: 16px;
+  }
+
+  .shot-stage__frames {
+    gap: 14px;
   }
 
   .shot:not(.shot--row) .shot-stage__item {
@@ -8731,7 +8755,7 @@ a.more-case:hover .more-case__link svg {
   }
 
   /* Side-by-side screenshots scroll sideways on phones. */
-  .shot--row:not(.shot--thumb) .shot-stage {
+  .shot--row:not(.shot--thumb) .shot-stage__frames {
     justify-content: flex-start;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
@@ -8773,7 +8797,7 @@ a.more-case:hover .more-case__link svg {
 }
 
 /* Groups of single screenshots: the same 4:3 backdrop for each, screenshot fitted inside. */
-.shot-group--uniform .shot:not(.shot--row) .shot-stage {
+.shot-group--uniform .shot:not(.shot--row) .shot-stage__frames {
   aspect-ratio: 4 / 3;
   align-items: center;
   container-type: size;
@@ -9205,4 +9229,65 @@ body.is-video-expanded .case-topic-nav {
 
 @keyframes shot-lightbox-in {
   from { opacity: 0; }
+}
+
+/* Facts: four metrics, every value the same size */
+.case-facts .case-stats strong,
+.case-facts .case-stats div:first-child strong {
+  font-size: 30px;
+  line-height: 1.15;
+  color: var(--color-ink, inherit);
+}
+
+.case-facts .case-stats div:first-child strong {
+  color: var(--color-peach-500);
+}
+
+@media (max-width: 1199px) {
+  .case-facts .case-stats strong,
+  .case-facts .case-stats div:first-child strong {
+    font-size: 26px;
+  }
+}
+
+@media (max-width: 767px) {
+  .case-facts .case-stats strong,
+  .case-facts .case-stats div:first-child strong {
+    font-size: 20px;
+  }
+}
+
+/* Stacked rows: before above after, each screenshot at full width. */
+.shot--stack .shot-stage__frames {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 24px;
+}
+
+.shot--stack .shot-stage__item,
+.shot--stack.shot--row:not(.shot--thumb) .shot-stage__item {
+  flex: none;
+  width: 100%;
+}
+
+@media (max-width: 767px) {
+  .shot--stack.shot--row:not(.shot--thumb) .shot-stage__frames {
+    overflow: visible;
+  }
+}
+
+/* A wide single screenshot in a group fills the stage. */
+.shot-group__wide .shot:not(.shot--row) .shot-stage__item {
+  width: min(100%, calc(var(--a) * 640px));
+}
+
+/* Design system patterns: white rounded cards, no outline. */
+.case-patterns article {
+  border: 0;
+  background: var(--color-surface);
+}
+
+/* Learnings: keep the lines between cells, drop the outer outline. */
+.case-learnings {
+  border: 0;
 }
