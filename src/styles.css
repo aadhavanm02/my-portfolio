@@ -9324,3 +9324,79 @@ body.is-video-expanded .case-topic-nav {
 .case-feature__detail + .case-feature__detail {
   margin-top: 12px;
 }
+
+/* Variants: keep the dividers, drop the outer outline. */
+.case-variants__grid {
+  border: 0;
+}
+
+/* Solution item: the number sits on the same line as its heading. */
+.case-feature__title {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+
+.case-feature__title .case-index {
+  flex: none;
+}
+
+/* The item number matches its heading's size. */
+.case-feature__title .case-index {
+  font-size: inherit;
+  line-height: inherit;
+  letter-spacing: normal;
+}
+
+.shot-image--video {
+  cursor: default;
+}
+
+.shot-image--video video {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Heading and text on the left; Before and After centered beside them. */
+.case-feature__text {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 14px;
+  grid-column: 1;
+}
+
+.case-feature__text > * {
+  margin: 0;
+}
+
+.case-features .case-feature .case-feature__body > .case-feature__compare {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: center;
+}
+
+@media (max-width: 767px) {
+  .case-features .case-feature .case-feature__body > .case-feature__compare {
+    grid-column: 1;
+    grid-row: auto;
+  }
+}
+
+/* Speed menu: our own chevron, set in from the right edge as far as "1x" is from the left. */
+.case-video__speed select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 0 32px 0 14px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M3 4.5 6 7.5 9 4.5' stroke='white' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-position: right 14px center;
+  background-repeat: no-repeat;
+  background-size: 12px 12px;
+}
+
+.project-media .project-shot video {
+  display: block;
+  width: 100%;
+  height: auto;
+}

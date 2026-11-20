@@ -670,6 +670,14 @@ function ShotImage({ frame, caption, onOpen }: { frame: MediaFrame; caption: str
   const preload = () => {
     if (frame.full && window.innerWidth >= FULL_SHOT_MIN_WIDTH) new Image().src = resolveSrc(frame.full.src);
   };
+  if (/\.mp4(\?|$)/.test(frame.src)) {
+    // A looping, silent screen recording shown in place of a still.
+    return (
+      <div className="shot-image shot-image--video">
+        <video aria-label={frame.label ?? caption} autoPlay loop muted playsInline preload="metadata" src={src} width={frame.size[0]} height={frame.size[1]} />
+      </div>
+    );
+  }
   return (
     <button
       aria-label={`View full size: ${frame.label ?? caption}`}
@@ -952,19 +960,27 @@ function SolutionView({ section }: { section: Extract<CaseSection, { kind: "solu
             </div>
 
             <div className="case-feature__body">
-              <div className="case-feature__meta">
-                <span className="case-index">{pad(index)}</span>
-                {item.area ? <span className="case-tag">{item.area}</span> : null}
-              </div>
-              <h3>{item.title}</h3>
-              <p className="case-feature__detail">
-                <RichText text={item.detail} />
-              </p>
-              {item.details?.map((text) => (
-                <p className="case-feature__detail" key={text}>
-                  <RichText text={text} />
+              <div className="case-feature__text">
+                <h3 className="case-feature__title">
+                  <span className="case-index">{pad(index)}</span>
+                  {item.title}
+                </h3>
+                <p className="case-feature__detail">
+                  <RichText text={item.detail} />
                 </p>
-              ))}
+                {item.details?.map((text) => (
+                  <p className="case-feature__detail" key={text}>
+                    <RichText text={text} />
+                  </p>
+                ))}
+                {item.highlights ? (
+                  <ul className="case-feature__highlights" aria-label="Key details">
+                    {item.highlights.map((highlight) => (
+                      <li key={highlight}>{highlight}</li>
+                    ))}
+                  </ul>
+                ) : null}
+              </div>
 
               <div className={`case-feature__compare${item.before ? "" : " case-feature__compare--single"}`}>
                 {item.before ? (
@@ -985,13 +1001,6 @@ function SolutionView({ section }: { section: Extract<CaseSection, { kind: "solu
                 </div>
               </div>
 
-              {item.highlights ? (
-                <ul className="case-feature__highlights" aria-label="Key details">
-                  {item.highlights.map((highlight) => (
-                    <li key={highlight}>{highlight}</li>
-                  ))}
-                </ul>
-              ) : null}
             </div>
           </article>
         ))}
@@ -1135,6 +1144,8 @@ function SystemView({ section }: { section: Extract<CaseSection, { kind: "system
           ))}
         </div>
       ) : null}
+
+      {section.levelsMedia ? <MediaGroup items={[section.levelsMedia]} /> : null}
 
       {section.patterns ? (
         <div className="case-patterns">
@@ -1804,8 +1815,15 @@ function HomePage() {
 
                 <div className="project-media" aria-hidden="true">
                   <div className={`project-shot ${project.imageClass ?? ""}`}>
-                    <img src={resolveSrc(project.image)} alt="" />
-                    <ShotMotion kind={project.key} />
+                    {project.key === "modern-cart" ? (
+                      // The dashboard tabs, clicked and scrolled through on a loop.
+                      <video autoPlay loop muted playsInline poster={resolveSrc("/assets/videos/modern-cart-card.jpg?v=2026-11-20b")} src={resolveSrc("/assets/videos/modern-cart-card.mp4?v=2026-11-20b")} />
+                    ) : (
+                      <>
+                        <img src={resolveSrc(project.image)} alt="" />
+                        <ShotMotion kind={project.key} />
+                      </>
+                    )}
                   </div>
                 </div>
               </article>

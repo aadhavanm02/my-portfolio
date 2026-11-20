@@ -137,6 +137,8 @@ export type CaseSection = SectionBase &
     | {
         kind: "system";
         levels?: CardItem[];
+        // Screenshots of the system itself, shown under the levels.
+        levelsMedia?: MediaItem;
         patterns?: CardItem[];
         tokens: Array<{ sample: "type" | "color" | "icons"; label: string; value: string }>;
         note?: CardItem;
@@ -446,7 +448,7 @@ const mcSizes = {
 type McShot = keyof typeof mcSizes;
 
 // Bumped whenever the ModernCart screenshots are replaced, so browsers fetch the new files instead of cached ones.
-const MC_VERSION = "2026-11-17c";
+const MC_VERSION = "2026-11-20b";
 
 // Full screenshots behind the crops, and each crop's box in pixels (x, y, width, height).
 const CART_X = 1469; // left edge of the slide-out cart in storefront screenshots
@@ -515,7 +517,7 @@ const modernCartDecisions: DecisionItem[] = [
       "I designed PRO badges, disabled fields with an inline “Upgrade now” note, an upgrade modal, and a Free vs Pro tab comparing every feature side by side.",
     ],
     result: [
-      "The team chose to keep the free version focused on free features, so Pro features stay out of view for free users. Both directions were on the table when that call was made, which is what I set out to do.",
+      "The team chose to keep the free version focused on free features, so Pro features stay out of view for free users, and the live plugin still works this way. Both directions were on the table when that call was made, which is what I set out to do.",
       "It reinforced how I approach this kind of work: give decision makers clear options with the reasoning behind each, knowing the right answer depends on how the business wants to position its product.",
     ],
     media: [
@@ -534,7 +536,7 @@ const modernCartDecisions: DecisionItem[] = [
     options: [
       {
         title: "Keep the cart as a plain list",
-        body: "Simple, nothing to distract from checkout. But an empty cart is a dead end, and a full cart misses the moment when the shopper is most ready to buy.",
+        body: "Simple, nothing to distract from checkout. But an empty cart leads nowhere, and a full cart misses the moment when the shopper is most ready to buy.",
       },
       {
         title: "Let the cart suggest products",
@@ -553,11 +555,11 @@ const modernCartDecisions: DecisionItem[] = [
     ],
     result: [
       "The PM and the team agreed straight away, and both shipped while I was on the team. I carried the idea through the rest of the product: the popup cart uses the same suggestions, and store owners can rewrite the suggestion titles from the Text Label tab.",
-      "The cart is no longer a dead end. Whether it's empty or full, it always gives the shopper something to explore.",
+      "Whether it's empty or full, the cart now always gives the shopper something to explore.",
     ],
     media: [
       mcRow(
-        "From a dead end to something to explore.",
+        "From an empty panel to something to explore.",
         mc("popup-empty", "Empty, no suggestion"),
         mc("cart-empty-panel", "Empty, with a suggestion"),
         mc("cart-two-panel", "Full, with the carousel"),
@@ -695,8 +697,8 @@ const cartAbandonment: CaseStudy = {
     {
       kind: "journey",
       id: "walkthrough",
-      nav: "Walkthrough",
-      eyebrow: "Walkthrough",
+      nav: "Final Solution",
+      eyebrow: "Final Solution",
       title: "One store owner, one shopper",
       intro: "Recovery has two sides: the owner watching the results, and the shopper who leaves and comes back.",
       story: [
@@ -716,8 +718,8 @@ const cartAbandonment: CaseStudy = {
     {
       kind: "solution",
       id: "solution",
-      nav: "Solution",
-      eyebrow: "Solution",
+      nav: "Solution Explanation",
+      eyebrow: "Solution Explanation",
       title: "What changed, part by part",
       intro: "Every change traces back to one of four problems: a page doing two jobs, data that was hard to use, no room to grow, and screens that didn't follow the design system.",
       items: [
@@ -1004,29 +1006,29 @@ const modernCart: CaseStudy = {
   slug: "modern-cart",
   cardTitle: "ModernCart for WooCommerce",
   cardSummary:
-    "Took an unreleased side cart plugin to launch in one week, then turned the cart from a dead end into a place shoppers keep browsing.",
-  proof: "50K+ active installs. Ready to launch in one week.",
+    "Took an unreleased side cart plugin to launch in one week, then turned an empty cart into a place shoppers keep browsing.",
+  proof: "60K+ active installs. Ready to launch in one week.",
   tone: "peach",
   image: "/assets/modern-cart.png?v=2026-11-17c",
   imageClass: "project-image--modern",
   headline: "Redesigning ModernCart so its cart stopped being a dead end",
   hook: "ModernCart had been built by developers and left unreleased. Then the PM made the call: it goes live in one week.",
   summary:
-    "ModernCart adds a side cart to WooCommerce stores, so shoppers can see and change their cart from any page. I got it launch-ready that week, then designed what came next: a dashboard organized around tasks, and a cart that suggests products instead of ending in a dead end.",
+    "ModernCart adds a side cart to WooCommerce stores, so shoppers can see and change their order from any page without leaving it. The features worked, but nobody had designed them around the owners who set it up or the people buying with it.",
   lead: [
-    "As the only designer, working with a PM and developers, I got it ready for launch in that week, then spent the weeks after designing what came next: a dashboard organized around what store owners actually do, and a cart that suggests products instead of leaving shoppers at a dead end.",
-    "The challenge was doing both on a product that was already built, inside a design system the team was still building. Today, ModernCart has 50K+ active installs on [WordPress.org](https://wordpress.org/plugins/modern-cart/).",
+    "As the only designer, working with a PM and developers, I made it launch-ready in that week. Until I left at the end of June 2025, I then designed what came next: a dashboard organized around what store owners actually do, and a cart that offers products when it would otherwise sit empty.",
+    "The challenge was doing both on a product that was already built, inside a design system the team was still building.",
   ],
   stats: [
-    { value: "50K+", label: "Active installs on [WordPress.org](https://wordpress.org/plugins/modern-cart/)" },
-    { value: "1 week", label: "From unreleased build to launch" },
-    { value: "~15", label: "Feature tickets after launch" },
+    { value: "60K+", label: "Active installs on [WordPress.org](https://wordpress.org/plugins/modern-cart/)" },
+    { value: "3 months", label: "April to June 2025" },
+    { value: "4.9 / 5", label: "Rating from 17 reviews on [WordPress.org](https://wordpress.org/plugins/modern-cart/#reviews)" },
     { value: "Product Designer", label: "Role, with a PM and developers" },
   ],
   meta: [],
   hero: {
-    caption: "The finished side cart open on DNK's storefront, next to the ModernCart dashboard.",
-    src: "/assets/modern-cart.png?v=2026-11-17c",
+    caption: "The ModernCart dashboard, General tab.",
+    src: "/assets/modern-cart-hero.png?v=2026-11-20b",
   },
   sections: [
     {
@@ -1057,7 +1059,7 @@ const modernCart: CaseStudy = {
           body: "Spacing, type and colors didn't follow ForceUI, so the dashboard felt unfinished.",
         },
         {
-          title: "An empty dead end",
+          title: "Nowhere to go",
           body: "Open the cart empty and you saw one line saying so, with nothing to look at and nowhere to go.",
         },
         {
@@ -1080,8 +1082,8 @@ const modernCart: CaseStudy = {
     {
       kind: "journey",
       id: "walkthrough",
-      nav: "Walkthrough",
-      eyebrow: "Walkthrough",
+      nav: "Final Solution",
+      eyebrow: "Final Solution",
       title: "One store, one shopper",
       intro: "ModernCart has two parts: a dashboard where store owners shape the cart, and the cart shoppers actually use. Every choice in the first shows up in the second.",
       story: [
@@ -1093,37 +1095,29 @@ const modernCart: CaseStudy = {
         kind: "video",
         caption: "",
         alt: "ModernCart walkthrough: Meera sets up her store's cart, then Arjun shops with it.",
-        src: "/assets/videos/modern-cart-walkthrough.mp4?v=2026-11-17c",
-        poster: "/assets/videos/modern-cart-walkthrough.jpg?v=2026-11-17c",
+        src: "/assets/videos/modern-cart-walkthrough.mp4?v=2026-11-20c",
+        poster: "/assets/videos/modern-cart-walkthrough.jpg?v=2026-11-20d",
       },
       lanes: [],
     },
     {
       kind: "solution",
       id: "solution",
-      nav: "Solution",
-      eyebrow: "Solution",
+      nav: "Solution Explanation",
+      eyebrow: "Solution Explanation",
       title: "What changed, part by part",
-      intro: "Every change traces back to one of the three problems: scattered settings, a cart with dead ends, and screens that didn't follow the design system.",
+      intro: "Every change traces back to one of the three problems: scattered settings, a cart that led nowhere, and screens that didn't follow the design system.",
       items: [
         {
           title: "Settings grouped by task",
-          detail: "Store owners had to hunt for settings across tabs. I split the dashboard into five tabs, each with one job: My Account for the plan and license, General for how the cart behaves, Text Label for what it says, Floating Cart Icon for the icon shoppers see on every page, and Styling for how it looks.",
-          details: [
-            "In General, dropdowns come first and toggles below, so the page reads top to bottom in one pass. Every setting has a one-line description, so owners never need the docs to know what it does.",
-          ],
+          detail: "Store owners had to hunt for what they needed. I split the dashboard into five tabs, each with one job: My Account for the plan and license, General for how the cart behaves, Text Label for what it says, Floating Cart Icon for the icon shoppers see on every page, and Styling for how it looks.",
           before: "Settings scattered across tabs.",
           after: "Five tabs, one job each.",
-          media: mcShot("Five tabs in the sidebar, each with one job. Here, General.", "general-tab"),
-          highlights: ["My Account", "General", "Text Label", "Floating Cart Icon", "Styling"],
-          area: "Dashboard",
+          media: { caption: "", alt: "The dashboard tabs one after another: My Account, General, Text Label, Floating Cart Icon and Styling, each scrolled through.", src: "/assets/videos/modern-cart-tabs.mp4?v=2026-11-20c", size: [1546, 964] },
         },
         {
           title: "Cart text that sounds like the store",
-          detail: "The cart's wording was fixed, so it couldn't sound like the store it lived in. In Text Label, every word a shopper sees is editable, from the cart heading to the empty cart message and the free shipping line.",
-          details: [
-            "Each field starts filled with sensible default text, so store owners only change what they care about.",
-          ],
+          detail: "The wording was fixed, so it couldn't sound like the store it lived in. In Text Label, every word a shopper sees is editable, from the heading to the empty cart message and the free shipping line. Each field starts filled with sensible defaults, so owners only change what they care about.",
           before: "Fixed wording in every store.",
           after: "Every word editable, defaults filled in.",
           media: mcRow(
@@ -1131,27 +1125,17 @@ const modernCart: CaseStudy = {
             mc("text-label-empty-fields", "Text Label"),
             mc("cart-empty-panel", "In the cart"),
           ),
-          highlights: ["Cart heading", "Empty cart message", "Free shipping line", "Suggestion titles"],
-          area: "Dashboard",
         },
         {
           title: "The floating cart in its own tab",
-          detail: "The floating cart icon is what shoppers see on every page, but its settings were buried inside General. It now has its own tab with position, hide when empty, and a set of preset icons.",
-          details: [
-            "Custom icon upload was my idea too, and the team built it later.",
-          ],
+          detail: "The floating cart icon is what shoppers see on every page, but its settings were buried inside General. It now has its own tab with position, hide when empty and a set of presets. Custom upload came out of my competitor review; the team designed and built it after I left.",
           before: "Buried inside General.",
           after: "Its own tab, with custom upload later.",
           media: mcShot("Position, hide when empty, and preset icons in their own tab.", "floating-icon-card"),
-          highlights: ["Position", "Hide when empty", "Preset icons", "Custom upload"],
-          area: "Dashboard",
         },
         {
           title: "Styling that's safe to try",
-          detail: "Store owners hesitate to change colors and sizes when they're not sure they can undo it. Styling is now grouped into Colors, Icon Style, Width and Miscellaneous.",
-          details: [
-            "Every color has a reset button, number fields show their default underneath (“Default width: 450px”), and units like px, % and ms sit inside the field, so owners can experiment without worrying about breaking anything.",
-          ],
+          detail: "Store owners hesitate to change how the cart looks when they're not sure they can undo it. Styling is now grouped into Colors, Icon Style, Width and Miscellaneous. Each swatch has a reset button, number fields show their default underneath (“Default width: 450px”), and units like px, % and ms sit inside the input, so trying something bold never feels risky.",
           before: "Owners hesitated to change what they couldn't undo.",
           after: "Grouped, resettable, defaults in view.",
           media: mcRow(
@@ -1159,16 +1143,11 @@ const modernCart: CaseStudy = {
             mc("styling-colors", "Reset on every color"),
             mc("styling-width", "Defaults and units"),
           ),
-          highlights: ["Reset on every color", "Visible defaults", "Units inside fields"],
-          area: "Dashboard",
         },
         {
           title: "Product suggestions",
-          detail: "An empty cart was a dead end, and a full cart gave shoppers no reason to keep browsing. The empty cart now shows a featured product and a Shop Now button, and a full cart shows a “You might also like” carousel below the items.",
-          details: [
-            "The carousel stays small, so it never covers the cart. More in Decision 2.",
-          ],
-          before: "Empty carts were dead ends; full carts were just lists.",
+          detail: "Shoppers who opened an empty cart found nothing, and a full one gave them no reason to stay. Now that state shows a featured product with a Shop Now button, and a “You might also like” carousel sits below the items once something is added.",
+          before: "Empty carts showed nothing; full carts were just lists.",
           after: "Something to explore, empty or full.",
           media: mcRow(
             "A featured product when the cart is empty, then one or two suggestions below the items.",
@@ -1176,15 +1155,10 @@ const modernCart: CaseStudy = {
             mc("cart-one-panel", "One suggestion"),
             mc("cart-two-panel", "Two suggestions"),
           ),
-          highlights: ["Featured product", "Shop Now button", "“You might also like” carousel"],
-          area: "Cart",
         },
         {
           title: "A clearer coupon field",
-          detail: "My first version was a collapsible “Got a Discount Code?” row. It worked, but it didn't feel like applying anything.",
-          details: [
-            "Now “Apply Coupon Code” stays a link until it's needed, opens into a field with an Apply button, and shows the applied code as a tag that can be removed in one tap, so the shopper always knows which discount is active.",
-          ],
+          detail: "My first version was a collapsible “Got a Discount Code?” row. It worked, but in a review the CEO pointed out that it didn't feel like applying anything. That feedback led to the redesign, and to the coupon styles store owners can pick from today. “Apply Coupon Code” now stays a link until it's needed, opens into a field with a button, and shows the code as a tag that can be removed in one tap, so the shopper always knows which discount is active.",
           before: "A collapsible “Got a Discount Code?” row.",
           after: "Link, field, removable tag.",
           media: mcRow(
@@ -1193,15 +1167,10 @@ const modernCart: CaseStudy = {
             mc("coupon-field-crop", "Opens into a field"),
             mc("coupon-tag-crop", "Becomes a tag"),
           ),
-          highlights: ["Quiet link", "Apply button", "Removable code tag"],
-          area: "Cart",
         },
         {
           title: "A complete order summary",
-          detail: "Shoppers couldn't see what made up their total. The order summary now lays out shipping, tax, subtotal and savings, so the total never comes as a surprise at checkout.",
-          details: [
-            "The checkout button is the one clear next step.",
-          ],
+          detail: "Shoppers couldn't see what made up their total. The order summary now lays out shipping, tax, subtotal and savings, so the final amount never comes as a surprise at checkout.",
           before: "No breakdown of the total.",
           after: "The full breakdown, before checkout.",
           media: mcRow(
@@ -1210,15 +1179,10 @@ const modernCart: CaseStudy = {
             mc("summary-card-crop", "Card, total in the button"),
             mc("summary-tags-crop", "Several codes"),
           ),
-          highlights: ["Shipping", "Tax", "Subtotal", "Savings"],
-          area: "Cart",
         },
         {
           title: "A popup cart",
           detail: "Some stores want the cart front and center, not at the edge of the screen. I designed a second cart type that opens in the middle of the page, for desktop, tablet and mobile.",
-          details: [
-            "On smaller screens the carousel drops from two products to one, so the cards stay readable. More in Decision 3.",
-          ],
           before: "Slide-out was the only option.",
           after: "A centered popup on every screen.",
           media: mcRow(
@@ -1226,8 +1190,6 @@ const modernCart: CaseStudy = {
             mc("popup-suggest", "Empty, with a suggestion"),
             mc("popup-items", "With items"),
           ),
-          highlights: ["Desktop", "Tablet", "Mobile"],
-          area: "Cart",
         },
       ],
       variants: {
@@ -1242,17 +1204,17 @@ const modernCart: CaseStudy = {
           {
             count: "6",
             name: "Item layouts",
-            body: "Layouts that change where the remove and quantity controls sit. Some stores want editing front and center, others want it quiet.",
+            body: "Layouts that change where the remove and quantity controls sit. Some stores want editing front and center, others prefer it quiet.",
           },
           {
             count: "2",
             name: "Order summaries",
-            body: "A simple list above the checkout button, or a card with its own heading and the total inside the button.",
+            body: "A simple list sitting above checkout, or a card with its own heading and the total inside the button.",
           },
           {
             count: "2",
             name: "Coupon styles",
-            body: "One handles a single code. The other shows several codes as tags, for stores that let shoppers stack discounts.",
+            body: "One handles a single code. The other shows several as tags, for stores that let shoppers stack discounts.",
           },
           {
             count: "1–2",
@@ -1262,7 +1224,7 @@ const modernCart: CaseStudy = {
           {
             count: "2",
             name: "Cart footers",
-            body: "View Cart and Checkout, or Checkout only. Some stores want a full cart page first, others the fastest path to checkout.",
+            body: "View Cart and Checkout, or Checkout only. Some stores want a full basket page first, others the fastest path to paying.",
           },
         ],
       },
@@ -1287,8 +1249,8 @@ const modernCart: CaseStudy = {
         {
           label: "Why ForceUI existed",
           text: [
-            "When I joined Brainstorm Force, each plugin had its own design system. During this project, the team decided to bring them together into one shared system, ForceUI, and I was part of building it. It lives in Figma and as React code, so designers and developers work from the same components.",
-            "One rule kept the two in sync: nobody changes a component on their own. If something needed to change, it went through a ticket, so the Figma file and the code never drifted apart.",
+            "When I joined Brainstorm Force, each plugin had its own design system. During this project, the team decided to bring them together into one shared system, ForceUI, and I worked on its atoms and molecules, while other designers built the larger patterns and templates. It lives in Figma and as React code, so designers and developers work from the same components.",
+            "One rule kept the two in sync: nobody changes a component on their own. If something needed to change, it went through a ticket, so the Figma file and the code never drifted apart. The developers also kept a React Storybook of every component, which we used as a reference for how and where each one should be used.",
           ],
         },
         {
@@ -1314,6 +1276,15 @@ const modernCart: CaseStudy = {
           body: "Full page layouts. ForceUI's Admin Settings template is the shape of the ModernCart dashboard: product navigation on top, a sidebar, and cards of settings.",
         },
       ],
+      levelsMedia: {
+        caption: "",
+        alt: "Pages from the ForceUI library in Figma, from atoms to molecules.",
+        row: [
+          { src: "/assets/modern-cart/forceui/buttons.webp?v=2026-11-20", size: [440, 625], label: "Atoms: Buttons", full: { src: "/assets/modern-cart/forceui/full-buttons.webp?v=2026-11-20", size: [1432, 1008], crop: [0.317, 0.0744, 0.3073, 0.62] } },
+          { src: "/assets/modern-cart/forceui/input.webp?v=2026-11-20", size: [432, 414], label: "Atoms: Input Base", full: { src: "/assets/modern-cart/forceui/full-input.webp?v=2026-11-20", size: [1425, 999], crop: [0.4477, 0.0511, 0.3032, 0.4144] } },
+          { src: "/assets/modern-cart/forceui/date-picker.webp?v=2026-11-20", size: [705, 626], label: "Molecules: Date Picker", full: { src: "/assets/modern-cart/forceui/full-date-picker.webp?v=2026-11-20", size: [1430, 900], crop: [0.0636, 0.1133, 0.493, 0.6956] } },
+        ],
+      },
       tokens: [
         { sample: "type", label: "Type", value: "Figtree, four weights" },
         { sample: "color", label: "Accent", value: "Flamingo, CartFlows' orange" },
@@ -1357,12 +1328,20 @@ const modernCart: CaseStudy = {
             "[Side Cart & Checkout](https://woocommerce.com/products/side-cart-checkout/)",
             "[Flycart](https://wordpress.org/plugins/woo-fly-cart/)",
           ],
-          media: mcRow("What the review led to: preset icons and cart styling.", mc("floating-icon-card", "Preset icons"), mc("styling-colors", "Cart styling")),
+          media: {
+            caption: "",
+            alt: "Three of the competitor plugins I reviewed, from their WordPress.org pages.",
+            row: [
+              { src: "/assets/modern-cart/competitors/funnelkit.webp?v=2026-11-20", size: [1195, 777], label: "FunnelKit Cart: settings beside a live preview" },
+              { src: "/assets/modern-cart/competitors/mini-cart.webp?v=2026-11-20", size: [1167, 607], label: "Mini Cart: settings with a live preview" },
+              { src: "/assets/modern-cart/competitors/side-cart.webp?v=2026-11-20", size: [867, 912], label: "Side Cart: suggestions in the cart" },
+            ],
+          },
         },
         {
           label: "Tickets",
           title: "Turning ideas into tickets",
-          body: "I shared what I found with the team, and the PM decided what to build first. I wrote about 15 Jira tickets, one per feature, each with a description and the designs.",
+          body: "I shared what I found with the team, and the PM decided what to build first. I wrote a Jira ticket for each feature, with a description and the designs.",
           details: [
             "The Figma file was organized the same way, one section per ticket, so anyone could match a design to its ticket.",
           ],
@@ -1392,12 +1371,12 @@ const modernCart: CaseStudy = {
       nav: "Future Scope",
       eyebrow: "Future Scope",
       title: "Ideas that shipped after I left",
-      intro: "Not everything I proposed was built while I was there. These three ideas came out of my competitor review, and the team shipped them after I moved on.",
+      intro: "These three ideas came out of my competitor review. I suggested them and talked through with the team where each would sit; the team designed and shipped them after I left at the end of June 2025.",
       tag: "Shipped later",
       items: [
         {
           title: "Live preview",
-          body: "Store owners were changing colors, icons and sizes without seeing the result until they opened their storefront. Competitors showed a preview right next to the settings, so I recommended the same. The team later added a cart preview to the dashboard, showing the floating icon and the cart, both empty and with items ([v1.0.8](https://wordpress.org/plugins/modern-cart/)).",
+          body: "Store owners were changing colors, icons and sizes without seeing the result until they opened their storefront. Competitors showed a preview right next to the settings, so I recommended the same. The team later designed and added a cart preview to the dashboard, showing the floating icon and the cart, both empty and with items ([v1.0.8](https://wordpress.org/plugins/modern-cart/)).",
         },
         {
           title: "Custom icon upload",
@@ -1448,10 +1427,10 @@ const modernCart: CaseStudy = {
       nav: "Outcome",
       eyebrow: "Outcome",
       title: "From an unreleased build to a cart that keeps shoppers going",
-      intro: "ModernCart started as a working build that nobody had designed for. In one week it was ready to publish. In the weeks after, it gained a dashboard organized around tasks, a cart that suggests products, and a second cart type. Several of those ideas shipped after I left, and today the plugin has 50K+ active installs.",
+      intro: "ModernCart started as a working build that nobody had designed for. In one week it was ready to publish. In the weeks after, it gained a dashboard organized around tasks, a cart that suggests products, and a second cart type. Several of those ideas shipped after I left, and today the plugin has 60K+ active installs.",
       before: "A working build nobody had designed for",
       after: "A task-based dashboard, a cart that suggests, and a second cart type",
-      stat: { value: "50K+", label: "Active installs today" },
+      stat: { value: "60K+", label: "Active installs today" },
       feedback: feedback("How would you have handled the Free and Pro question?"),
     },
   ],
@@ -1638,8 +1617,8 @@ const superfansSocialFeed: CaseStudy = {
     {
       kind: "journey",
       id: "walkthrough",
-      nav: "Walkthrough",
-      eyebrow: "Walkthrough",
+      nav: "Final Solution",
+      eyebrow: "Final Solution",
       title: "One brand, one shopper",
       intro:
         "Riya manages the app for Thread & Care, a scrubs brand on Superfans. Karan is a nurse who shops with them. Both are made up for this story.",
@@ -1707,8 +1686,8 @@ const superfansSocialFeed: CaseStudy = {
     {
       kind: "solution",
       id: "solution",
-      nav: "Solution",
-      eyebrow: "Solution",
+      nav: "Solution Explanation",
+      eyebrow: "Solution Explanation",
       title: "What I designed, and the problem each part solves",
       intro:
         "Every part traces back to one of four goals: bring video into the app, save merchants time, keep shopper content under control, and introduce something new clearly.",
