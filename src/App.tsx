@@ -1876,6 +1876,13 @@ const workCards: WorkCard[] = [
   })),
 ];
 
+// Proof strip under the hero: Superfans first, then the two Brainstorm Force plugins.
+const heroStats = [
+  { company: "Superfans", current: true, value: "5,000+", label: "Brands on the app builder", href: "/work/superfans-social-feed" },
+  { company: "Brainstorm Force", value: "300K+", label: "Cart Abandonment Recovery installs", href: "/work/cart-abandonment-recovery" },
+  { company: "Brainstorm Force", value: "60K+", label: "ModernCart installs", href: "/work/modern-cart" },
+];
+
 function HomePage() {
   const [showMoreProjects, setShowMoreProjects] = useState(false);
   const visibleProjects = showMoreProjects ? workCards : workCards.slice(0, 4);
@@ -1886,31 +1893,30 @@ function HomePage() {
 
       <main>
         <section className="hero" aria-labelledby="hero-title">
-          {about.photo ? <img className="hero__photo" src={assetPath(about.photo)} alt="Aadhavan M" /> : null}
-          <h1 id="hero-title">
-            I’m Aadhavan, a product designer building shoppable video for 5,000+ brands at Superfans,{" "}
-            <span>after designing commerce tools 360K+ stores rely on at Brainstorm Force.</span>
-          </h1>
-          <div className="hero-proof">
-            <a className="hero-proof__group" href={withBasePath("/work/superfans-social-feed")}>
-              <span className="hero-proof__company">
-                Superfans <em>Current</em>
-              </span>
-              <span className="hero-proof__stat">
-                <strong>5,000+</strong> brands on the app builder
-              </span>
-            </a>
-            <div className="hero-proof__group hero-proof__group--pair">
-              <span className="hero-proof__company">Brainstorm Force</span>
-              <div className="hero-proof__pair">
-                <a className="hero-proof__stat" href={withBasePath("/work/cart-abandonment-recovery")}>
-                  <strong>300K+</strong> Cart Abandonment installs
-                </a>
-                <a className="hero-proof__stat" href={withBasePath("/work/modern-cart")}>
-                  <strong>60K+</strong> ModernCart installs
-                </a>
+          <div className="hero__intro">
+            <div className="hero__id">
+              {about.photo ? <img className="hero__photo" src={assetPath(about.photo)} alt="Aadhavan M" /> : null}
+              <div className="hero__name">
+                <strong>Aadhavan M</strong>
+                <span>Product Designer at Superfans · Chennai</span>
               </div>
             </div>
+            <h1 id="hero-title">
+              Complex features don’t need crowded screens.{" "}
+              <span>I design with generous space and very few elements, so what matters most is the first thing people see.</span>
+            </h1>
+          </div>
+          <div className="hero-proof">
+            {heroStats.map((stat) => (
+              <a className="hero-proof__card" href={withBasePath(stat.href)} key={stat.label}>
+                <span className="hero-proof__company">
+                  {stat.company}
+                  {stat.current ? <em>Current</em> : null}
+                </span>
+                <strong>{stat.value}</strong>
+                <span className="hero-proof__label">{stat.label}</span>
+              </a>
+            ))}
           </div>
         </section>
 

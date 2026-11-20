@@ -335,40 +335,123 @@ button {
   color: var(--color-muted);
 }
 
-.hero__photo {
-  display: block;
-  width: 72px;
-  height: 72px;
-  margin-bottom: 28px;
-  border-radius: 50%;
-  object-fit: cover;
-  box-shadow: 0 0 0 4px #fff, 0 6px 18px rgb(0 0 0 / 10%);
-}
-
-/* Proof strip: Superfans first, then the two Brainstorm Force plugins. Each number opens its case study. */
-.hero-proof {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-top: 48px;
-}
-
-.hero-proof__group {
+.hero__intro {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 20px 24px;
-  border: 1px solid var(--color-neutral-200);
-  border-radius: 20px;
-  background: #fff;
+  gap: 32px;
+}
+
+.hero__photo {
+  display: block;
+  flex: none;
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 0 5px #fff, 0 10px 28px rgb(0 0 0 / 12%);
+}
+
+/* Name tag: round photo with name and role beside it, above the headline. */
+.hero__id {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.hero__name {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hero__name strong {
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.2;
+}
+
+.hero__name span {
+  color: var(--color-body-muted);
+  font-size: 16px;
+}
+
+/* Layout B: photo beside the headline. */
+.hero--photo-side .hero__intro {
+  flex-direction: row;
+  align-items: center;
+  gap: 40px;
+}
+
+.hero--photo-side .hero__photo {
+  width: 168px;
+  height: 168px;
+}
+
+/* Layout C: a larger photo on the right, headline on the left. */
+.hero--photo-right .hero__intro {
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: space-between;
+  gap: 56px;
+}
+
+.hero--photo-right .hero__photo {
+  width: 240px;
+  height: 240px;
+}
+
+@media (max-width: 760px) {
+  .hero--photo-side .hero__intro,
+  .hero--photo-right .hero__intro {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 28px;
+  }
+
+  .hero--photo-side .hero__photo,
+  .hero--photo-right .hero__photo {
+    width: 112px;
+    height: 112px;
+  }
+}
+
+/* Proof strip: one row like a table, with dividers only between cells, no outer border. Superfans first. */
+.hero-proof {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 64px;
+}
+
+.hero-proof__card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 4px 40px;
   color: inherit;
   text-decoration: none;
+}
+
+.hero-proof__card:first-child {
+  padding-left: 0;
+}
+
+.hero-proof__card + .hero-proof__card {
+  border-left: 1px solid var(--color-neutral-300);
+}
+
+.hero-proof__card:hover strong {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 6px;
 }
 
 .hero-proof__company {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  margin-bottom: 8px;
   color: var(--color-neutral-600);
   font-size: 13px;
   font-weight: var(--font-weight-semibold);
@@ -385,43 +468,32 @@ button {
   font-style: normal;
 }
 
-.hero-proof__pair {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 40px;
-}
-
-.hero-proof__stat {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  color: var(--color-body-muted);
-  font-size: 15px;
-  text-decoration: none;
-}
-
-.hero-proof__stat strong {
+.hero-proof__card strong {
   color: var(--color-ink);
   font-family: var(--font-display);
-  font-size: 32px;
+  font-size: 40px;
   font-weight: var(--font-weight-semibold);
-  line-height: 1.15;
+  line-height: 1.1;
 }
 
-a.hero-proof__group,
-a.hero-proof__stat {
-  transition: border-color 160ms ease, transform 160ms ease;
+.hero-proof__label {
+  color: var(--color-body-muted);
+  font-size: 15px;
 }
 
-a.hero-proof__group:hover {
-  border-color: var(--color-neutral-300);
-  transform: translateY(-2px);
-}
+@media (max-width: 760px) {
+  .hero-proof {
+    grid-template-columns: minmax(0, 1fr);
+  }
 
-a.hero-proof__stat:hover strong {
-  text-decoration: underline;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 4px;
+  .hero-proof__card {
+    padding: 20px 0;
+  }
+
+  .hero-proof__card + .hero-proof__card {
+    border-top: 1px solid var(--color-neutral-300);
+    border-left: 0;
+  }
 }
 
 /* Logo: the pen stroke draws the A once on load. */
