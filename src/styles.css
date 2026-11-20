@@ -331,8 +331,131 @@ button {
   letter-spacing: 0;
 }
 
-.hero span {
+.hero h1 span {
   color: var(--color-muted);
+}
+
+.hero__photo {
+  display: block;
+  width: 72px;
+  height: 72px;
+  margin-bottom: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 0 4px #fff, 0 6px 18px rgb(0 0 0 / 10%);
+}
+
+/* Proof strip: Superfans first, then the two Brainstorm Force plugins. Each number opens its case study. */
+.hero-proof {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 48px;
+}
+
+.hero-proof__group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px 24px;
+  border: 1px solid var(--color-neutral-200);
+  border-radius: 20px;
+  background: #fff;
+  color: inherit;
+  text-decoration: none;
+}
+
+.hero-proof__company {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-neutral-600);
+  font-size: 13px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.hero-proof__company em {
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  background: #efe9ff;
+  color: #6d3df5;
+  font-size: 11px;
+  font-style: normal;
+}
+
+.hero-proof__pair {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 40px;
+}
+
+.hero-proof__stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  color: var(--color-body-muted);
+  font-size: 15px;
+  text-decoration: none;
+}
+
+.hero-proof__stat strong {
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.15;
+}
+
+a.hero-proof__group,
+a.hero-proof__stat {
+  transition: border-color 160ms ease, transform 160ms ease;
+}
+
+a.hero-proof__group:hover {
+  border-color: var(--color-neutral-300);
+  transform: translateY(-2px);
+}
+
+a.hero-proof__stat:hover strong {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+/* Logo: the pen stroke draws the A once on load. */
+.logo-mark__pen {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: logo-write 1.6s cubic-bezier(0.55, 0.1, 0.35, 1) 0.25s forwards;
+}
+
+.logo:hover .logo-mark__pen {
+  animation: logo-write-again 1.4s cubic-bezier(0.55, 0.1, 0.35, 1) forwards;
+}
+
+@keyframes logo-write {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes logo-write-again {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-mark__pen,
+  .logo:hover .logo-mark__pen {
+    stroke-dashoffset: 0;
+    animation: none;
+  }
 }
 
 .work-section {

@@ -63,6 +63,7 @@ import {
 } from "./caseStudies";
 import { skillGroups, skills, type Skill, type SkillGroup, type SkillVisual } from "./skills";
 import { about } from "./about";
+import { logoPath } from "./logoPath";
 import { playgroundItems, type PlaygroundIcon, type PlaygroundItem } from "./playground";
 
 const navLinks = ["Work", "Skills", "Playground", "About"];
@@ -143,8 +144,35 @@ function isActiveNavLink(link: string) {
 
 const projects = caseStudies;
 
+// The A mark, drawn on load like a pen writing it: a stroke along the letter's centre line
+// reveals the real shape through a mask, so the finished mark matches the logo exactly.
 function LogoMark() {
-  return <img className="logo-image" src={assetPath("/assets/a-logo.svg")} alt="" />;
+  return (
+    <svg className="logo-image logo-mark" viewBox="0 0 48 48" aria-hidden="true">
+      <defs>
+        <clipPath id="logo-disc">
+          <circle cx="24.0008" cy="24.0031" r="19.2" />
+        </clipPath>
+        <mask id="logo-pen" maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48">
+          <path
+            className="logo-mark__pen"
+            d="M30.6 28.6 C27.5 28.2 25.4 28.5 22.6 30.4 C20.4 32 18.3 33.6 16.6 34.6 C15 35.4 13 34.3 13.4 32.4 L23.9 12.9 L35 35.4"
+            fill="none"
+            pathLength={1}
+            stroke="#fff"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={4.6}
+          />
+        </mask>
+      </defs>
+      <circle cx="24" cy="24" r="24" fill="#101010" />
+      <g clipPath="url(#logo-disc)" mask="url(#logo-pen)">
+        <circle cx="24.0008" cy="24.0031" r="19.2" fill="#fff" />
+        <path d={logoPath} fill="#101010" />
+      </g>
+    </svg>
+  );
 }
 
 function resolveSrc(src: string) {
@@ -1858,13 +1886,32 @@ function HomePage() {
 
       <main>
         <section className="hero" aria-labelledby="hero-title">
+          {about.photo ? <img className="hero__photo" src={assetPath(about.photo)} alt="Aadhavan M" /> : null}
           <h1 id="hero-title">
-            I’m Aadhavan M, a Product Designer with 4+ years solving problems{" "}
-            <span>
-              through systems, structure, and AI-assisted workflows for scalable
-              digital products.
-            </span>
+            I’m Aadhavan, a product designer building shoppable video for 5,000+ brands at Superfans,{" "}
+            <span>after designing commerce tools 360K+ stores rely on at Brainstorm Force.</span>
           </h1>
+          <div className="hero-proof">
+            <a className="hero-proof__group" href={withBasePath("/work/superfans-social-feed")}>
+              <span className="hero-proof__company">
+                Superfans <em>Current</em>
+              </span>
+              <span className="hero-proof__stat">
+                <strong>5,000+</strong> brands on the app builder
+              </span>
+            </a>
+            <div className="hero-proof__group hero-proof__group--pair">
+              <span className="hero-proof__company">Brainstorm Force</span>
+              <div className="hero-proof__pair">
+                <a className="hero-proof__stat" href={withBasePath("/work/cart-abandonment-recovery")}>
+                  <strong>300K+</strong> Cart Abandonment installs
+                </a>
+                <a className="hero-proof__stat" href={withBasePath("/work/modern-cart")}>
+                  <strong>60K+</strong> ModernCart installs
+                </a>
+              </div>
+            </div>
+          </div>
         </section>
 
         <section className="work-section" id="work" aria-labelledby="work-title">
