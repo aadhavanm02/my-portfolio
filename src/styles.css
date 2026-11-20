@@ -367,14 +367,33 @@ button {
 .hero__name strong {
   color: var(--color-ink);
   font-family: var(--font-display);
-  font-size: 22px;
+  font-size: 30px;
   font-weight: var(--font-weight-semibold);
   line-height: 1.2;
 }
 
 .hero__name span {
   color: var(--color-body-muted);
-  font-size: 16px;
+  font-size: 18px;
+}
+
+@media (max-width: 760px) {
+  .hero__id {
+    gap: 16px;
+  }
+
+  .hero .hero__photo {
+    width: 68px;
+    height: 68px;
+  }
+
+  .hero__name strong {
+    font-size: 24px;
+  }
+
+  .hero__name span {
+    font-size: 16px;
+  }
 }
 
 /* Layout B: photo beside the headline. */
@@ -422,23 +441,23 @@ button {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   margin-top: 64px;
+  overflow: hidden;
+  border: 1px solid var(--color-neutral-200);
+  border-radius: 24px;
+  background: #fff;
 }
 
 .hero-proof__card {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding: 4px 40px;
+  padding: 28px 32px;
   color: inherit;
   text-decoration: none;
 }
 
-.hero-proof__card:first-child {
-  padding-left: 0;
-}
-
 .hero-proof__card + .hero-proof__card {
-  border-left: 1px solid var(--color-neutral-300);
+  border-left: 1px solid var(--color-neutral-200);
 }
 
 .hero-proof__card:hover strong {
@@ -487,11 +506,11 @@ button {
   }
 
   .hero-proof__card {
-    padding: 20px 0;
+    padding: 22px 24px;
   }
 
   .hero-proof__card + .hero-proof__card {
-    border-top: 1px solid var(--color-neutral-300);
+    border-top: 1px solid var(--color-neutral-200);
     border-left: 0;
   }
 }

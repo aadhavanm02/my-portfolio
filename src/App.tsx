@@ -1898,7 +1898,7 @@ function HomePage() {
               {about.photo ? <img className="hero__photo" src={assetPath(about.photo)} alt="Aadhavan M" /> : null}
               <div className="hero__name">
                 <strong>Aadhavan M</strong>
-                <span>Product Designer at Superfans · Chennai</span>
+                <span>Product Designer at Superfans</span>
               </div>
             </div>
             <h1 id="hero-title">
