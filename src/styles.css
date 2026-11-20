@@ -2747,6 +2747,75 @@ button {
   white-space: nowrap;
 }
 
+.case-option__badges {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+/* Options that were set aside: dashed edge, a Dropped tag and the reason underneath. */
+.case-option.is-dropped {
+  border-style: dashed;
+  border-color: var(--color-neutral-300);
+}
+
+.case-option.is-dropped .case-option__letter {
+  background: var(--color-neutral-100);
+  color: var(--color-neutral-600);
+}
+
+.case-option__badge--dropped {
+  background: #fdecec;
+  color: #b42318;
+}
+
+.case-option__dropped {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: auto;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #fdf3f2;
+}
+
+.case-option__dropped span {
+  color: #b42318;
+  font-size: 12px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.case-option .case-option__dropped p {
+  color: var(--color-ink);
+  font-size: 14px;
+}
+
+.shot-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: 8px;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  vertical-align: 1px;
+}
+
+.shot-status--dropped {
+  background: #fdecec;
+  color: #b42318;
+}
+
+.shot-status--shipped {
+  background: #e7f6ec;
+  color: #1a7f37;
+}
+
 .case-option.is-chosen .case-option__badge {
   background: var(--color-peach-500);
   color: var(--color-on-ink);
@@ -9399,4 +9468,108 @@ body.is-video-expanded .case-topic-nav {
   display: block;
   width: 100%;
   height: auto;
+}
+
+/* Solution items told in three beats: Noticed, Did and Why it works, in one panel.
+   Before sits under Noticed and After under Did, so the comparison lives inside the story. */
+.case-features .case-feature .case-feature__body--story {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.case-feature__body--story .case-feature__text {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.case-story3 {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr) minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid var(--color-neutral-200);
+  border-radius: 18px;
+  background: #fff;
+}
+
+.case-story3__step {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 22px 24px;
+}
+
+.case-story3__step + .case-story3__step {
+  border-left: 1px solid var(--color-neutral-200);
+}
+
+.case-story3__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-neutral-600);
+  font-size: 12px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.case-story3__step > p {
+  margin: 0;
+  color: var(--color-ink);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.case-story3 .case-story3__tag {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px dashed var(--color-neutral-200);
+  font-size: 13px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.45;
+}
+
+.case-story3__tag svg {
+  flex: none;
+  margin-top: 3px;
+}
+
+.case-story3__tag--before {
+  color: var(--color-neutral-700);
+}
+
+.case-story3 .case-story3__tag--after {
+  color: var(--brand);
+}
+
+.case-story3__step--why {
+  background: color-mix(in srgb, var(--brand) 7%, #fff);
+}
+
+.case-story3__step--why .case-story3__label {
+  color: var(--brand);
+}
+
+.case-story3 .case-story3__step--why > p {
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: var(--font-weight-medium);
+  line-height: 1.45;
+}
+
+@media (max-width: 860px) {
+  .case-story3 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .case-story3__step + .case-story3__step {
+    border-top: 1px solid var(--color-neutral-200);
+    border-left: 0;
+  }
 }

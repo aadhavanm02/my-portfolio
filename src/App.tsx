@@ -48,6 +48,8 @@ import {
   SpeakerX,
   Storefront,
   X,
+  MagnifyingGlass,
+  Lightbulb,
 } from "@phosphor-icons/react";
 import {
   caseStudies,
@@ -692,6 +694,16 @@ function ShotImage({ frame, caption, onOpen }: { frame: MediaFrame; caption: str
   );
 }
 
+function StatusTag({ status }: { status?: MediaItem["status"] }) {
+  if (!status) return null;
+  return (
+    <span className={`shot-status shot-status--${status}`}>
+      {status === "dropped" ? <X aria-hidden="true" size={11} weight="bold" /> : <Check aria-hidden="true" size={11} weight="bold" />}
+      {status === "dropped" ? "Dropped" : "Shipped"}
+    </span>
+  );
+}
+
 function ShotMedia({ item, thumb }: { item: MediaItem; thumb?: boolean }) {
   const [open, setOpen] = useState<MediaFrame | null>(null);
   const frames: MediaFrame[] = item.row ?? (item.src && item.size ? [{ src: item.src, size: item.size, full: item.full }] : []);
@@ -707,7 +719,12 @@ function ShotMedia({ item, thumb }: { item: MediaItem; thumb?: boolean }) {
             </div>
           ))}
         </div>
-        {item.caption ? <figcaption className="shot-stage__caption">{item.caption}</figcaption> : null}
+        {item.caption ? (
+          <figcaption className="shot-stage__caption">
+            <StatusTag status={item.status} />
+            {item.caption}
+          </figcaption>
+        ) : null}
       </div>
       {open ? <ShotLightbox caption={open.label ?? item.alt ?? item.caption} frame={open} onClose={() => setOpen(null)} /> : null}
     </figure>
@@ -725,7 +742,10 @@ function MediaPlaceholder({ className = "", item }: { className?: string; item: 
           {item.kind === "video" ? "Video placeholder" : "Image placeholder"}
         </span>
       </div>
-      <figcaption>{item.caption}</figcaption>
+      <figcaption>
+        <StatusTag status={item.status} />
+        {item.caption}
+      </figcaption>
     </figure>
   );
 }
@@ -959,21 +979,68 @@ function SolutionView({ section }: { section: Extract<CaseSection, { kind: "solu
               {item.media ? <MediaGroup items={[item.media]} /> : null}
             </div>
 
-            <div className="case-feature__body">
+            <div className={`case-feature__body${item.did ? " case-feature__body--story" : ""}`}>
               <div className="case-feature__text">
                 <h3 className="case-feature__title">
                   <span className="case-index">{pad(index)}</span>
                   {item.title}
                 </h3>
-                <p className="case-feature__detail">
-                  <RichText text={item.detail} />
-                </p>
+                {item.did ? (
+                  <div className="case-story3">
+                    <div className="case-story3__step">
+                      <span className="case-story3__label">
+                        <MagnifyingGlass aria-hidden="true" size={14} weight="bold" />
+                        Noticed
+                      </span>
+                      <p>
+                        <RichText text={item.noticed ?? ""} />
+                      </p>
+                      {item.before ? (
+                        <p className="case-story3__tag case-story3__tag--before">
+                          <X aria-hidden="true" size={12} weight="bold" />
+                          {item.before}
+                        </p>
+                      ) : null}
+                    </div>
+                    <div className="case-story3__step">
+                      <span className="case-story3__label">
+                        <PencilSimpleLine aria-hidden="true" size={14} weight="bold" />
+                        Did
+                      </span>
+                      <p>
+                        <RichText text={item.did} />
+                      </p>
+                      {item.before ? (
+                        <p className="case-story3__tag case-story3__tag--after">
+                          <Check aria-hidden="true" size={12} weight="bold" />
+                          {item.after}
+                        </p>
+                      ) : null}
+                    </div>
+                    {item.why ? (
+                      <div className="case-story3__step case-story3__step--why">
+                        <span className="case-story3__label">
+                          <Lightbulb aria-hidden="true" size={14} weight="bold" />
+                          Why it works
+                        </span>
+                        <p>
+                          <RichText text={item.why} />
+                        </p>
+                      </div>
+                    ) : null}
+                  </div>
+                ) : null}
+                {item.detail ? (
+                  <p className="case-feature__detail">
+                    <RichText text={item.detail} />
+                  </p>
+                ) : null}
                 {item.details?.map((text) => (
                   <p className="case-feature__detail" key={text}>
                     <RichText text={text} />
                   </p>
                 ))}
-                {item.highlights ? (
+                {item.highlights && !item.did ? (
                   <ul className="case-feature__highlights" aria-label="Key details">
                     {item.highlights.map((highlight) => (
                       <li key={highlight}>{highlight}</li>
@@ -982,6 +1049,7 @@ function SolutionView({ section }: { section: Extract<CaseSection, { kind: "solu
                 ) : null}
               </div>
 
+              {item.did ? null : (
               <div className={`case-feature__compare${item.before ? "" : " case-feature__compare--single"}`}>
                 {item.before ? (
                   <div className="case-feature__before">
@@ -1000,6 +1068,7 @@ function SolutionView({ section }: { section: Extract<CaseSection, { kind: "solu
                   <p>{item.after}</p>
                 </div>
               </div>
+              )}
 
             </div>
           </article>
@@ -1083,18 +1152,33 @@ function DecisionCard({ decision, index }: { decision: DecisionItem; index: numb
           <p>{decision.turningIntro}</p>
           <div className={`case-options case-options--${Math.min(decision.options.length, 4)}`}>
             {decision.options.map((option, optionIndex) => (
-              <div className={`case-option${option.chosen ? " is-chosen" : ""}`} key={option.title}>
+              <div className={`case-option${option.chosen ? " is-chosen" : ""}${option.dropped ? " is-dropped" : ""}`} key={option.title}>
                 <div className="case-option__top">
                   <span className="case-option__letter">{String.fromCharCode(65 + optionIndex)}</span>
-                  {option.badge || option.chosen ? (
-                    <span className="case-option__badge">
-                      {option.chosen ? <Check aria-hidden="true" size={12} weight="bold" /> : null}
-                      {option.badge ?? "Chosen"}
-                    </span>
-                  ) : null}
+                  <span className="case-option__badges">
+                    {option.badge && !option.chosen ? <span className="case-option__badge">{option.badge}</span> : null}
+                    {option.dropped ? (
+                      <span className="case-option__badge case-option__badge--dropped">
+                        <X aria-hidden="true" size={12} weight="bold" />
+                        Dropped
+                      </span>
+                    ) : null}
+                    {option.chosen ? (
+                      <span className="case-option__badge">
+                        <Check aria-hidden="true" size={12} weight="bold" />
+                        {option.badge ?? "Chosen"}
+                      </span>
+                    ) : null}
+                  </span>
                 </div>
                 <h5>{option.title}</h5>
                 <p>{option.body}</p>
+                {option.dropped ? (
+                  <div className="case-option__dropped">
+                    <span>Why it was dropped</span>
+                    <p>{option.dropped}</p>
+                  </div>
+                ) : null}
               </div>
             ))}
           </div>
