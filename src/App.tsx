@@ -1876,13 +1876,6 @@ const workCards: WorkCard[] = [
   })),
 ];
 
-// Proof strip under the hero: Superfans first, then the two Brainstorm Force plugins.
-const heroStats = [
-  { company: "Superfans", current: true, value: "5,000+", label: "Brands on the app builder", href: "/work/superfans-social-feed" },
-  { company: "Brainstorm Force", value: "300K+", label: "Cart Abandonment Recovery installs", href: "/work/cart-abandonment-recovery" },
-  { company: "Brainstorm Force", value: "60K+", label: "ModernCart installs", href: "/work/modern-cart" },
-];
-
 function HomePage() {
   const [showMoreProjects, setShowMoreProjects] = useState(false);
   const visibleProjects = showMoreProjects ? workCards : workCards.slice(0, 4);
@@ -1905,18 +1898,6 @@ function HomePage() {
               Complex features don’t need crowded screens.{" "}
               <span>I design with generous space and very few elements, so what matters most is the first thing people see.</span>
             </h1>
-          </div>
-          <div className="hero-proof">
-            {heroStats.map((stat) => (
-              <a className="hero-proof__card" href={withBasePath(stat.href)} key={stat.label}>
-                <span className="hero-proof__company">
-                  {stat.company}
-                  {stat.current ? <em>Current</em> : null}
-                </span>
-                <strong>{stat.value}</strong>
-                <span className="hero-proof__label">{stat.label}</span>
-              </a>
-            ))}
           </div>
         </section>
 
