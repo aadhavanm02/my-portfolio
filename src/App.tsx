@@ -737,13 +737,18 @@ function ShotMedia({ item, thumb }: { item: MediaItem; thumb?: boolean }) {
   const frames: MediaFrame[] = item.row ?? (item.src && item.size ? [{ src: item.src, size: item.size, full: item.full }] : []);
 
   return (
-    <figure className={`shot${item.row ? " shot--row" : ""}${item.stack ? " shot--stack" : ""}${thumb ? " shot--thumb" : ""}`}>
+    <figure className={`shot${item.row ? " shot--row" : ""}${item.stack ? " shot--stack" : ""}${item.phone ? " shot--phone" : ""}${thumb ? " shot--thumb" : ""}`}>
       <div className="shot-stage">
-        <div className="shot-stage__frames">
+        <div className="shot-stage__frames" style={{ ["--n" as string]: frames.length }}>
           {frames.map((frame, index) => (
             <div className="shot-stage__item" key={`${frame.src}-${index}`} style={{ ["--a" as string]: frame.size[0] / frame.size[1] }}>
               <ShotImage caption={item.alt ?? item.caption} frame={frame} onOpen={setOpen} />
-              {frame.label ? <span className="shot-stage__label">{frame.label}</span> : null}
+              {frame.label || frame.status ? (
+                <span className="shot-stage__label">
+                  <StatusTag status={frame.status} />
+                  {frame.label}
+                </span>
+              ) : null}
             </div>
           ))}
         </div>
@@ -1876,6 +1881,24 @@ const workCards: WorkCard[] = [
   })),
 ];
 
+// Expenzo's work card: full phone screens drifting right to left on a loop.
+const expenzoCarousel = ["home", "scanning", "scan-done", "record", "add-category", "repeat-set", "analytics", "export", "exported", "failed-popup"].map(
+  (name) => `/assets/expenzo/${name}.webp?v=2026-11-22b`,
+);
+
+function PhoneCarousel({ screens }: { screens: string[] }) {
+  // The list is drawn twice so the loop has no visible seam.
+  return (
+    <div className="phone-carousel">
+      <div className="phone-carousel__track">
+        {[...screens, ...screens].map((src, index) => (
+          <img alt="" key={`${src}-${index}`} loading="lazy" src={resolveSrc(src)} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function HomePage() {
   const [showMoreProjects, setShowMoreProjects] = useState(false);
   const visibleProjects = showMoreProjects ? workCards : workCards.slice(0, 4);
@@ -1932,10 +1955,13 @@ function HomePage() {
                 </div>
 
                 <div className="project-media" aria-hidden="true">
+                  {project.key === "expenzo" ? (
+                    <PhoneCarousel screens={expenzoCarousel} />
+                  ) : (
                   <div className={`project-shot ${project.imageClass ?? ""}`}>
                     {project.key === "modern-cart" ? (
                       // The dashboard tabs, clicked and scrolled through on a loop.
-                      <video autoPlay loop muted playsInline poster={resolveSrc("/assets/videos/modern-cart-card.jpg?v=2026-11-20b")} src={resolveSrc("/assets/videos/modern-cart-card.mp4?v=2026-11-20b")} />
+                      <video autoPlay loop muted playsInline poster={resolveSrc("/assets/videos/modern-cart-card.jpg?v=2026-11-21")} src={resolveSrc("/assets/videos/modern-cart-card.mp4?v=2026-11-21")} />
                     ) : (
                       <>
                         <img src={resolveSrc(project.image)} alt="" />
@@ -1943,6 +1969,7 @@ function HomePage() {
                       </>
                     )}
                   </div>
+                  )}
                 </div>
               </article>
             ))}
@@ -2032,7 +2059,12 @@ function handleSectionLink(event: MouseEvent<HTMLAnchorElement>, id: string) {
 }
 
 function MoreCaseStudies({ current }: { current: CaseStudy }) {
-  const others = projects.filter((item) => item.slug !== current.slug);
+  // Show two neighbours: the case study before and after this one. At either end of the
+  // list, show the two closest instead.
+  const index = projects.findIndex((item) => item.slug === current.slug);
+  const last = projects.length - 1;
+  const picks = index <= 0 ? [1, 2] : index >= last ? [last - 2, last - 1] : [index - 1, index + 1];
+  const others = picks.filter((i) => i >= 0 && i <= last && i !== index).map((i) => projects[i]);
 
   if (others.length === 0) {
     return null;
@@ -2313,7 +2345,19 @@ function CaseStudyPage({ project }: { project: CaseStudy }) {
             <CaseHeroVideo coverImage={resolveSrc(project.image)} title={project.cardTitle} videoSrc={resolveSrc(project.hero.src)} />
           ) : (
             <figure className="case-hero-media case-hero-image">
-              <img alt={project.hero.caption} src={heroCover} />
+              {/\.mp4(\?|$)/.test(heroCover) ? (
+                <video
+                  aria-label={project.hero.caption}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  poster={project.hero.poster ? resolveSrc(project.hero.poster) : undefined}
+                  src={heroCover}
+                />
+              ) : (
+                <img alt={project.hero.caption} src={heroCover} />
+              )}
             </figure>
           )}
           <div className="case-facts">

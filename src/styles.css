@@ -655,6 +655,12 @@ button {
   width: 1247px;
 }
 
+.project-image--expenzo {
+  top: 0;
+  left: 0;
+  width: 1094px;
+}
+
 .project-image--funnel {
   top: -33px;
   left: -283px;
@@ -2218,6 +2224,7 @@ button {
   text-underline-offset: 3px;
 }
 
+.case-hero-image video,
 .case-hero-image img {
   display: block;
   width: 100%;
@@ -8042,9 +8049,7 @@ a.more-case:focus-visible {
   transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-a.more-case:hover .more-case__media img {
-  transform: translateY(-6px);
-}
+/* The card lifts on hover; the screenshot stays put so it always meets the card body with no gap. */
 
 .more-case__body {
   display: flex;
@@ -9706,5 +9711,63 @@ body.is-video-expanded .case-topic-nav {
   .case-story3__step + .case-story3__step {
     border-top: 1px solid var(--color-neutral-200);
     border-left: 0;
+  }
+}
+
+/* Rows of phone screens stay at a readable width, so two tall screens don't fill a whole page.
+   Rows with more screens get more room, so dropped and shipped versions fit on one line. */
+.shot--phone:not(.shot--thumb) .shot-stage__frames {
+  max-width: min(100%, calc(var(--n, 2) * 250px));
+  margin-inline: auto;
+}
+
+.shot--phone.shot--row:not(.shot--thumb) .shot-stage__item {
+  max-width: 300px;
+}
+
+.shot-stage__label .shot-status {
+  margin-right: 6px;
+}
+
+/* Expenzo work card: a row of full phone screens moving right to left. */
+.phone-carousel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: #e9eee7;
+}
+
+.phone-carousel__track {
+  display: flex;
+  width: max-content;
+  height: calc(100% - 64px);
+  animation: phone-carousel 48s linear infinite;
+}
+
+.project-media .phone-carousel img {
+  position: static;
+  flex: none;
+  width: auto;
+  height: 100%;
+  margin-right: 24px;
+  border-radius: 22px;
+  box-shadow: 0 14px 30px rgb(30 50 35 / 14%);
+}
+
+.project-card:hover .phone-carousel__track {
+  animation-play-state: paused;
+}
+
+@keyframes phone-carousel {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phone-carousel__track {
+    animation: none;
   }
 }

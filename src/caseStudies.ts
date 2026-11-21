@@ -19,6 +19,8 @@ export type MediaFrame = {
   size: [number, number];
   label?: string;
   full?: FullShot;
+  // Tags one screenshot in a row as a dropped version or the one that shipped.
+  status?: "dropped" | "shipped";
 };
 
 export type MediaItem = {
@@ -39,6 +41,8 @@ export type MediaItem = {
   full?: FullShot;
   // Marks a screenshot in a decision as a version that was dropped or one that shipped.
   status?: "dropped" | "shipped";
+  // Phone screens: keeps a row of tall screens to a comfortable width instead of filling the column.
+  phone?: boolean;
 };
 
 export type CardItem = {
@@ -1033,8 +1037,9 @@ const modernCart: CaseStudy = {
   ],
   meta: [],
   hero: {
-    caption: "The ModernCart dashboard, General tab.",
-    src: "/assets/modern-cart-hero.png?v=2026-11-20b",
+    caption: "The ModernCart dashboard, clicking through each settings tab and the Free vs Pro page.",
+    src: "/assets/videos/modern-cart-tour.mp4?v=2026-11-21",
+    poster: "/assets/videos/modern-cart-tour.jpg?v=2026-11-21",
   },
   sections: [
     {
@@ -1954,5 +1959,550 @@ const superfansSocialFeed: CaseStudy = {
   ],
 };
 
-export const caseStudies: CaseStudy[] = [superfansSocialFeed, cartAbandonment, modernCart];
+
+// ---------- Expenzo screenshots ----------
+// Exported from the project's Figma file at 2x. Bump when replaced.
+const EX_VERSION = "2026-11-22b";
+
+const exSizes = {
+  splash: [784, 1700], reminder: [784, 1700], home: [784, 1700], camera: [784, 1700], scanning: [784, 1700],
+  "scan-status": [784, 1700], "scan-done": [784, 1700], record: [784, 1700], "select-category": [784, 954],
+  "add-category": [784, 1700], "record-category": [784, 1700], "home-updated": [784, 1700], analytics: [784, 1700],
+  "repeat-edit": [784, 1700], "repeat-sheet": [784, 520], "repeat-set": [784, 1700], "analytics-export": [784, 1700],
+  export: [784, 1700], exported: [784, 1700], "failed-notified": [784, 1700], "failed-popup": [784, 1700],
+  "record-empty": [784, 1700], "tax-sheet": [784, 500], "fab-menu": [720, 340], "manual-record": [784, 1700],
+  "first-scanning": [784, 1700], "first-two-status": [784, 1700], "first-being-scanned": [784, 1700], "first-add": [784, 1700],
+  "first-analytics": [784, 1700], "first-home": [784, 1700], "var-home-same": [784, 1700], "var-home-green": [784, 1700],
+  filter: [784, 1700], "var-txn-old": [784, 1700], "sketch-00": [453, 854], "sketch-02": [453, 854], "sketch-04": [453, 854],
+  "sketch-06": [453, 854], "sketch-08": [453, 854], "sketch-10": [453, 854], "ledger-excel": [1620, 480], zoho: [930, 605],
+  bookipi: [930, 605],
+} satisfies Record<string, [number, number]>;
+
+type ExShot = keyof typeof exSizes;
+
+const ex = (name: ExShot, label?: string, status?: MediaFrame["status"]): MediaFrame => ({ src: `/assets/expenzo/${name}.webp?v=${EX_VERSION}`, size: exSizes[name], label, status });
+const isPhone = (size: [number, number]) => size[1] > size[0] * 1.6;
+const exShot = (alt: string, name: ExShot): MediaItem => ({ caption: "", alt, src: ex(name).src, size: exSizes[name], phone: isPhone(exSizes[name]) });
+const exRow = (alt: string, ...row: MediaFrame[]): MediaItem => ({ caption: "", alt, row, phone: row.some((f) => isPhone(f.size)) });
+// Shows the alt text as a visible caption, so a Dropped or Shipped tag has a line to sit on.
+const exCap = (item: MediaItem): MediaItem => ({ ...item, caption: item.alt ?? "" });
+
+const expenzoDecisions: DecisionItem[] = [
+  {
+    title: "Why scanning runs in the background instead of holding the screen",
+    hook: "Ravi has a month of receipts to get through. Should he stare at a progress bar for each one?",
+    before: [
+      "In my first flow, a scan opened a pop-up that stayed until the receipt was read. Checking on a scan meant opening a separate “Receipt Being Scanned” page, and failed scans sat in their own list.",
+    ],
+    turningIntro: "I worked through three versions:",
+    options: [
+      {
+        title: "Wait on the scanning pop-up",
+        body: "Simple to build and easy to follow, one receipt at a time.",
+        dropped: "With a stack of bills, waiting on every scan turns automation back into a chore.",
+      },
+      {
+        title: "Two status rows and a status page",
+        body: "“Receipts Being Scanned” and “Scan Receipt Failed” on All Transactions, each opening its own page.",
+        dropped: "Two rows for one job, and an extra page just to learn whether a scan worked.",
+      },
+      {
+        title: "Scan in the background, then notify",
+        body: "One “Receipt Scan Status” row, a notification when reading finishes, and a tap straight into the filled-in expense.",
+        chosen: true,
+      },
+    ],
+    reasoning: [
+      "Zoho Expense lets people keep using the app while a receipt is read, and that answered my ambiguity about whether the overlay should block the screen. Merging the rows and adding a notification removed the trip to a status page.",
+    ],
+    next: [
+      "I merged both statuses into a single row, added “Receipt autoscanning completed” and “Receipt auto scanning failed” notifications, and sent successful scans directly to Record Expense.",
+    ],
+    result: [
+      "The final flow lets Ravi scan, keep browsing, and review each receipt when it's ready.",
+    ],
+    media: [
+      exRow(
+        "First, two status rows and a page for checking a scan. Finally, one status row and a notification when the scan is read.",
+        ex("first-two-status", "Two status rows", "dropped"),
+        ex("first-being-scanned", "A status page", "dropped"),
+        ex("scan-status", "One status row", "shipped"),
+        ex("scan-done", "Notified when done", "shipped"),
+      ),
+    ],
+  },
+  {
+    title: "Why the scanning pop-up lost its “Add Manually” button",
+    hook: "Three buttons on a pop-up that only needs to say “please wait”. Which ones earn their place?",
+    before: [
+      "Following Zoho Expense, the first scanning pop-up offered Wait for Autoscan, Add Manually and Delete Receipt. OCR reads receipts with 85% to 95% accuracy, dropping to about 75% on poor photos or handwriting, so a manual route felt necessary.",
+    ],
+    turningIntro: "I weighed three versions of that pop-up:",
+    options: [
+      {
+        title: "Wait, Add Manually and Delete",
+        body: "Every route is available at once.",
+        dropped: "Testers couldn't tell whether Add Manually stopped the scan or saved the receipt, and typing isn't needed while a scan might still work.",
+      },
+      {
+        title: "Wait and Retake",
+        body: "Retake would replace Delete, for a blurry photo.",
+        dropped: "A retake makes more sense after a failure than during a scan, and Delete still lets people undo a mistake.",
+      },
+      {
+        title: "Wait and Delete while scanning, Add Manually and Retake on failure",
+        body: "Each choice shows up only when it's useful.",
+        chosen: true,
+      },
+    ],
+    reasoning: [
+      "The manual route didn't disappear. It moved to the moment it matters: when a scan fails, with the receipt photo already attached to the empty form.",
+    ],
+    next: [
+      "I rebuilt the scanning pop-up with two actions and designed a separate “Scanning Failed” pop-up offering Add Manually or Retake Receipt.",
+    ],
+    result: [
+      "Fewer choices while waiting, and a clear way forward when reading fails.",
+    ],
+    media: [
+      exRow(
+        "The first scanning pop-up with three buttons, then the final pop-ups: two actions while scanning, and the failure state.",
+        ex("first-scanning", "Three buttons", "dropped"),
+        ex("scanning", "While scanning", "shipped"),
+        ex("failed-popup", "When a scan fails", "shipped"),
+      ),
+    ],
+  },
+  {
+    title: "Why the expense form copies the ledgers owners already keep",
+    hook: "Articles told me what businesses should track. Ledgers told me what they actually write down.",
+    before: [
+      "My early expense form had a name, an amount and a category. General research on small businesses was too broad to say which fields mattered for GST.",
+    ],
+    turningIntro: "Two ways to decide the fields:",
+    options: [
+      {
+        title: "A generic expense form",
+        body: "Quick to fill and familiar from personal finance apps.",
+        dropped: "It missed what accountants need for GST: invoice number, GST number, merchant and tax split.",
+      },
+      {
+        title: "Fields taken from real records",
+        body: "Match the columns in owners' notebooks and sales and purchase sheets.",
+        chosen: true,
+      },
+    ],
+    reasoning: [
+      "A small business owner who runs a 10-person printing company showed me his handwritten expense book and the Excel sheet he sends his auditor. Interviews with four more owners confirmed the same structure.",
+    ],
+    next: [
+      "Record Expense follows that format: date, time, name, invoice or reference number, GST number, merchant, category, amount and tax type. A secondary-research question shaped the tax field: within a state, 18% GST splits into 9% CGST and 9% SGST, while sales across states use IGST.",
+    ],
+    result: [
+      "An owner can check a scanned receipt against the same columns they already know, and the export lines up with what the accountant expects.",
+    ],
+    media: [
+      { ...exCap(exShot("A real expense notebook and the sales sheet sent to the auditor, with the columns that shaped the form.", "ledger-excel")), wide: true },
+      exRow("The Record Expense form and the tax type choice.", ex("record", "Record Expense"), ex("tax-sheet", "Choosing the tax type")),
+    ],
+  },
+  {
+    title: "Why exporting got its own screen instead of a menu item",
+    hook: "An export that lives behind three dots works for one file. GST filing needs the right file.",
+    before: [
+      "In the first cut, the Analytic Report had a three-dot menu with Share, Export as PDF and Export as XLS. Analytics only listed data by week, month or year.",
+    ],
+    turningIntro: "Two versions:",
+    options: [
+      {
+        title: "Export from a three-dot menu",
+        body: "Fast, and out of the way.",
+        dropped: "No way to pick dates or transaction types, and my self-review asked whether anyone would find the menu at all.",
+      },
+      {
+        title: "A dedicated Export screen",
+        body: "Pick a date range, Expense, Income or Both, the B2B and B2C groupings, and Excel or PDF.",
+        chosen: true,
+      },
+    ],
+    reasoning: [
+      "GST work runs on deadlines in a month, and an accountant needs purchases and sales split the way the return is filed. Zoho Books groups its reports by sales and expenses, which suggested the categories.",
+      "Testers also asked to filter by specific dates and by category, so the same thinking went into a new Filter page.",
+    ],
+    next: [
+      "I moved export to an icon on the Analytic Report that opens the Export screen, added a “File exported” notification, and designed a Filter page with transaction type, B2B and B2C groupings and expense categories.",
+    ],
+    result: [
+      "Ajay, one of the testers, singled out filtering by B2B and B2C and exporting to Excel or PDF as what made tax reporting easier.",
+    ],
+    media: [
+      exRow(
+        "Exporting from a three-dot menu, then the final Export screen and the Filter page.",
+        ex("first-analytics", "Three-dot menu", "dropped"),
+        ex("export", "Export screen", "shipped"),
+        ex("filter", "Filter page", "shipped"),
+      ),
+    ],
+  },
+];
+
+const expenzo: CaseStudy = {
+  slug: "expenzo",
+  brand: "#3F6E4E",
+  cardTitle: "Expenzo, an expense tracker for small businesses",
+  cardSummary:
+    "A concept app that scans receipts, fills in GST details and exports a file an accountant can use, designed from interviews with five business owners.",
+  proof: "5 business owners interviewed. 3 usability tests.",
+  tone: "peach",
+  image: "/assets/expenzo/card.png?v=2026-11-22b",
+  imageClass: "project-image--expenzo",
+  headline: "Designing an expense tracker that turns a month of paper receipts into a GST-ready file",
+  hook: "Before every GST deadline, small business owners sit down with a pile of bills, a notebook and an Excel sheet, and type it all in by hand.",
+  summary:
+    "Expenzo is a concept mobile app for small business owners in India. It scans receipts, fills in the invoice and GST details, sorts expenses into categories, repeats regular bills and exports a file that's ready for the accountant.",
+  lead: [
+    "I designed it on my own over three months, from picking the problem out of 18 options to a tested prototype. I interviewed five business owners, studied five competing apps and tested the first version with three people.",
+    "The challenge was that the people who need automation most trust it least. One owner had tried scanning apps and found that correcting their mistakes took as long as typing. The hardest call was how much of the scanning to hide, and how much to show.",
+  ],
+  stats: [
+    { value: "Concept", label: "Self-initiated mobile app, not shipped" },
+    { value: "3 months", label: "September to November 2024" },
+    { value: "5 owners", label: "Interviewed, from printing to car travel" },
+    { value: "Product Designer", label: "Solo, research to prototype" },
+  ],
+  meta: [],
+  hero: {
+    caption: "Expenzo's home, a receipt being scanned, the filled-in expense and the Export screen.",
+    src: "/assets/expenzo/hero.webp?v=2026-11-22b",
+  },
+  sections: [
+    {
+      kind: "problem",
+      id: "the-problem",
+      nav: "The Problem",
+      eyebrow: "The Problem",
+      title: "Bookkeeping that happens in notebooks, spreadsheets and a monthly rush",
+      intro:
+        "Small business owners keep their own records, usually in a mix of paper ledgers, receipts and Excel. Every month, someone has to turn that pile into numbers an accountant can file.",
+      story: [
+        {
+          label: "What I heard",
+          text: [
+            "Kalim runs an IT services company and enters every expense twice, once in Excel and once in Tally. For GST, “it's often a rush at the end of the month to organize everything properly and submit it on time.”",
+            "Raja runs eight cars for a travel business. Fuel and maintenance go into a paper ledger, income into Excel, and when the two don't match, finding the mistake “can take hours.”",
+          ],
+        },
+        {
+          label: "Why it was worth solving",
+          text: "Missed entries and wrong categories lead to inaccurate reports, and inaccurate GST records can mean penalties. Owners also lose time they'd rather spend running the business.",
+        },
+      ],
+      goalsIntro: "What the app needed to do for a business:",
+      goals: [
+        { title: "Save time", body: "Take repetitive entry off the owner's plate." },
+        { title: "Cut errors", body: "Read receipts instead of retyping them." },
+        { title: "Show where money goes", body: "A clear picture of income and spending each month." },
+        { title: "Stay ready for GST", body: "Records organized in the format an accountant files." },
+      ],
+      pains: [
+        { title: "Typing everything twice", body: "Receipts go into a ledger first, then into Excel or Tally." },
+        { title: "Receipts go missing", body: "Lost or damaged paper leaves gaps in the records." },
+        { title: "Small costs slip through", body: "Kumar, who runs a 40-room hostel, said small expenses he forgets to note throw off his totals." },
+        { title: "A monthly deadline scramble", body: "Invoices are sorted for the accountant in a hurry before filing." },
+      ],
+      note: {
+        title: "What existing apps offered",
+        body: "Of the five apps I studied, only Zoho Expense could scan receipts, and it tracked expenses without income. Bookipi, FinArt, Zenmoney and Axio had no scanning and no export.",
+      },
+      media: { ...exShot("A real expense notebook and the Excel sheet sent to an auditor.", "ledger-excel"), wide: true },
+      mapping: [
+        ["Typing receipts in by hand", "Scan a receipt and review what it read"],
+        ["Records scattered across paper and Excel", "Income and expenses in one place"],
+        ["A rush to prepare GST files", "An export shaped for the accountant"],
+        ["Regular bills entered every month", "Transactions that repeat on their own"],
+      ],
+      constraints: [
+        "Solo concept project",
+        "Indian GST rules",
+        "Owners who aren't tech-savvy",
+        "OCR is never 100% accurate",
+      ],
+    },
+    {
+      kind: "journey",
+      id: "walkthrough",
+      nav: "Final Solution",
+      eyebrow: "Final Solution",
+      title: "How one GST reminder becomes a file ready for the accountant",
+      intro: "The prototype follows Ravi, a 47-year-old owner of a small printing business, through one month's filing day.",
+      video: { kind: "video", caption: "Prototype walkthrough video, to be added." },
+      lanes: [
+        {
+          name: "Ravi",
+          role: "Business owner",
+          about: "Ravi has a month of receipts on his desk and a GST deadline coming up. Here's his session in Expenzo, step by step.",
+          steps: [
+            { title: "A reminder on filing day", body: "“Hi Ravi S, finalize your monthly expenses.” He gathers his receipts.", media: exShot("Expenzo's reminder notification on the lock screen.", "reminder") },
+            { title: "Scan from the center of the nav", body: "He taps the scan button and photographs the first receipt.", media: exShot("The home screen with the scan button in the middle of the bottom bar.", "home") },
+            { title: "Keep going while it reads", body: "A pop-up shows progress. He taps Wait for Autoscan and carries on browsing.", media: exShot("Scanning in progress, 40% completed.", "scanning") },
+            { title: "Notified when it's done", body: "A notification says the receipt is read. One tap opens the filled-in expense.", media: exShot("The scan-complete notification over All Transactions.", "scan-done") },
+            { title: "Fix the category", body: "“Material” doesn't fit, so he creates “Printing Supply” and saves the expense.", media: exShot("Adding a new expense category.", "add-category") },
+            { title: "Spot the repeating bill", body: "In Analytics he notices the internet bill comes every month, and sets it to repeat monthly.", media: exShot("Choosing how often a transaction repeats.", "repeat-set") },
+            { title: "Export for the accountant", body: "He picks the dates, the transaction types and Excel, then sends the file on.", media: exShot("The Export screen.", "export") },
+          ],
+        },
+      ],
+    },
+    {
+      kind: "solution",
+      id: "solution",
+      nav: "Solution Explanation",
+      eyebrow: "Solution Explanation",
+      title: "From a pile of receipts to records an accountant can file",
+      intro: "Each part answers something an owner told me, or something that broke in testing.",
+      items: [
+        {
+          title: "A home that answers “how's this month going?”",
+          noticed: "Owners wanted to see money in and out at a glance, and most finance apps open on a summary card.",
+          did: "Put total balance, this month's income and expense, and the latest transactions on home, with scanning in the middle of the bottom bar.",
+          why: "The most frequent job sits under the thumb, and the numbers that matter are the first thing on screen.",
+          before: "Records spread across paper and Excel.",
+          after: "Income, expense and recent activity on one screen.",
+          media: exRow("Home, and the add menu for entering income or an expense by hand.", ex("home", "Home"), ex("fab-menu", "Add income or expense")),
+        },
+        {
+          title: "Scanning that doesn't make you wait",
+          noticed: "A month of receipts means many scans, and nobody wants to watch each one.",
+          did: "Scans run in the background with a single status row on All Transactions, and a notification opens each finished receipt.",
+          why: "Automation only saves time if it stays out of the way.",
+          before: "Wait on a pop-up, then check a status page.",
+          after: "Scan, keep going, get notified.",
+          media: exRow("Taking the photo, waiting or moving on, and the notification when reading finishes.", ex("camera", "Single, quick or multipage"), ex("scanning", "Scanning"), ex("scan-done", "Done")),
+        },
+        {
+          title: "An expense form in GST format",
+          noticed: "Ledgers and auditor sheets all used the same columns: invoice number, date, party, GST number, amount and tax.",
+          did: "Built Record Expense around those fields, prefilled from the scan, with a receipt thumbnail and a choice between IGST and CGST plus SGST.",
+          why: "Reviewing is faster when the screen matches the paper in your hand.",
+          before: "A generic name, amount and category.",
+          after: "The columns an accountant files.",
+          media: exRow("Record Expense filled in by a scan, and the tax type sheet.", ex("record", "Prefilled from the receipt"), ex("tax-sheet", "IGST or CGST + SGST")),
+        },
+        {
+          title: "Categories that fit the business",
+          noticed: "Interviewees track costs like rent, materials and fuel their own way, and a fixed list never quite fits.",
+          did: "Offered common categories in a sheet, plus a “+” to create one, with its own icon colour and a choice of expense or income.",
+          why: "Reports only help when the buckets match how the owner thinks.",
+          before: "Every printing cost filed under “Material”.",
+          after: "“Printing Supply”, made in a few taps.",
+          media: exRow("Choosing a category, creating one, and the expense saved with it.", ex("select-category", "Select category"), ex("add-category", "Add category"), ex("record-category", "Saved")),
+        },
+        {
+          title: "Bills that repeat themselves",
+          noticed: "Utilities, wages, rent and internet come every month, and owners enter them again each time. Kumar asked for this directly.",
+          did: "Added a repeat option to any transaction, by week, month or year, borrowing the idea from Zenmoney.",
+          why: "Anything predictable shouldn't need typing twice.",
+          before: "The same bill entered every month.",
+          after: "Set once, logged automatically.",
+          media: exRow("Picking a repeat interval for the internet bill.", ex("repeat-edit", "Edit expense"), ex("repeat-sheet", "Repeat by week, month or year")),
+        },
+        {
+          title: "Analytics with real filters",
+          noticed: "Testers wanted specific dates and categories, not just week, month or year.",
+          did: "Gave the Analytic Report a weekly income and expense chart, a summary, month navigation on the right for the thumb, and a Filter page.",
+          why: "Owners check by month for GST and by category to see where money goes.",
+          before: "Fixed weekly, monthly or yearly lists.",
+          after: "Dates, types and categories to filter by.",
+          media: exRow("The Analytic Report and its Filter page.", ex("analytics", "Analytic Report"), ex("filter", "Filter")),
+        },
+        {
+          title: "An export built for GST filing",
+          noticed: "Owners send their accountant Excel files sorted into purchases and sales.",
+          did: "Designed an Export screen with a date range, Expense, Income or Both, B2B and B2C groupings, and Excel or PDF, followed by a notification when the file is ready.",
+          why: "The file is the real deliverable, so it should arrive the way the accountant needs it.",
+          before: "Export hidden in a three-dot menu.",
+          after: "A file shaped for the GST return.",
+          media: exRow("The Export screen and the confirmation.", ex("export", "Export"), ex("exported", "File exported")),
+        },
+        {
+          title: "A way forward when scanning fails",
+          noticed: "OCR struggles with poor photos and handwriting, and Kalim had already given up on one inaccurate scanner.",
+          did: "Designed a failure notification and pop-up with Add Manually or Retake Receipt, which opens the form with the receipt photo already attached.",
+          why: "Trust comes from handling the misses well, not from promising there won't be any.",
+          before: "A failed scan meant starting over.",
+          after: "Add it by hand, receipt attached.",
+          media: exRow("The failure notification, the choice, and the form with the receipt attached.", ex("failed-notified", "Failure notification"), ex("failed-popup", "Add manually or retake"), ex("record-empty", "Receipt attached")),
+        },
+      ],
+    },
+    {
+      kind: "decisions",
+      id: "critical-decisions",
+      nav: "Decisions",
+      eyebrow: "Critical Decisions",
+      title: "Wait or keep going, three buttons or two, generic or familiar, menu or screen",
+      items: expenzoDecisions,
+    },
+    {
+      kind: "system",
+      id: "design-system",
+      nav: "Design System",
+      eyebrow: "Design System",
+      title: "A small system built for money on a phone",
+      intro: "Expenzo didn't have a design system to start from, so I set up text styles, colours and components in Figma as the screens took shape.",
+      patterns: [
+        { title: "Balance card", body: "Total balance with this month's income and expense, in the theme green." },
+        { title: "Transaction row", body: "Category icon, name, party, amount and time, with green for money in and red for money out." },
+        { title: "Input card", body: "A label above the value, used for every field in Record Expense and Export." },
+        { title: "Notification cards", body: "Reminder, scan complete, scan failed and file exported, sharing one layout." },
+      ],
+      tokens: [
+        { sample: "type", label: "Type", value: "Ten text styles, from 12px dates to a 24px total balance" },
+        { sample: "color", label: "Colours", value: "Theme green, price green and red, and light category tints" },
+        { sample: "icons", label: "Icons", value: "Outline icons, one tint per category" },
+      ],
+      note: {
+        title: "Colour carries meaning",
+        body: "Green and red appear only on amounts, so they always mean money in or out. Abrar, a tester with no finance background, said that alone helped him understand what was coming in and going out.",
+      },
+    },
+    {
+      kind: "process",
+      id: "process",
+      nav: "Process",
+      eyebrow: "Process",
+      title: "From a guess about receipts to a tested prototype",
+      intro: "I worked in milestones, and each one ended with a review that changed the next.",
+      steps: [
+        {
+          label: "Choosing the problem",
+          title: "Picking one problem out of 18",
+          body: "I reviewed 18 problem statements and chose expense management for small businesses, then split it into the user's problem and the business goal.",
+          points: ["Fintech", "Small business owners", "India"],
+        },
+        {
+          label: "Hypothesis",
+          title: "Sketching the first guess",
+          body: "My first hypothesis was a scan button that reads a receipt, saves it as an expense and exports a monthly Excel file for the auditor. I sketched it on paper, screen by screen.",
+          details: [
+            "Secondary research on small business finance left me with more questions than answers, and for a while the project stalled. Writing down a hypothesis turned that fog into specific questions I could go and answer.",
+          ],
+          media: exRow("Paper sketches of the first scan flow.", ex("sketch-00"), ex("sketch-02"), ex("sketch-04"), ex("sketch-06")),
+        },
+        {
+          label: "Ambiguities",
+          title: "Turning questions into research",
+          body: "I listed what I didn't know and answered each one before designing further.",
+          points: [
+            "Should an expense tracker track income too?",
+            "What does a GST filing report contain?",
+            "Why does 18% GST show up as 9% and 9%?",
+            "Should a scan block the screen?",
+            "What if a receipt has no invoice or GST number?",
+          ],
+        },
+        {
+          label: "Competitors",
+          title: "Studying five apps",
+          body: "I used Bookipi, FinArt, Zoho Expense, Zenmoney and Axio, noting what each did well and what was missing.",
+          details: [
+            "Zoho Expense showed background scanning, Zenmoney repeat transactions, Bookipi tutorial videos after sign-up, and FinArt and Axio reading bank SMS. Only Zoho could scan receipts, and none of them exported a GST-ready file.",
+          ],
+          media: exRow("Two of the apps I studied: Zoho Expense and Bookipi.", ex("zoho", "Zoho Expense"), ex("bookipi", "Bookipi")),
+        },
+        {
+          label: "Interviews",
+          title: "Talking to five business owners",
+          body: "I started with a printing-company owner and then interviewed four more: an IT services owner, a valve manufacturer that exports 99% of its output, a 40-room hostel owner and a car travel operator.",
+          details: [
+            "Everyone mixed paper and Excel, and the bigger businesses added Tally. Manual entry, lost receipts and the monthly GST rush came up again and again.",
+            "Not everyone wanted automation. Hareendran, the manufacturer, prefers manual entry because “it gives us more control over the data”. That pushed me to make every scan easy to review and correct.",
+          ],
+          points: ["Paper plus Excel everywhere", "Automation only if accurate", "Excel for the accountant", "Reminders and repeats"],
+        },
+        {
+          label: "First cut",
+          title: "The first full version",
+          body: "I designed the first high-fidelity screens around Ravi's filing-day journey, with research notes pinned next to each decision.",
+          media: exRow("Screens from the first cut.", ex("first-home", "Home"), ex("first-scanning", "Scanning"), ex("first-add", "Add transaction"), ex("first-analytics", "Analytics")),
+        },
+        {
+          label: "Testing",
+          title: "Self-review and three usability tests",
+          body: "I reviewed the first cut against consistency, clarity and affordance, had teammates critique it, and gave three people a 14-step task to complete.",
+          details: [
+            "Abrar, with no finance background, didn't know where to start after logging in, which led to onboarding with tutorial videos. Ajay liked the B2B and B2C export and recurring transactions, and asked for bulk import from Excel. Kalim wanted Tally integration and automatic GST calculation.",
+          ],
+          points: [
+            "Scan and home icons both looked active",
+            "Expense and Income as tabs was the wrong pattern",
+            "The icon picker had no signifier",
+            "Filters needed dates and categories",
+          ],
+          media: exRow("Home before and after: the scan and home icons first shared one active colour.", ex("var-home-same", "Before"), ex("home", "After")),
+        },
+        {
+          label: "Final",
+          title: "Covering the edges",
+          body: "Beyond the main journey, the final prototype covers a failed scan, entering income or an expense by hand, and a first-time user flow with sign-in, SMS and location permissions and tutorial videos.",
+          media: exRow("Manual entry and the failed-scan path.", ex("fab-menu", "Add by hand"), ex("manual-record", "Blank expense form"), ex("failed-popup", "When a scan fails")),
+        },
+      ],
+      notes: [
+        {
+          title: "A concept, not a launch",
+          body: "Expenzo was never built or released, so there are no usage numbers. What I can show is the research behind each choice and how testing changed the design.",
+        },
+        {
+          title: "What I'd test next",
+          body: "Whether owners trust a scan enough to skip checking every field, and whether the B2B and B2C groupings match how different accountants want their files.",
+        },
+      ],
+    },
+    {
+      kind: "future",
+      id: "future-scope",
+      nav: "Future Scope",
+      eyebrow: "Future Scope",
+      title: "Where Expenzo could go after the prototype",
+      intro: "These ideas came from interviews, testing and competitors, and were left out to keep the first version focused.",
+      tag: "Next",
+      items: [
+        { title: "Reading bank SMS", body: "FinArt and Axio create transactions from bank messages. For owners who rely on SMS alerts as their record, this would remove even more typing." },
+        { title: "Tally and Excel import", body: "Ajay asked for bulk import, and Kalim and Hareendran both run their books in Tally. Syncing with it would meet them where they already work." },
+        { title: "Copy into the GST tool", body: "The government's offline GST tool accepts data pasted from Excel. A matching export would turn filing into a copy and paste." },
+        { title: "Several people, one account", body: "Let an owner give staff access to add expenses while keeping control of sensitive numbers, as Zoho Books does." },
+        { title: "Matching receipts to the ledger", body: "Check uploaded receipts against existing entries and flag duplicates or mismatches." },
+        { title: "Working offline", body: "Record expenses without a connection and sync later, for owners on the road or with patchy internet." },
+      ],
+    },
+    {
+      kind: "learnings",
+      id: "learnings",
+      nav: "Learnings",
+      eyebrow: "Learnings",
+      title: "What designing for paper-first businesses taught me",
+      items: [
+        { title: "Feeling stuck is part of the work.", body: "The stall after secondary research ended once I wrote down a hypothesis and turned it into questions." },
+        { title: "Real records beat general research.", body: "One expense book and one auditor sheet told me more about the form than any article." },
+        { title: "Ask what people use instead.", body: "When someone doesn't use an app, their notebook or spreadsheet is the real competitor." },
+        { title: "Solve the important 80%.", body: "Testers suggested far more than one version could hold, so I fixed what blocked the main journey and logged the rest." },
+      ],
+    },
+    {
+      kind: "outcome",
+      id: "outcome",
+      nav: "Outcome",
+      eyebrow: "Outcome",
+      title: "From typing every receipt to reviewing what the app read",
+      intro: "Expenzo started as a guess that owners struggle with receipts. Interviews, five competitor apps and three usability tests turned it into a prototype that scans in the background, records expenses in the format accountants use, repeats regular bills and exports a file ready for GST.",
+      before: "Paper ledgers, Excel and a monthly rush",
+      after: "Scan, review, repeat and export in one app",
+      stat: { value: "5", label: "Business owners whose records shaped the design" },
+      feedback: feedback("Would you trust an app to read your receipts?"),
+    },
+  ],
+};
+
+export const caseStudies: CaseStudy[] = [superfansSocialFeed, cartAbandonment, modernCart, expenzo];
 
