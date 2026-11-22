@@ -2,37 +2,84 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Strip · walkthrough</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script>
+  // On a phone, open the app itself full screen, instead of showing a phone inside a phone.
+  if (matchMedia("(max-width: 640px)").matches) location.replace("./app/index.html" + location.search + location.hash);
+</script>
+<title>Strip</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
 <link rel="stylesheet" href="../../shared/player.css" />
 <link rel="stylesheet" href="../../shared/iphone.css" />
+<style>
+  .qv-try {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .qv-try li {
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: var(--bg);
+    font-size: 14px;
+    line-height: 1.45;
+  }
+
+  .qv-try b {
+    display: block;
+    margin-bottom: 2px;
+    font-size: 13px;
+  }
+</style>
 </head>
 <body>
-<div id="wt"></div>
-<script>
-window.WT_CONFIG = {
-  note: "Scanning, reminders and the doctor chat are shown with a made-up patient's data.",
-  variants: [
-    {
-      label: "Phone",
-      frame: "phone",
-      base: "./",
-      data: "./screens.json",
-      stories: [
-        { label: "Lakshmi's story, clinic to follow-up", path: ["Welcome","RxCamera","RxScan","Refill","Scan","Confirm","SetupDone","AddSheet","LabelScan","EdgeLoose","Reminder","Hand","TakenSync","Today","StripView","Assistant","Doctor","Chat","VideoCall","Finished","Family","RefillArun","Rx","Report","RxCamera2","RxChange"] },
-        { label: "What if the foil is torn while scanning", path: ["S1Scan","EdgeScanFail","S1Confirm"] },
-        { label: "What if some tablets are already used", path: ["S2Confirm","EdgeCut","S2SetupDone"] },
-        { label: "What if she isn't sure she took it", path: ["S3Reminder","EdgeMissed","S3TakenSync"] },
-        { label: "What if the dose is half a tablet", path: ["S4Today","EdgeHalf","S4StripView"] },
-        { label: "What if a strip has expired", path: ["S5Finished","EdgeExpired","S5Refill"] },
-        { label: "Raghavan's story, no doctor visit", path: ["H2Welcome","HomeStart","H2Scan","SelfConfirm","OldRx","HomeBox","SyrupView","SyrupStop","BoxSearch"] }
-      ]
-    }
-  ]
-};
-</script>
+<div id="wt">
+  <div class="wt-body">
+    <div class="wt-stage" id="qv-stage"></div>
+    <aside class="wt-panel">
+      <div class="wt-now">
+        <span class="wt-chapter">Live app · Gemini</span>
+        <h1 class="wt-title">Set up your medicines and take a dose</h1>
+        <p class="wt-hint">Prescription and strip photos are read by AI. Everything you add stays in this browser.</p>
+      </div>
+      <ul class="qv-try">
+        <li><b>Start from a prescription</b>Take a photo of a real one, or tap “Use a sample prescription”.</li>
+        <li><b>Add your strips</b>Scan the silver back of a strip, or add each one straight from your plan.</li>
+        <li><b>Take a dose</b>Open the next dose on Today, or tap a pocket on the strip. Half tablets stay half in their pocket.</li>
+        <li><b>Ask, box and family</b>Ask about your medicines, search your medicine box, or share today with family.</li>
+      </ul>
+      <button type="button" class="wt-btn" id="qv-reset">Start over</button>
+    </aside>
+  </div>
+</div>
 <script src="../../shared/iphone.js"></script>
-<script src="../../shared/player.js"></script>
+<script>
+  // The Strip app, running inside an iPhone.
+  const stage = document.getElementById("qv-stage");
+  const phone = IPhone.create({ statusBg: "#F6F5F1", label: "Strip on iPhone" });
+  const frame = document.createElement("iframe");
+  frame.src = "./app/index.html";
+  frame.title = "Strip app";
+  phone.content.appendChild(frame);
+  phone.followIframe(frame);
+  stage.appendChild(phone.holder);
+  function fit() {
+    const r = stage.getBoundingClientRect();
+    phone.fit(r.width - 8, Math.max(r.height, 560) - 8);
+  }
+  window.addEventListener("resize", fit);
+  fit();
+  document.getElementById("qv-reset").onclick = () => {
+    if (!confirm("Clear your plan, strips and history from this browser?")) return;
+    try {
+      localStorage.removeItem("strip-app-v1");
+    } catch {}
+    frame.src = "./app/index.html?r=" + Date.now();
+  };
+</script>
 </body>
 </html>

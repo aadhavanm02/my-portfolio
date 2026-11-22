@@ -209,11 +209,11 @@ const allPlaygroundItems: PlaygroundItem[] = [
     icon: "pill",
     tags: ["Health", "Mobile", "Accessibility"],
     src: "/playground/projects/strip/index.html",
-    preview: "/assets/playground/strip.jpg",
-    note: "Clickable walkthrough of the designs with a made-up patient.",
+    preview: "/assets/playground/strip.jpg?v=2",
+    note: "The working app: scan a prescription or a strip, pop a pocket to log a dose. Photos are read by Gemini.",
     study: {
-      kind: "Concept · mobile",
-      demoNote: "Pick a story and tap through the phone, or use Next step. Lakshmi's story covers a month, and each “What if” shows one edge case.",
+      kind: "Concept · mobile app",
+      demoNote: "This is the working app on an iPhone. Scan a real prescription or use the sample, add your strips, then pop a pocket to log a dose. Prescription and strip photos, and the Ask tab, run on Gemini. Everything stays in this browser.",
       intro: [
         "Most medicine in India comes in foil strips. Tracker apps turn that into a number and a checklist, so the thing in your hand and the thing on screen never match.",
         "Strip scans the real strip, rebuilds it on screen, and lets you pop a tablet to log a dose. What's left is always visible, the way it is on the foil.",
@@ -221,7 +221,7 @@ const allPlaygroundItems: PlaygroundItem[] = [
       facts: [
         { label: "Type", value: "Personal exploration, 2026" },
         { label: "Platform", value: "Mobile, in English, Tamil and Hindi" },
-        { label: "Screens", value: "50 across 2 stories and 5 what-ifs" },
+        { label: "Built", value: "Working app with AI photo reading" },
         { label: "Main persona", value: "Lakshmi, managing 4 medicines" },
       ],
       problem: {
@@ -258,12 +258,14 @@ const allPlaygroundItems: PlaygroundItem[] = [
         ],
       },
       images: [
+        { src: "/assets/playground/strip/app-screens.webp", size: [2180, 893], caption: "The working app: a prescription read from a photo, Today with a strip you can pop, a half dose, the strip report and Ask." },
         { src: "/assets/playground/strip/journey.webp", size: [2000, 1000], caption: "The journey from clinic to follow-up, with the gap found at each stage and how it was fixed." },
         { src: "/assets/playground/strip/stripkit.webp", size: [2000, 1400], caption: "One component draws any strip from four facts: name, tablet colour, tablets per strip and how many are left." },
       ],
       next: [
-        "Build the strip as a real component from those four facts, so any medicine renders correctly.",
         "Test the one-scan setup with older users, in Tamil and Hindi as well as English.",
+        "Real reminders on the phone, and a family view that updates on the caregiver's own phone.",
+        "Look up strip sizes and tablet colours from a medicine database instead of asking the photo.",
       ],
     },
   },
