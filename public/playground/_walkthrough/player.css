@@ -1,0 +1,391 @@
+:root {
+  --ink: #16181d;
+  --muted: #5b5f68;
+  --line: #e2dfd6;
+  --bg: #f4f3ef;
+  --accent: #f06434;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: Inter, system-ui, sans-serif;
+}
+
+#wt {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.wt-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--line);
+  background: #fff;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.wt-banner strong {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: #fff;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.wt-banner__more {
+  color: var(--ink);
+}
+
+.wt-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  gap: 24px;
+  padding: 20px;
+}
+
+.wt-stage {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.wt-device {
+  position: relative;
+  flex: none;
+}
+
+.wt-device > * {
+  transform-origin: top left;
+}
+
+/* Phone: a plain bezel around a 390 x 844 viewport. */
+.wt-device--phone .wt-chrome {
+  display: none;
+}
+
+.wt-device--phone .wt-viewport {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(var(--fw) + 28px);
+  height: calc(var(--fh) + 28px);
+  padding: 14px;
+  border-radius: 56px;
+  background: #111;
+  box-shadow: 0 30px 60px rgb(22 24 29 / 22%);
+  transform: scale(var(--scale));
+}
+
+.wt-device--phone .wt-viewport::before {
+  content: "";
+  position: absolute;
+  inset: 14px;
+  z-index: 0;
+  border-radius: 42px;
+  background: #fff;
+}
+
+.wt-device--phone .wt-screen {
+  border-radius: 42px;
+}
+
+/* Desktop: a browser window. */
+.wt-device--desktop .wt-chrome {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: calc(var(--fw) + 46px);
+  height: 30px;
+  padding: 0 16px;
+  border-radius: 14px 14px 0 0;
+  background: #e6e3dc;
+  transform: scale(var(--scale));
+}
+
+.wt-device--desktop .wt-chrome span {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #cfcac0;
+}
+
+.wt-device--desktop .wt-chrome b {
+  flex: 1;
+  height: 16px;
+  margin-left: 12px;
+  border-radius: 6px;
+  background: #f7f6f2;
+}
+
+.wt-device--desktop .wt-viewport {
+  position: absolute;
+  top: calc(30px * var(--scale));
+  left: 0;
+  width: calc(var(--fw) + 46px);
+  height: calc(var(--fh) + 46px);
+  padding: 0 23px 23px;
+  border-radius: 0 0 14px 14px;
+  background: #e6e3dc;
+  box-shadow: 0 30px 60px rgb(22 24 29 / 18%);
+  transform: scale(var(--scale));
+}
+
+.wt-viewport {
+  overflow: hidden;
+}
+
+.wt-viewport .wt-screen {
+  position: relative;
+  z-index: 1;
+}
+
+/* The scrolling area inside the frame. */
+.wt-device--phone .wt-viewport,
+.wt-device--desktop .wt-viewport {
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.wt-viewport::-webkit-scrollbar {
+  display: none;
+}
+
+.wt-screen {
+  position: relative;
+  overflow: hidden;
+  background: #fff;
+}
+
+.wt-screen img {
+  display: block;
+  width: 100%;
+  height: auto;
+  user-select: none;
+}
+
+.wt-hotspots {
+  position: absolute;
+  inset: 0;
+}
+
+.wt-spot {
+  position: absolute;
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.wt-spot:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.wt-show .wt-spot,
+.wt-flash .wt-spot {
+  background: rgb(240 100 52 / 16%);
+  box-shadow: inset 0 0 0 2px rgb(240 100 52 / 70%);
+}
+
+.wt-nudge .wt-spot {
+  animation: wt-pulse 1.6s ease-in-out 2;
+}
+
+@keyframes wt-pulse {
+  50% {
+    background: rgb(240 100 52 / 18%);
+    box-shadow: inset 0 0 0 2px rgb(240 100 52 / 60%);
+  }
+}
+
+.wt-panel {
+  display: flex;
+  flex: 0 0 300px;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: #fff;
+  align-self: center;
+}
+
+.wt-variants {
+  display: flex;
+  gap: 6px;
+  padding: 4px;
+  border-radius: 999px;
+  background: var(--bg);
+}
+
+.wt-variants[hidden] {
+  display: none;
+}
+
+.wt-chip {
+  flex: 1;
+  min-height: 36px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font: 600 13px Inter, sans-serif;
+  cursor: pointer;
+}
+
+.wt-chip.is-on {
+  background: var(--ink);
+  color: #fff;
+}
+
+.wt-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.wt-story {
+  min-height: 42px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--ink);
+  font: 500 14px Inter, sans-serif;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.wt-now {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.wt-chapter {
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.wt-title {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.3;
+}
+
+.wt-hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.55;
+  white-space: pre-line;
+}
+
+.wt-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.wt-btn {
+  flex: 1;
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--ink);
+  font: 600 14px Inter, sans-serif;
+  cursor: pointer;
+}
+
+.wt-btn--primary {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: #fff;
+}
+
+.wt-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.wt-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.wt-count {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+@media (max-width: 760px) {
+  .wt-body {
+    flex-direction: column;
+    gap: 14px;
+    padding: 12px;
+  }
+
+  .wt-stage {
+    min-height: 520px;
+  }
+
+  .wt-panel {
+    flex: none;
+    align-self: stretch;
+  }
+}
+
+/* Scrolling screen inside the iPhone mockup. */
+.wt-pview {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.wt-pview::-webkit-scrollbar {
+  display: none;
+}
+
+.wt-device[hidden],
+.iph-holder[hidden] {
+  display: none;
+}

@@ -50,6 +50,10 @@ import {
   X,
   MagnifyingGlass,
   Lightbulb,
+  ArrowUpRight,
+  Briefcase,
+  NotePencil,
+  Pill,
 } from "@phosphor-icons/react";
 import {
   caseStudies,
@@ -2938,6 +2942,9 @@ const playgroundIcons: Record<PlaygroundIcon, ReactNode> = {
   notebook: <Notebook size={40} weight="duotone" />,
   chat: <ChatCircleDots size={40} weight="duotone" />,
   exam: <Exam size={40} weight="duotone" />,
+  pill: <Pill size={40} weight="duotone" />,
+  briefcase: <Briefcase size={40} weight="duotone" />,
+  canvas: <NotePencil size={40} weight="duotone" />,
 };
 
 function PlaygroundPlayer({ item, onClose }: { item: PlaygroundItem; onClose: () => void }) {
@@ -3146,10 +3153,18 @@ function PlaygroundCard({ item, onPlay }: { item: PlaygroundItem; onPlay: (item:
         </div>
         {isLive ? (
           <div className="pg-card__footer">
-            <button className="button" onClick={() => onPlay(item)} type="button">
-              <Play aria-hidden="true" size={16} weight="fill" />
-              Play in browser
-            </button>
+            <div className="pg-card__buttons">
+              {item.study ? (
+                <a className="button" href={withBasePath(`/playground/${item.id}`)}>
+                  Read the case study
+                  <ArrowRight aria-hidden="true" size={16} weight="bold" />
+                </a>
+              ) : null}
+              <button className={item.study ? "button button--secondary" : "button"} onClick={() => onPlay(item)} type="button">
+                <Play aria-hidden="true" size={16} weight="fill" />
+                {item.study ? "Play demo" : "Play in browser"}
+              </button>
+            </div>
             {item.note ? <small>{item.note}</small> : null}
           </div>
         ) : (
@@ -3204,6 +3219,143 @@ function PlaygroundPage() {
   );
 }
 
+function PlaygroundStudyPage({ item }: { item: PlaygroundItem }) {
+  const study = item.study!;
+  const demoSrc = withBasePath(item.src ?? "");
+
+  return (
+    <>
+      <Header />
+
+      <main className="page pg-study">
+        <a className="case-back" href={withBasePath("/playground")}>
+          ← All playground
+        </a>
+
+        <header className="pg-study__head">
+          <span className="pg-study__kind">{study.kind}</span>
+          <h1>{item.title}</h1>
+          <p className="pg-study__tagline">{item.tagline}</p>
+          <div className="pg-card__tags">
+            {item.tags.map((tag) => (
+              <span key={tag}>{tag}</span>
+            ))}
+          </div>
+          {study.intro.map((text) => (
+            <p className="pg-study__intro" key={text}>
+              {text}
+            </p>
+          ))}
+          <dl className="pg-study__facts">
+            {study.facts.map((fact) => (
+              <div key={fact.label}>
+                <dt>{fact.label}</dt>
+                <dd>{fact.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </header>
+
+        <section className="pg-study__demo" aria-labelledby="pg-demo-title">
+          <div className="pg-study__demo-head">
+            <div>
+              <p className="section-eyebrow" id="pg-demo-title">
+                Walkthrough
+              </p>
+              <p>{study.demoNote}</p>
+            </div>
+            <a className="button button--secondary" href={demoSrc} rel="noreferrer" target="_blank">
+              Open full screen
+              <ArrowUpRight aria-hidden="true" size={16} weight="bold" />
+            </a>
+          </div>
+          <iframe loading="lazy" src={demoSrc} style={{ height: study.demoHeight ?? 940 }} title={`${item.title} walkthrough`} />
+        </section>
+
+        <section className="pg-study__section">
+          <p className="section-eyebrow">The problem</p>
+          <h2>{study.problem.title}</h2>
+          {study.problem.body.map((text) => (
+            <p key={text}>{text}</p>
+          ))}
+          <div className="pg-study__cards pg-study__cards--2">
+            {study.audience.map((person) => (
+              <article key={person.name}>
+                <h3>{person.name}</h3>
+                <p>{person.body}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="pg-study__section">
+          <p className="section-eyebrow">What I designed</p>
+          <h2>The parts that make it work</h2>
+          <div className="pg-study__cards">
+            {study.features.map((feature) => (
+              <article key={feature.title}>
+                <h3>{feature.title}</h3>
+                <p>{feature.body}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="pg-study__section">
+          <p className="section-eyebrow">Key decisions</p>
+          <h2>Choices that shaped it</h2>
+          <ol className="pg-study__decisions">
+            {study.decisions.map((decision, index) => (
+              <li key={decision.title}>
+                <span className="case-index">{pad(index)}</span>
+                <div>
+                  <h3>{decision.title}</h3>
+                  <p>{decision.body}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section className="pg-study__section">
+          <p className="section-eyebrow">Edge cases</p>
+          <h2>When things go wrong</h2>
+          <p>{study.edges.intro}</p>
+          <ul className="pg-study__edges">
+            {study.edges.items.map((edge) => (
+              <li key={edge}>{edge}</li>
+            ))}
+          </ul>
+        </section>
+
+        <section className="pg-study__section">
+          <p className="section-eyebrow">From the design file</p>
+          <h2>Maps, rules and systems</h2>
+          <div className="pg-study__images">
+            {study.images.map((image) => (
+              <ShotMedia item={{ caption: image.caption, alt: image.caption, src: image.src, size: image.size }} key={image.src} />
+            ))}
+          </div>
+        </section>
+
+        <section className="pg-study__section">
+          <p className="section-eyebrow">What's next</p>
+          <h2>Still in progress</h2>
+          <ul className="pg-study__edges">
+            {study.next.map((text) => (
+              <li key={text}>{text}</li>
+            ))}
+          </ul>
+        </section>
+
+        <ContactPanel id="pg-study-contact-title" />
+      </main>
+
+      <SiteFooter />
+    </>
+  );
+}
+
 function BackToTop() {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -3245,6 +3397,8 @@ function App() {
     page = <SkillsPage />;
   } else if (path === "/playground") {
     page = <PlaygroundPage />;
+  } else if (path.startsWith("/playground/") && playgroundItems.some((item) => item.study && path === `/playground/${item.id}`)) {
+    page = <PlaygroundStudyPage item={playgroundItems.find((item) => path === `/playground/${item.id}`)!} />;
   } else if (path === "/about") {
     page = <AboutPage />;
   }

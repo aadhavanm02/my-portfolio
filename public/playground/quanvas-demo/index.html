@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Quanvas</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+<link rel="stylesheet" href="../_walkthrough/player.css" />
+<link rel="stylesheet" href="../_walkthrough/iphone.css" />
+<style>
+  .qv-try {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .qv-try li {
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: var(--bg);
+    font-size: 14px;
+    line-height: 1.45;
+  }
+
+  .qv-try b {
+    display: block;
+    margin-bottom: 2px;
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+<div id="wt">
+  <div class="wt-body">
+    <div class="wt-stage" id="qv-stage"></div>
+    <aside class="wt-panel">
+      <div class="wt-now">
+        <span class="wt-chapter">Live app · Gemini</span>
+        <h1 class="wt-title">Use it like you would on your phone</h1>
+        <p class="wt-hint">Look-ups are answered live by AI, so they can take a few seconds and can be wrong. Your canvases stay in this browser only.</p>
+      </div>
+      <ul class="qv-try">
+        <li><b>Look anything up</b>Type an item or a question, like “kasuri methi” or “how long to soak chana?”, then tap the Look up pill.</li>
+        <li><b>Get any recipe</b>Type “how to make paneer butter masala”. Open the card to cook step by step or buy the ingredients.</li>
+        <li><b>Ask about a photo or link</b>Use the + button to add a photo of an ingredient, a text file or a recipe link, then tap What is this? or Explain.</li>
+      </ul>
+      <button type="button" class="wt-btn" id="qv-reset">Restart the app</button>
+    </aside>
+  </div>
+</div>
+<script src="../_walkthrough/iphone.js"></script>
+<script>
+  // The real Quanvas web app, running inside an iPhone.
+  const stage = document.getElementById("qv-stage");
+  const phone = IPhone.create({ statusBg: "#F7F8FA", label: "Quanvas on iPhone" });
+  const frame = document.createElement("iframe");
+  frame.src = "./app/index.html";
+  frame.title = "Quanvas app";
+  phone.content.appendChild(frame);
+  phone.followIframe(frame);
+  stage.appendChild(phone.holder);
+  function fit() {
+    const r = stage.getBoundingClientRect();
+    phone.fit(r.width - 8, Math.max(r.height, 560) - 8);
+  }
+  window.addEventListener("resize", fit);
+  fit();
+  document.getElementById("qv-reset").onclick = () => {
+    frame.src = "./app/index.html?r=" + Date.now();
+  };
+</script>
+</body>
+</html>

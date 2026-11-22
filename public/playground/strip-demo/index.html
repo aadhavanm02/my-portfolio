@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Strip · walkthrough</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+<link rel="stylesheet" href="../_walkthrough/player.css" />
+<link rel="stylesheet" href="../_walkthrough/iphone.css" />
+</head>
+<body>
+<div id="wt"></div>
+<script>
+window.WT_CONFIG = {
+  note: "Scanning, reminders and the doctor chat are shown with a made-up patient's data.",
+  variants: [
+    {
+      label: "Phone",
+      frame: "phone",
+      base: "./",
+      data: "./screens.json",
+      stories: [
+        { label: "Lakshmi's story, clinic to follow-up", path: ["Welcome","RxCamera","RxScan","Refill","Scan","Confirm","SetupDone","AddSheet","LabelScan","EdgeLoose","Reminder","Hand","TakenSync","Today","StripView","Assistant","Doctor","Chat","VideoCall","Finished","Family","RefillArun","Rx","Report","RxCamera2","RxChange"] },
+        { label: "What if the foil is torn while scanning", path: ["S1Scan","EdgeScanFail","S1Confirm"] },
+        { label: "What if some tablets are already used", path: ["S2Confirm","EdgeCut","S2SetupDone"] },
+        { label: "What if she isn't sure she took it", path: ["S3Reminder","EdgeMissed","S3TakenSync"] },
+        { label: "What if the dose is half a tablet", path: ["S4Today","EdgeHalf","S4StripView"] },
+        { label: "What if a strip has expired", path: ["S5Finished","EdgeExpired","S5Refill"] },
+        { label: "Raghavan's story, no doctor visit", path: ["H2Welcome","HomeStart","H2Scan","SelfConfirm","OldRx","HomeBox","SyrupView","SyrupStop","BoxSearch"] }
+      ]
+    }
+  ]
+};
+</script>
+<script src="../_walkthrough/iphone.js"></script>
+<script src="../_walkthrough/player.js"></script>
+</body>
+</html>

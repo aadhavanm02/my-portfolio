@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Shortlist</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+<link rel="stylesheet" href="../_walkthrough/player.css" />
+<link rel="stylesheet" href="../_walkthrough/iphone.css" />
+<style>
+  /* The real Shortlist app, shown as a desktop web app in a browser window or on an iPhone. */
+  .sl-browser {
+    position: relative;
+    flex: none;
+    width: 1280px;
+    overflow: hidden;
+    border-radius: 14px;
+    background: #e6e3dc;
+    box-shadow: 0 30px 60px rgb(22 24 29 / 18%);
+    transform-origin: top left;
+  }
+
+  .sl-browser__bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 38px;
+    padding: 0 16px;
+  }
+
+  .sl-browser__bar span {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #cfcac0;
+  }
+
+  .sl-browser__bar b {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    max-width: 420px;
+    height: 24px;
+    margin: 0 auto;
+    border-radius: 7px;
+    background: #f7f6f2;
+    color: #6a6670;
+    font: 500 12px Inter, sans-serif;
+  }
+
+  .sl-browser iframe {
+    display: block;
+    width: 1280px;
+    height: 800px;
+    border: 0;
+    background: #faf8f6;
+  }
+
+  .sl-holder {
+    position: relative;
+    flex: none;
+  }
+
+  .sl-stage [hidden] {
+    display: none;
+  }
+
+  .qv-try {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .qv-try li {
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: var(--bg);
+    font-size: 14px;
+    line-height: 1.45;
+  }
+
+  .qv-try b {
+    display: block;
+    margin-bottom: 2px;
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+<div id="wt">
+  <div class="wt-body">
+    <div class="wt-stage sl-stage" id="stage">
+      <div class="sl-holder" id="deskHolder"><div class="sl-browser" id="desk"><div class="sl-browser__bar" aria-hidden="true"><span></span><span></span><span></span><b>shortlist.app/jobs</b></div></div></div>
+    </div>
+    <aside class="wt-panel">
+      <div class="wt-variants" role="tablist" aria-label="Device">
+        <button type="button" class="wt-chip" role="tab" data-view="desk">Web app</button>
+        <button type="button" class="wt-chip" role="tab" data-view="phone">iPhone</button>
+      </div>
+      <div class="wt-now">
+        <span class="wt-chapter">Live app · Gemini</span>
+        <h1 class="wt-title">Use it like a job seeker would</h1>
+        <p class="wt-hint">Resume reading, tailoring, refining and referral notes run live on AI. Jobs and referrers are example companies. Everything stays in this browser.</p>
+      </div>
+      <ul class="qv-try">
+        <li><b>Start with your resume</b>Upload a PDF or paste the text, or pick the sample profile to jump in.</li>
+        <li><b>Tailor it to a job</b>Open a job, tap Tailor resume, then accept or reject each suggestion.</li>
+        <li><b>Refine with chat</b>Ask for changes in plain words. It won't add anything your resume doesn't support.</li>
+        <li><b>Ask for a referral</b>Open Referrals and send a note to someone with an open slot.</li>
+      </ul>
+      <button type="button" class="wt-btn" id="reset">Start over</button>
+    </aside>
+  </div>
+</div>
+<script src="../_walkthrough/iphone.js"></script>
+<script>
+  const APP = "../shortlist-app/index.html";
+  const stage = document.getElementById("stage");
+  const deskHolder = document.getElementById("deskHolder");
+  const desk = document.getElementById("desk");
+  const phone = IPhone.create({ statusBg: "#FFFFFF", label: "Shortlist on iPhone" });
+  stage.appendChild(phone.holder);
+  const frames = {};
+
+  function frame(view) {
+    if (frames[view]) return frames[view];
+    const f = document.createElement("iframe");
+    f.src = APP;
+    f.title = view === "desk" ? "Shortlist web app" : "Shortlist on iPhone";
+    if (view === "desk") desk.appendChild(f);
+    else {
+      phone.content.appendChild(f);
+      phone.followIframe(f);
+    }
+    return (frames[view] = f);
+  }
+
+  let view = window.matchMedia("(max-width: 760px)").matches ? "phone" : "desk";
+  function show(v) {
+    view = v;
+    frame(v);
+    deskHolder.hidden = v !== "desk";
+    phone.holder.hidden = v !== "phone";
+    document.querySelectorAll("[data-view]").forEach((b) => {
+      b.classList.toggle("is-on", b.dataset.view === v);
+      b.setAttribute("aria-selected", String(b.dataset.view === v));
+    });
+    fit();
+  }
+
+  function fit() {
+    const r = stage.getBoundingClientRect();
+    const h = Math.max(r.height, 520) - 8;
+    if (view === "phone") phone.fit(r.width - 8, h);
+    else {
+      const w = 1280, ht = 838;
+      const s = Math.min(1, (r.width - 8) / w, h / ht);
+      desk.style.transform = `scale(${s})`;
+      deskHolder.style.width = w * s + "px";
+      deskHolder.style.height = ht * s + "px";
+    }
+  }
+
+  document.querySelectorAll("[data-view]").forEach((b) => (b.onclick = () => show(b.dataset.view)));
+  document.getElementById("reset").onclick = () => {
+    if (!confirm("Clear your resume, tailored versions and requests from this browser?")) return;
+    try {
+      localStorage.removeItem("shortlist-app-v1");
+    } catch {}
+    Object.values(frames).forEach((f) => (f.src = APP + "?r=" + Date.now() + "#/welcome"));
+  };
+  window.addEventListener("resize", fit);
+  show(view);
+</script>
+</body>
+</html>
