@@ -52,7 +52,7 @@ export const playgroundItems: PlaygroundItem[] = [
     icon: "briefcase",
     tags: ["AI", "Web and Android", "Two-sided"],
     src: "/playground/shortlist-demo/index.html",
-    preview: "/assets/playground/shortlist.jpg",
+    preview: "/assets/playground/shortlist.jpg?v=2",
     note: "The working app on web and iPhone, with live AI resume reading, tailoring and refining.",
     study: {
       kind: "Concept · web and Android",
