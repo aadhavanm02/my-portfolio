@@ -52,6 +52,7 @@ import {
   Lightbulb,
   ArrowUpRight,
   Briefcase,
+  Books,
   NotePencil,
   Pill,
 } from "@phosphor-icons/react";
@@ -2944,6 +2945,7 @@ const playgroundIcons: Record<PlaygroundIcon, ReactNode> = {
   exam: <Exam size={40} weight="duotone" />,
   pill: <Pill size={40} weight="duotone" />,
   briefcase: <Briefcase size={40} weight="duotone" />,
+  books: <Books size={40} weight="duotone" />,
   canvas: <NotePencil size={40} weight="duotone" />,
 };
 

@@ -1,9 +1,13 @@
 // Playground: things built to explore ideas.
-// "live" items run inside the site from public/playground/<folder>/index.html.
-// "template" items are placeholders, ready to switch to live once a playable build exists:
-// add the build under public/playground/<folder>/, set `src`, and change status to "live".
+// Every project lives in its own folder: public/playground/projects/<name>/.
+//   index.html  the page shown on the site (a phone or browser frame around the app, or the app itself)
+//   app/        the app, when it is shown inside a frame
+// Shared pieces (the iPhone mockup, the walkthrough player) live in public/playground/shared/.
+// Projects sit under projects/ so their folders never cover the /playground/<id> case study pages.
+// "live" items run from `src`. "template" items are placeholders until a playable build exists.
+// Set `hidden: true` to keep a project in the code but leave it off the page.
 
-export type PlaygroundIcon = "cube" | "shirt" | "notebook" | "chat" | "exam" | "pill" | "briefcase" | "canvas";
+export type PlaygroundIcon = "cube" | "shirt" | "notebook" | "chat" | "exam" | "pill" | "briefcase" | "canvas" | "books";
 
 export type PlaygroundItem = {
   id: string;
@@ -22,6 +26,8 @@ export type PlaygroundItem = {
   pending?: string;
   // A short case study, shown on its own page at /playground/<id>.
   study?: PlaygroundStudy;
+  // Kept in the code but not shown on the page.
+  hidden?: boolean;
 };
 
 export type PlaygroundStudy = {
@@ -41,7 +47,89 @@ export type PlaygroundStudy = {
   next: string[];
 };
 
-export const playgroundItems: PlaygroundItem[] = [
+const allPlaygroundItems: PlaygroundItem[] = [
+  {
+    id: "library",
+    title: "The Library",
+    tagline: "A calm neighbourhood library you walk through, borrow from and read in.",
+    description:
+      "A 3D library that runs in the browser on desktop and phone. Make a library card, walk the racks, pick up real public-domain books, sign the register at the issue desk and read with real page turns: two pages on a big screen, one on a phone.",
+    status: "live",
+    icon: "books",
+    tags: ["3D", "Web and phone", "Reading"],
+    src: "/playground/projects/library/index.html",
+    preview: "/assets/playground/library.jpg",
+    note: "Real-time 3D: it takes a few seconds to open, and works best on a recent phone or laptop.",
+    study: {
+      kind: "Concept · 3D web app for desktop and phone",
+      demoNote: "This is the working app. Switch between desktop and iPhone, make your library card and walk in. Arrow keys or WASD on desktop, the joystick on a phone. Only one view runs at a time, and both share your progress.",
+      demoHeight: 860,
+      intro: [
+        "Reading apps show books as a grid of covers. You never wander, never notice the book next to the one you came for, and never have the small ritual of borrowing something and taking it home.",
+        "The Library puts that back. It is a warm, quiet room you walk through in the browser, with signed racks, a librarian at the issue desk and a reading table by the window. Every book in it is in the public domain, so the openings you read are the real text.",
+      ],
+      facts: [
+        { label: "Type", value: "Self-initiated concept" },
+        { label: "Platforms", value: "Web, on desktop and phone" },
+        { label: "Built with", value: "Real-time 3D in the browser" },
+        { label: "Books", value: "40 public-domain titles in 12 sections" },
+      ],
+      problem: {
+        title: "Reading apps are lists. Libraries are places.",
+        body: [
+          "The best part of a library is not search. It is walking past a shelf and stopping, the librarian who remembers you, and the stamp that makes a book yours for two weeks.",
+          "The challenge was to make that feel calm rather than like a game: no score, no quests, no clutter over the room. And it had to work with one thumb on a phone as well as with a keyboard on a laptop.",
+        ],
+      },
+      audience: [
+        { name: "Readers who miss browsing", body: "People who read on a screen but miss stumbling on a book. The racks are grouped like a real library, so wandering is the feature." },
+        { name: "Students meeting the classics", body: "Austen, Tagore, Doyle, Keats and more, with their real opening pages, a link to the full text, and no sign-up." },
+        { name: "People on a phone", body: "A joystick for walking, a card that folds out of the way, and a reader that becomes a single page with large, comfortable text." },
+      ],
+      features: [
+        { title: "Your library card", body: "Pick a name and a look before you walk in. The card stays in the corner with what you are reading, what is in your hands and what you have borrowed." },
+        { title: "A room to walk through", body: "Twelve signed sections, from Classics and Poetry to Indian writing and Science fiction. A map in the corner, name tags on people, and a regular reading in the armchair." },
+        { title: "The issue desk", body: "Hold up to five books, then sign the register. Your name goes in by hand and the librarian stamps it ISSUED, due in 14 days." },
+        { title: "The reading table", body: "Sit down and read for an hour without borrowing. Your seat is saved while the hour runs, even if you get up." },
+        { title: "Take them home", body: "Walk out the front door with your borrowed books and you arrive in your own room, with a desk and a lamp, to keep reading." },
+        { title: "A reader that feels like paper", body: "Page curls you can drag, light, sepia and night themes, text size, and ribbon bookmarks. On a big screen the book opens as two pages; on a phone it is one." },
+      ],
+      decisions: [
+        { title: "A library card, not a game HUD", body: "Everything on top of the room is a library object: a brass plaque for where you are, a library card for your status, a stamp-red badge for counts. Cream paper, library green and stamp red, with a serif for titles and another for reading." },
+        { title: "Real text, or honest samples", body: "Books marked with a ribbon open with their real public-domain text. The others say Sample pages up front and link to the full book on Project Gutenberg, instead of pretending." },
+        { title: "Limits that feel like a library", body: "You can only carry five books, and borrowing means signing the register. The limits are explained the way a librarian would: “Your hands are full. Register or put some back first.”" },
+        { title: "Built for one thumb", body: "On a phone the joystick sits under the right thumb, the card folds into a pill, the map grows when tapped, and prompts sit above the thumb zone. Graphics run a little lighter on touch screens to save battery." },
+        { title: "Two pages on desktop, one on a phone", body: "A wide screen opens the book flat, and the right-hand page turns over the spine with the next page printed on its back. A phone keeps a single page so the text never gets small." },
+        { title: "Never break on a bad save", body: "Progress is saved in the browser and checked every time the app opens, so an old or edited save can't break it. If a device can't run 3D it says so plainly, and reduced motion turns the page-turn animation off." },
+      ],
+      edges: {
+        intro: "The moments that need a clear answer, written in the librarian's voice.",
+        items: [
+          "Hands full: register at the desk or put a book back",
+          "Trying to read a borrowed book while still at the library",
+          "The hour at the reading table runs out",
+          "Returning borrowed books at the desk",
+          "No name on the card: you visit as a guest with a friendly made-up name",
+          "Bookmarks, last page and progress kept for every book",
+          "Start over clears the card, books and bookmarks on this device",
+          "A device that can't start 3D gets a plain message instead of a blank screen",
+        ],
+      },
+      images: [
+        { src: "/assets/playground/library/setup.webp", size: [1600, 1000], caption: "Making your library card. The reader behind it updates as you pick." },
+        { src: "/assets/playground/library/hall.webp", size: [1600, 1000], caption: "The main hall: signed racks, people with name tags and the library card in the corner." },
+        { src: "/assets/playground/library/desk.webp", size: [1600, 1000], caption: "The issue desk and the reading table by the window." },
+        { src: "/assets/playground/library/mybooks.webp", size: [1600, 1000], caption: "My books: what is in your hands and what you have borrowed, with due dates." },
+        { src: "/assets/playground/library/mobile.webp", size: [780, 1688], caption: "On a phone: joystick, a folded library card and a map that grows when tapped." },
+      ],
+      next: [
+        "Full texts for every book, streamed from Project Gutenberg",
+        "A list view of the racks for people who would rather not walk in 3D",
+        "Saving your card across devices",
+        "More rooms: a children's corner and a quiet study",
+      ],
+    },
+  },
   {
     id: "shortlist",
     title: "Shortlist",
@@ -51,7 +139,7 @@ export const playgroundItems: PlaygroundItem[] = [
     status: "live",
     icon: "briefcase",
     tags: ["AI", "Web and Android", "Two-sided"],
-    src: "/playground/shortlist-demo/index.html",
+    src: "/playground/projects/shortlist/index.html",
     preview: "/assets/playground/shortlist.jpg?v=2",
     note: "The working app on web and iPhone, with live AI resume reading, tailoring and refining.",
     study: {
@@ -120,7 +208,7 @@ export const playgroundItems: PlaygroundItem[] = [
     status: "live",
     icon: "pill",
     tags: ["Health", "Mobile", "Accessibility"],
-    src: "/playground/strip-demo/index.html",
+    src: "/playground/projects/strip/index.html",
     preview: "/assets/playground/strip.jpg",
     note: "Clickable walkthrough of the designs with a made-up patient.",
     study: {
@@ -188,7 +276,7 @@ export const playgroundItems: PlaygroundItem[] = [
     status: "live",
     icon: "canvas",
     tags: ["AI", "Mobile", "Working app"],
-    src: "/playground/quanvas-demo/index.html",
+    src: "/playground/projects/quanvas/index.html",
     preview: "/assets/playground/quanvas.jpg",
     note: "The working app, with live AI look-ups, recipes and photo answers from Gemini.",
     study: {
@@ -258,7 +346,9 @@ export const playgroundItems: PlaygroundItem[] = [
     status: "live",
     icon: "cube",
     tags: ["3D", "Computer vision", "Ecommerce"],
-    src: "/playground/photos-to-3d/index.html",
+    src: "/playground/projects/photos-to-3d/index.html",
+    // Hidden for now: the 3D result isn't reliable enough to show.
+    hidden: true,
     preview: "/assets/playground/photos-to-3d.jpg",
     note: "Loads an image model on first use, so it can take a moment.",
   },
@@ -271,7 +361,7 @@ export const playgroundItems: PlaygroundItem[] = [
     status: "live",
     icon: "shirt",
     tags: ["AI", "Ecommerce", "Mobile"],
-    src: "/playground/try-on/index.html",
+    src: "/playground/projects/try-on/index.html",
     preview: "/assets/playground/virtual-try-on.jpg",
     note: "Runs on a free AI server, so a result takes 30 to 90 seconds.",
   },
@@ -284,7 +374,7 @@ export const playgroundItems: PlaygroundItem[] = [
     status: "live",
     icon: "notebook",
     tags: ["Productivity", "Responsive", "Local-first"],
-    src: "/playground/weave-notebook/index.html",
+    src: "/playground/projects/weave-notebook/index.html",
     preview: "/assets/playground/weave-notebook.jpg",
     note: "Saves only in your browser.",
   },
@@ -297,7 +387,7 @@ export const playgroundItems: PlaygroundItem[] = [
     status: "live",
     icon: "chat",
     tags: ["AI", "Search", "Internal tool"],
-    src: "/playground/sop-assistant/index.html",
+    src: "/playground/projects/sop-assistant/index.html",
     preview: "/assets/playground/sop-assistant.jpg",
     note: "Demo with a made-up coffee chain handbook; summaries run in your browser.",
   },
@@ -310,8 +400,11 @@ export const playgroundItems: PlaygroundItem[] = [
     status: "live",
     icon: "exam",
     tags: ["AI", "Learning", "Full stack"],
-    src: "/playground/ai-interview/index.html",
+    src: "/playground/projects/ai-interview/index.html",
     preview: "/assets/playground/ai-interview-practice.jpg",
     note: "Demo version: uses sample questions and scores answers in your browser.",
   },
 ];
+
+// What the Playground page shows. Hidden items stay in the code.
+export const playgroundItems = allPlaygroundItems.filter((item) => !item.hidden);
