@@ -347,6 +347,8 @@ const allPlaygroundItems: PlaygroundItem[] = [
     icon: "cube",
     tags: ["3D", "Ecommerce", "Mobile"],
     src: "/playground/projects/product-3d/index.html",
+    // Hidden for now: Photos to 3D is shown instead.
+    hidden: true,
     preview: "/assets/playground/product-3d.jpg",
     note: "The 3D model is about 8 MB, so it takes a moment on first load.",
   },
@@ -360,8 +362,6 @@ const allPlaygroundItems: PlaygroundItem[] = [
     icon: "cube",
     tags: ["3D", "Computer vision", "Ecommerce"],
     src: "/playground/projects/photos-to-3d/index.html",
-    // Hidden for now: the 3D result isn't reliable enough to show.
-    hidden: true,
     preview: "/assets/playground/photos-to-3d.jpg",
     note: "Loads an image model on first use, so it can take a moment.",
   },
