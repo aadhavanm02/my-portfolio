@@ -3331,8 +3331,8 @@ function PlaygroundStudyPage({ item }: { item: PlaygroundItem }) {
         </section>
 
         <section className="pg-study__section">
-          <p className="section-eyebrow">From the design file</p>
-          <h2>Maps, rules and systems</h2>
+          <p className="section-eyebrow">A closer look</p>
+          <h2>Screens and details</h2>
           <div className="pg-study__images">
             {study.images.map((image) => (
               <ShotMedia item={{ caption: image.caption, alt: image.caption, src: image.src, size: image.size }} key={image.src} />
