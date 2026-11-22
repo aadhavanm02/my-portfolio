@@ -338,6 +338,19 @@ const allPlaygroundItems: PlaygroundItem[] = [
     },
   },
   {
+    id: "product-3d",
+    title: "3D Product View",
+    tagline: "Turn the product around before you buy it.",
+    description:
+      "A phone product page where the photos are a real 3D model. Rotate and zoom the shoe, switch colours and watch the angle shots update, then pick a size. Every thumbnail is rendered from the model, so there is no separate photo shoot.",
+    status: "live",
+    icon: "cube",
+    tags: ["3D", "Ecommerce", "Mobile"],
+    src: "/playground/projects/product-3d/index.html",
+    preview: "/assets/playground/product-3d.jpg",
+    note: "The 3D model is about 8 MB, so it takes a moment on first load.",
+  },
+  {
     id: "photos-to-3d",
     title: "Photos to 3D",
     tagline: "Turn product photos into a 3D model, right in the browser.",
@@ -375,6 +388,8 @@ const allPlaygroundItems: PlaygroundItem[] = [
     icon: "notebook",
     tags: ["Productivity", "Responsive", "Local-first"],
     src: "/playground/projects/weave-notebook/index.html",
+    // Hidden for now: too niche for most visitors.
+    hidden: true,
     preview: "/assets/playground/weave-notebook.jpg",
     note: "Saves only in your browser.",
   },

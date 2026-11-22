@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>3D Product View</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+<link rel="stylesheet" href="../../shared/player.css" />
+<link rel="stylesheet" href="../../shared/iphone.css" />
+<style>
+  .qv-try {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .qv-try li {
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: var(--bg);
+    font-size: 14px;
+    line-height: 1.45;
+  }
+
+  .qv-try b {
+    display: block;
+    margin-bottom: 2px;
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+<div id="wt">
+  <div class="wt-body">
+    <div class="wt-stage" id="qv-stage"></div>
+    <aside class="wt-panel">
+      <div class="wt-now">
+        <span class="wt-chapter">Live 3D product page</span>
+        <h1 class="wt-title">Check the shoe from every side</h1>
+        <p class="wt-hint">A phone product page where the photos are a real 3D model. The model is about 8 MB, so it takes a moment on first load.</p>
+      </div>
+      <ul class="qv-try">
+        <li><b>Open the 3D viewer</b>Tap the shoe or “Tap to view in 3D”. Drag to rotate, pinch or scroll to zoom.</li>
+        <li><b>Change the colour</b>Pick Midnight, Beach or Street. The angle shots below update to match.</li>
+        <li><b>Jump to an angle</b>Tap a thumbnail for the side, back or top view.</li>
+        <li><b>Pick a size</b>Choose a UK size to add it to the bag. Size 11 is sold out.</li>
+      </ul>
+      <button type="button" class="wt-btn" id="qv-reset">Restart the app</button>
+    </aside>
+  </div>
+</div>
+<script src="../../shared/iphone.js"></script>
+<script>
+  // The 3D product page, running inside an iPhone.
+  const stage = document.getElementById("qv-stage");
+  const phone = IPhone.create({ statusBg: "#FFFFFF", label: "3D product view on iPhone" });
+  const frame = document.createElement("iframe");
+  frame.src = "./app/index.html";
+  frame.title = "3D product page";
+  phone.content.appendChild(frame);
+  phone.followIframe(frame);
+  stage.appendChild(phone.holder);
+  function fit() {
+    const r = stage.getBoundingClientRect();
+    phone.fit(r.width - 8, Math.max(r.height, 560) - 8);
+  }
+  window.addEventListener("resize", fit);
+  fit();
+  document.getElementById("qv-reset").onclick = () => {
+    frame.src = "./app/index.html?r=" + Date.now();
+  };
+</script>
+</body>
+</html>
