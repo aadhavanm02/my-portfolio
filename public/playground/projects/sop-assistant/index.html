@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Fernway Store Portal · Handbook Assistant demo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -39,6 +39,12 @@
     .row:first-of-type { border-top: 0; }
     .ok { color: var(--green); font-weight: 600; }
     .warn { color: #b06a12; font-weight: 600; }
+    /* On a phone the assistant opens full screen, clear of the notch and home indicator. */
+    @media (max-width: 640px) {
+      html body #ea-panel { inset: 0 !important; width: 100% !important; max-width: none !important; border: 0 !important; border-radius: 0 !important; }
+      html body #ea-header { padding-top: max(14px, env(safe-area-inset-top)) !important; }
+      html body #ea-input-wrap { padding-bottom: max(11px, env(safe-area-inset-bottom)) !important; }
+    }
     .demo-note {
       margin-top: 24px; padding: 14px 16px; border-radius: 12px;
       background: #eef4f0; color: var(--green-dark); font-size: 13px; line-height: 1.5;

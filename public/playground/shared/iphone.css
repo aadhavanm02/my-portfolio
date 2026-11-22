@@ -4,11 +4,14 @@
 .iph {
   --iph-status-bg: #fff;
   --iph-status-ink: #0b0b0c;
+  --iph-bottom-bg: #fff;
+  --iph-home: #0b0b0c;
+  --iph-h: 844px;
   position: relative;
   flex: none;
   box-sizing: content-box;
   width: 390px;
-  height: 844px;
+  height: var(--iph-h);
   padding: 13px;
   border-radius: 68px;
   background: #0a0a0b;
@@ -105,23 +108,30 @@
   background: var(--iph-status-bg);
 }
 
+/* The home indicator gets its own strip, so app content always ends above it. */
+.iph__safe {
+  position: relative;
+  z-index: 4;
+  flex: none;
+  height: 24px;
+  background: var(--iph-bottom-bg);
+  transition: background 0.2s;
+}
+
 .iph__home {
   position: absolute;
   bottom: 8px;
   left: 50%;
-  z-index: 4;
   width: 136px;
   height: 5px;
   border-radius: 3px;
-  background: #0b0b0c;
+  background: var(--iph-home);
   opacity: 0.85;
   transform: translateX(-50%);
   pointer-events: none;
 }
 
-.iph--dark .iph__home {
-  background: #fff;
-}
+
 
 /* Wrapper that holds the scaled phone at its scaled size, so layouts flow around it. */
 .iph-holder {
@@ -131,6 +141,11 @@
 
 /* Overlay mode: for full-height 390 x 844 screens that already leave room at the top, the
    status bar floats over the screen like it does on a real phone. */
+.iph--overlay {
+  /* Full-height 844 screens plus the home indicator strip below them. */
+  --iph-h: 868px;
+}
+
 .iph--overlay .iph__status {
   position: absolute;
   top: 0;

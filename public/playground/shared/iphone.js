@@ -6,6 +6,7 @@
 (function () {
   const W = 390 + 26;
   const H = 844 + 26;
+  const H_OVERLAY = 868 + 26;
 
   const icons =
     // Signal bars
@@ -35,7 +36,7 @@
         <div class="iph__screen">
           <div class="iph__status" aria-hidden="true"><span class="iph__time"></span><span class="iph__island"></span><span class="iph__icons">${icons}</span></div>
           <div class="iph__content"></div>
-          <span class="iph__home" aria-hidden="true"></span>
+          <div class="iph__safe" aria-hidden="true"><span class="iph__home"></span></div>
         </div>
       </div>`;
     const phone = holder.firstElementChild;
@@ -44,6 +45,7 @@
     time.textContent = clock();
     clocks.add(time);
 
+    const h = opts.overlay ? H_OVERLAY : H;
     const api = {
       holder,
       phone,
@@ -51,28 +53,41 @@
       setStatus(bg, ink) {
         if (bg) phone.style.setProperty("--iph-status-bg", bg);
         phone.style.setProperty("--iph-status-ink", ink || (isDark(bg) ? "#fff" : "#0b0b0c"));
-        phone.classList.toggle("iph--dark", isDark(bg));
+      },
+      // The strip behind the home indicator matches the bottom of the app; the bar flips to
+      // white on dark apps, like iOS.
+      setBottom(bg) {
+        if (!bg) return;
+        phone.style.setProperty("--iph-bottom-bg", bg);
+        phone.style.setProperty("--iph-home", isDark(bg) ? "#ffffff" : "#0b0b0c");
       },
       // Scale the phone to fit a box; it never grows past its real size.
       fit(maxW, maxH) {
-        const s = Math.min(1, maxW / (W + 12), maxH / (H + 12));
+        const s = Math.min(1, maxW / (W + 12), maxH / (h + 12));
         phone.style.transform = `translate(${6 * s}px, ${6 * s}px) scale(${s})`;
         holder.style.width = (W + 12) * s + "px";
-        holder.style.height = (H + 12) * s + "px";
+        holder.style.height = (h + 12) * s + "px";
         return s;
       },
       // For a same-origin iframe: keep the status bar the same colour as whatever is at the top
       // of the app right now (a header, a dark camera view, a dimmed sheet), like iOS does.
       followIframe(iframe) {
         let last = "";
+        let lastB = "";
         const sync = () => {
           try {
             const doc = iframe.contentDocument;
             if (!doc || !doc.body) return;
-            const color = topColor(doc, iframe.contentWindow);
+            const win = iframe.contentWindow;
+            const color = colorAt(doc, win, 1);
             if (color && color !== last) {
               last = color;
               api.setStatus(color);
+            }
+            const bottom = colorAt(doc, win, win.innerHeight - 1);
+            if (bottom && bottom !== lastB) {
+              lastB = bottom;
+              api.setBottom(bottom);
             }
           } catch {}
         };
@@ -88,15 +103,19 @@
       },
       // For screenshots: read the colour of the image's top edge.
       followImage(img) {
+        const pick = (y) => {
+          const c = document.createElement("canvas");
+          c.width = 1;
+          c.height = 1;
+          const g = c.getContext("2d");
+          g.drawImage(img, 12, y, 1, 1, 0, 0, 1, 1);
+          const [r, gg, b] = g.getImageData(0, 0, 1, 1).data;
+          return "#" + [r, gg, b].map((v) => v.toString(16).padStart(2, "0")).join("");
+        };
         const sync = () => {
           try {
-            const c = document.createElement("canvas");
-            c.width = 1;
-            c.height = 1;
-            const g = c.getContext("2d");
-            g.drawImage(img, 12, 4, 1, 1, 0, 0, 1, 1);
-            const [r, gg, b] = g.getImageData(0, 0, 1, 1).data;
-            api.setStatus("#" + [r, gg, b].map((v) => v.toString(16).padStart(2, "0")).join(""));
+            api.setStatus(pick(4));
+            api.setBottom(pick(Math.max(0, img.naturalHeight - 3)));
           } catch {}
         };
         img.addEventListener("load", sync);
@@ -109,9 +128,9 @@
 
   // Colour a viewer sees at the very top of a page: the element there, its parents, and any
   // see-through layers (like a sheet's dark backdrop) blended together.
-  function topColor(doc, win) {
+  function colorAt(doc, win, y) {
     const x = Math.min(24, win.innerWidth / 2);
-    const stack = doc.elementsFromPoint ? doc.elementsFromPoint(x, 1) : [doc.elementFromPoint(x, 1)];
+    const stack = doc.elementsFromPoint ? doc.elementsFromPoint(x, y) : [doc.elementFromPoint(x, y)];
     const layers = [];
     const seen = new Set();
     for (const start of stack) {

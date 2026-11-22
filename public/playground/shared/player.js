@@ -52,8 +52,15 @@
   const phone = window.IPhone.create({ statusBg: cfg.statusBg || "#ffffff", label: "Phone", overlay: true });
   phone.followImage(img);
   const phoneView = el("div", "wt-pview");
-  phone.content.appendChild(phoneView);
-  $(".wt-stage").appendChild(phone.holder);
+  // On a real phone the screens fill the display, with no mockup around them.
+  const onPhone = matchMedia("(max-width: 640px)").matches;
+  if (onPhone) {
+    root.classList.add("wt-phone");
+    $(".wt-stage").appendChild(phoneView);
+  } else {
+    phone.content.appendChild(phoneView);
+    $(".wt-stage").appendChild(phone.holder);
+  }
 
   async function loadVariant(i) {
     const v = cfg.variants[i];
@@ -109,7 +116,8 @@
     if (!s) return;
     const stage = $(".wt-stage").getBoundingClientRect();
     if (v.frame === "phone") {
-      phone.fit(stage.width - 8, Math.max(stage.height, 480) - 8);
+      if (onPhone) root.style.setProperty("--z", Math.min(stage.width / 390, stage.height / s.h));
+      else phone.fit(stage.width - 8, Math.max(stage.height, 480) - 8);
       return;
     }
     const frameW = v.frame === "desktop" ? Math.min(s.w, 1440) : 390;
@@ -132,7 +140,7 @@
     const isPhone = variant().frame === "phone";
     device.className = "wt-device wt-device--" + variant().frame;
     device.hidden = isPhone;
-    phone.holder.hidden = !isPhone;
+    phone.holder.hidden = !isPhone || onPhone;
     viewport = isPhone ? phoneView : deskViewport;
     if (screenEl.parentElement !== viewport) viewport.appendChild(screenEl);
     img.src = variant().base + "screens/" + s.id + ".webp";

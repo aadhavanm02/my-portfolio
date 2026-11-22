@@ -184,6 +184,36 @@ details[open] summary{margin-bottom:10px}
 .ptoast.show{opacity:1;transform:translate(-50%,0)}
 #resLayer:not([hidden]) ~ .ptoast{bottom:160px}
 .note{font-size:12px;color:var(--muted);max-width:360px;text-align:center;margin:0}
+
+/* Home indicator: the phone keeps its own strip for it, so nothing sits under the bar. */
+.screen{background:var(--surface)}
+.screen>.scroll,.screen>.buy,.screen>.layer,.screen>.full{bottom:24px}
+.screen>.buy{padding-bottom:10px}
+.home{bottom:10px;opacity:.5}
+.screen:has(>.full:not([hidden])){background:#0d0f12}
+.screen:has(>.full:not([hidden])) .home{background:#fff}
+.screen:has(.gallery.expanded){background:var(--tile)}
+.sheet{padding-bottom:18px}
+.fullfoot,.resfoot{padding-bottom:16px}
+.ptoast{bottom:120px}
+
+/* On a real phone the shopper's page fills the screen, like the app it is. */
+@media (max-width:640px){
+  .wrap{display:flex;flex-direction:column;gap:20px;padding:0 0 32px}
+  .caption{display:none}
+  .phone{width:100%;max-width:none;aspect-ratio:auto;height:100svh;padding:0;border-radius:0;box-shadow:none;background:none}
+  .screen{border-radius:0}
+  .notch,.sbar,.home{display:none}
+  .screen>.scroll,.screen>.buy,.screen>.layer,.screen>.full{bottom:0}
+  .screen>.scroll{padding-top:env(safe-area-inset-top)}
+  .screen>.buy{padding-bottom:max(10px,env(safe-area-inset-bottom))}
+  .sheet,.fullfoot,.resfoot{padding-bottom:max(24px,calc(env(safe-area-inset-bottom) + 12px))}
+  .vbottom{bottom:max(16px,calc(env(safe-area-inset-bottom) + 8px))}
+  .fullbar,.vtop{padding-top:max(12px,env(safe-area-inset-top))}
+  .side{order:-1}
+  .panel{margin:0 16px}
+  .ptoast{bottom:calc(84px + env(safe-area-inset-bottom))}
+}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
 </style>
 

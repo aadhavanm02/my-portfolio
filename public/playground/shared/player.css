@@ -389,3 +389,92 @@ body {
 .iph-holder[hidden] {
   display: none;
 }
+
+/* Real phones: the screen fills the display and the controls fold into one bar. */
+.wt-phone .wt-banner,
+.wt-phone .wt-variants,
+.wt-phone .wt-chapter,
+.wt-phone .wt-hint,
+.wt-phone .wt-restart,
+.wt-phone .wt-toggle,
+.wt-phone .wt-count,
+.wt-phone .wt-field > span {
+  display: none;
+}
+
+.wt-phone .wt-body {
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+}
+
+.wt-phone .wt-stage {
+  flex: 1;
+  min-height: 0;
+  align-items: stretch;
+  justify-content: flex-start;
+}
+
+.wt-phone .wt-pview {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.wt-phone .wt-screen {
+  zoom: var(--z, 1);
+}
+
+.wt-phone .wt-panel {
+  flex: none;
+  flex-flow: row wrap;
+  align-items: center;
+  align-self: stretch;
+  gap: 8px;
+  padding: 8px 12px max(10px, env(safe-area-inset-bottom));
+  border: 0;
+  border-top: 1px solid var(--line);
+  border-radius: 0;
+}
+
+.wt-phone .wt-field {
+  order: 1;
+  flex: 1 1 100%;
+}
+
+.wt-phone .wt-story {
+  min-height: 36px;
+  font-size: 13px;
+}
+
+.wt-phone .wt-actions {
+  display: contents;
+}
+
+.wt-phone .wt-back {
+  order: 2;
+  flex: none;
+  min-height: 40px;
+  padding: 0 14px;
+}
+
+.wt-phone .wt-now {
+  order: 3;
+  flex: 1;
+  min-width: 0;
+}
+
+.wt-phone .wt-title {
+  overflow: hidden;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wt-phone .wt-next {
+  order: 4;
+  flex: none;
+  min-height: 40px;
+  padding: 0 16px;
+}

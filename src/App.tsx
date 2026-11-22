@@ -3180,6 +3180,15 @@ function PlaygroundCard({ item, onPlay }: { item: PlaygroundItem; onPlay: (item:
 function PlaygroundPage() {
   const [activeItem, setActiveItem] = useState<PlaygroundItem | null>(null);
   const liveCount = playgroundItems.filter((item) => item.status === "live").length;
+  // On a phone, open the project itself full screen, like opening an app; back returns here.
+  // On larger screens it plays in a window on this page.
+  function playItem(item: PlaygroundItem) {
+    if (item.src && window.matchMedia("(max-width: 640px)").matches) {
+      window.location.href = withBasePath(item.src);
+      return;
+    }
+    setActiveItem(item);
+  }
   const closePlayer = useCallback(() => setActiveItem(null), []);
 
   return (
@@ -3207,7 +3216,7 @@ function PlaygroundPage() {
 
         <div className="pg-grid">
           {playgroundItems.map((item) => (
-            <PlaygroundCard item={item} key={item.id} onPlay={setActiveItem} />
+            <PlaygroundCard item={item} key={item.id} onPlay={playItem} />
           ))}
         </div>
 
