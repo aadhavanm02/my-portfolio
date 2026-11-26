@@ -1464,6 +1464,68 @@ const modernCart: CaseStudy = {
 };
 
 // Built from the "Social Feed Case Study" doc. The brand and people in the walkthrough are made up.
+const SF_VERSION = "2026-11-26";
+
+const sfSizes = {
+  "a-comment": [750, 1627],
+  "a-feed": [750, 1627],
+  "a-post": [750, 1627],
+  "ac-except": [1920, 1428],
+  "ac-only": [1920, 1428],
+  banner: [1920, 1280],
+  "d-error": [1920, 1545],
+  "d-grid": [1920, 1428],
+  "d-import": [1920, 1428],
+  "d-link": [1920, 1428],
+  "d-linked": [1920, 1428],
+  "d-loading": [1920, 1545],
+  "d-newpost": [1920, 1527],
+  "d-reports": [1920, 1428],
+  "d-single": [1920, 1428],
+  log: [1334, 3184],
+  "m-multi": [1920, 1428],
+  "m-reported": [1920, 1428],
+  "m-review": [1920, 1428],
+  "m-reviewed": [1920, 1428],
+  "m-settings": [1920, 1428],
+  "o-pdp": [750, 1626],
+  "o-sheet": [750, 1627],
+  "o-swipe": [750, 1627],
+  "p-caption": [750, 1624],
+  "p-comments": [750, 1626],
+  "p-delete": [750, 1626],
+  "p-empty": [750, 1626],
+  "p-feed-paused": [750, 1624],
+  "p-feed": [750, 1624],
+  "p-highlight": [750, 1624],
+  "p-own": [750, 1626],
+  "p-replies": [750, 1626],
+  "p-report": [750, 1626],
+  "p-report2": [750, 1626],
+  "pdp-feed": [750, 1626],
+  "pdp-post": [750, 1626],
+  polls: [2000, 1745],
+  qa: [2600, 1049],
+  "u-caption": [750, 1626],
+  "u-edit": [750, 1627],
+  "u-large": [750, 1626],
+  "u-multi": [750, 1626],
+  "u-picker": [750, 1626],
+  "u-posted": [750, 1627],
+  "u-preview": [750, 1626],
+  "u-rejected": [750, 1626],
+  "u-review": [750, 1626],
+  "u-search": [750, 1626],
+  "u-unsupported": [750, 1626],
+} as const;
+
+type SfShot = keyof typeof sfSizes;
+
+const sfIsPhone = (size: readonly [number, number]) => size[1] > size[0] * 1.6;
+const sf = (name: SfShot, label?: string, status?: MediaFrame["status"]): MediaFrame => ({ src: `/assets/superfans/${name}.webp?v=${SF_VERSION}`, size: [...sfSizes[name]] as [number, number], label, status });
+const sfShot = (caption: string, name: SfShot): MediaItem => ({ caption, alt: caption, src: sf(name).src, size: sf(name).size, phone: sfIsPhone(sfSizes[name]) });
+const sfRow = (caption: string, ...row: MediaFrame[]): MediaItem => ({ caption, alt: caption, row, phone: row.every((f) => sfIsPhone(f.size)) });
+
 const superfansDecisions: DecisionItem[] = [
   {
     title: "Why the dashboard shows posts as a grid, not a table",
@@ -1498,7 +1560,7 @@ const superfansDecisions: DecisionItem[] = [
     result: [
       "The grid and single post view became the base for everything that followed in the dashboard, from comments to Instagram import.",
     ],
-    media: [{ caption: "The early table version.", status: "dropped" }, { caption: "The grid view.", status: "shipped" }],
+    media: [{ ...sfShot("The grid view that shipped.", "d-grid"), status: "shipped" }],
   },
   {
     title: "Why we improved the post view instead of redesigning it",
@@ -1531,7 +1593,7 @@ const superfansDecisions: DecisionItem[] = [
       "I added a simple header to the post: its title, when it was posted, likes and comments, and a menu for Edit, Copy Post ID, Hide and Delete. I also explored showing post metrics (CTR, unique views, likes, comments) in the same header.",
     ],
     result: ["The improved header shipped. The metrics version is a next step the team may add later."],
-    media: [{ caption: "The tabs exploration.", status: "dropped" }, { caption: "The YouTube Shorts exploration.", status: "dropped" }, { caption: "The improved header.", status: "shipped" }],
+    media: [{ ...sfShot("The single post view with the improved header that shipped.", "d-single"), status: "shipped" }],
   },
   {
     title: "Why moderation uses a dropdown, not tick and cross buttons",
@@ -1568,7 +1630,7 @@ const superfansDecisions: DecisionItem[] = [
       "The PM signed off on the updated design the next day, and the dropdown version shipped.",
       "A tick could mean “reviewed” or “visible”, and a written label removes that guess, even if it costs one more click.",
     ],
-    media: [{ caption: "The tick and cross exploration.", status: "dropped" }, { caption: "The status dropdown.", status: "shipped" }],
+    media: [{ ...sfShot("The status dropdown that shipped, in the Reported tab.", "m-reported"), status: "shipped" }],
   },
 ];
 
@@ -1580,7 +1642,7 @@ const superfansSocialFeed: CaseStudy = {
     "A shoppable short video feed inside brands' own apps, where shoppers watch, comment, buy and post, and merchants keep it safe from the Superfans dashboard.",
   proof: "Shipped across iOS, Android and the merchant dashboard.",
   tone: "violet",
-  image: "/assets/superfans-dashboard.png",
+  image: "/assets/superfans/overview.webp?v=2026-11-26",
   imageClass: "project-image--superfans",
   headline: "Bringing shoppable short video to Superfans, the app builder behind 5,000+ Shopify brands",
   hook: "Shoppers spend hours scrolling videos on Instagram and TikTok. Superfans wanted that same feed inside every brand's own app, where every video could be shopped.",
@@ -1597,8 +1659,8 @@ const superfansSocialFeed: CaseStudy = {
   ],
   meta: [],
   hero: {
-    caption: "The shopper's feed on a phone, next to the merchant's Social Feed dashboard.",
-    src: "/assets/superfans-dashboard.png",
+    caption: "The merchant's Social Feed dashboard: a post in the phone preview beside its comments.",
+    src: "/assets/superfans/overview.webp?v=2026-11-26",
   },
   sections: [
     {
@@ -1670,22 +1732,22 @@ const superfansSocialFeed: CaseStudy = {
             {
               title: "Brings in Instagram videos",
               body: "Links the brand's account, opens the import window and picks two recent videos from Your Posts, without creating anything new.",
-              media: { caption: "Link Account and the Instagram import modal." },
+              media: sfShot("The Instagram import modal, after linking the account.", "d-import"),
             },
             {
               title: "Publishes a post of her own",
               body: "Adds a video, writes a description, tags the sweatshirt and sets it visible, with a phone preview beside the form.",
-              media: { caption: "New Post panel with the phone preview." },
+              media: sfShot("New Post panel with the phone preview.", "d-newpost"),
             },
             {
               title: "Sees everything at a glance",
               body: "The grid shows every post; opening one shows the video beside its comments, with likes and a menu to edit, hide or delete.",
-              media: { caption: "Grid view and the single post view." },
+              media: sfShot("The grid view of every post.", "d-grid"),
             },
             {
               title: "Keeps the feed safe",
               body: "A reported comment is hidden automatically. She reviews it in the Reported tab and decides who can see the feed at all.",
-              media: { caption: "Reported tab, review modal and Feed Access Controls." },
+              media: sfShot("Reviewing a reported post.", "m-review"),
             },
           ],
         },
@@ -1697,22 +1759,22 @@ const superfansSocialFeed: CaseStudy = {
             {
               title: "Finds the feed",
               body: "A new Feed tab sits in the bottom bar, and a short hint shows him he can swipe up for more.",
-              media: { caption: "Feed tab with the swipe up hint." },
+              media: sfRow("Feed tab with the swipe up hint.", sf("p-feed"), sf("o-swipe")),
             },
             {
               title: "Watches and shops",
               body: "A video shows the sweatshirt he's been eyeing, tagged right on it. He taps the tag and adds it to his cart.",
-              media: { caption: "Feed video with the product tag." },
+              media: sfRow("Feed video with the product tag.", sf("u-posted"), sf("p-caption")),
             },
             {
               title: "Joins the conversation",
               body: "Asks about sizing and replies to another shopper. A notification later brings him back to his highlighted reply.",
-              media: { caption: "Comments sheet and the highlighted comment." },
+              media: sfRow("Comments sheet and the highlighted comment.", sf("p-comments"), sf("p-highlight")),
             },
             {
               title: "Posts his own video",
               body: "A week later he posts a video of his new sweatshirt from the product page, with the product already tagged.",
-              media: { caption: "Posting from the product page." },
+              media: sfRow("Posting from the product page.", sf("pdp-feed"), sf("pdp-post")),
             },
           ],
         },
@@ -1735,7 +1797,7 @@ const superfansSocialFeed: CaseStudy = {
           why: "Borrowing a pattern shoppers use every day means nothing new to learn.",
           after: "A Feed tab with a full screen vertical video feed.",
           highlights: ["Feed tab", "Full screen", "Vertical video"],
-          media: { caption: "Bottom bar with the Feed tab, and the feed screen." },
+          media: sfRow("The feed with the Feed tab in the bottom bar, playing and paused.", sf("p-feed"), sf("p-feed-paused")),
         },
         {
           area: "App",
@@ -1745,7 +1807,7 @@ const superfansSocialFeed: CaseStudy = {
           why: "Watching turns into buying without leaving the feed.",
           after: "From watching to the product page in one tap.",
           highlights: ["Product tag", "Likes and comments", "Expandable caption", "Play and pause"],
-          media: { caption: "A feed video, annotated." },
+          media: sfRow("A product tag on the video, and the expanded caption.", sf("u-posted"), sf("p-caption")),
         },
         {
           area: "App",
@@ -1755,7 +1817,7 @@ const superfansSocialFeed: CaseStudy = {
           why: "Covering every state makes the conversation feel trustworthy.",
           after: "A complete comments system, down to notifications.",
           highlights: ["Replies", "Edit and delete", "Report with reason", "Highlighted from notifications"],
-          media: { caption: "Comments sheet, report flow and highlighted comment." },
+          media: sfRow("Comments, reporting with a reason, the confirmation and a highlighted comment.", sf("p-comments"), sf("p-report"), sf("p-report2"), sf("p-highlight")),
         },
         {
           area: "Posting",
@@ -1765,7 +1827,7 @@ const superfansSocialFeed: CaseStudy = {
           why: "A shopper should always know what happened to their post.",
           after: "A full posting flow, with every state after posting covered.",
           highlights: ["Multiple product tags", "Under review", "Upload failed", "First time flow"],
-          media: { caption: "The posting flow from file picker to posted." },
+          media: sfRow("The posting flow: file picker, a file that is too large, tagging products, preview and under review.", sf("u-picker"), sf("u-large"), sf("u-multi"), sf("u-preview"), sf("u-review")),
         },
         {
           area: "Posting",
@@ -1775,7 +1837,7 @@ const superfansSocialFeed: CaseStudy = {
           why: "Meeting shoppers in the moment removes a step.",
           after: "Share a product right where you're looking at it.",
           highlights: ["Feed icon on the product page", "Product pre-tagged"],
-          media: { caption: "Product page with the feed icon, then the posting screen." },
+          media: sfRow("Customer posts on the product page, then the posting screen with the product tagged.", sf("pdp-feed"), sf("pdp-post")),
         },
         {
           area: "Onboarding",
@@ -1785,7 +1847,7 @@ const superfansSocialFeed: CaseStudy = {
           why: "Light hints where shoppers already are beat a long tutorial.",
           after: "Light entry points that explain the feed where shoppers already are.",
           highlights: ["Swipe up hint", "Intro sheet", "Feed section on the PDP", "Feature banner"],
-          media: { caption: "Onboarding sheet and the feature banner." },
+          media: { ...sfRow("The Introducing Social Feed sheet, the version on the product page, and the feature banner.", sf("o-sheet"), sf("o-pdp"), sf("banner")), phone: false },
         },
         {
           area: "App",
@@ -1794,7 +1856,7 @@ const superfansSocialFeed: CaseStudy = {
           did: "Designed blocks that fill a slot like a video: a single choice poll (“What matters most in your scrubs?”) that reveals how others voted, and a this or that question with two product images, each built custom per brand.",
           why: "People answer more readily when a question feels like part of the scroll.",
           after: "First hand data, collected inside the feed itself.",
-          media: { caption: "The poll and the this or that block in the feed." },
+          media: sfShot("The poll, this or that and open question blocks, before and after answering.", "polls"),
           highlights: ["Single choice poll", "This or that", "Custom per brand"],
         },
         {
@@ -1806,7 +1868,7 @@ const superfansSocialFeed: CaseStudy = {
           before: "The app builder's block layout, then a table of posts.",
           after: "A grid of thumbnails and a single post view beside its comments.",
           highlights: ["Grid view", "Single post view", "Phone preview"],
-          media: { caption: "Grid view and single post view." },
+          media: sfRow("Grid view and single post view.", sf("d-grid"), sf("d-single")),
         },
         {
           area: "Dashboard",
@@ -1816,7 +1878,7 @@ const superfansSocialFeed: CaseStudy = {
           why: "Seeing the result while editing removes guesswork.",
           after: "Everything about a post in one panel, with a live preview.",
           highlights: ["Redirection", "Likes and comments toggles", "Conditional visibility", "Live preview"],
-          media: { caption: "New Post panel with the preview." },
+          media: sfRow("New Post panel with the preview, and the error state for a file that is too large.", sf("d-newpost"), sf("d-error")),
         },
         {
           area: "Dashboard",
@@ -1826,7 +1888,7 @@ const superfansSocialFeed: CaseStudy = {
           why: "What brands already have fills the feed in a few clicks.",
           after: "Existing Instagram videos fill the feed in a few clicks.",
           highlights: ["Link account", "Your and tagged posts", "Multi-select"],
-          media: { caption: "Link Account, then the import modal." },
+          media: sfRow("Link Account, then the import modal.", sf("d-link"), sf("d-import")),
         },
         {
           area: "Dashboard",
@@ -1836,7 +1898,7 @@ const superfansSocialFeed: CaseStudy = {
           why: "Brands that answer shoppers build the community they want.",
           after: "Merchants take part in the conversation and see what's been reported.",
           highlights: ["Reply", "Edit and delete", "Report counts and reasons"],
-          media: { caption: "Comments in the single post view, and report details." },
+          media: sfRow("Comments in the single post view, and report details.", sf("d-single"), sf("d-reports")),
         },
         {
           area: "Moderation",
@@ -1846,7 +1908,7 @@ const superfansSocialFeed: CaseStudy = {
           why: "Hiding first and deciding later protects the community without slowing merchants down.",
           after: "A review queue where reported content waits hidden until a merchant decides.",
           highlights: ["Auto hidden", "Reported tab", "Bulk select", "Reviewed tab"],
-          media: { caption: "Reported tab and the review modal." },
+          media: sfRow("Reported tab with bulk select, and the review modal.", sf("m-multi"), sf("m-review")),
         },
         {
           area: "Access",
@@ -1855,7 +1917,7 @@ const superfansSocialFeed: CaseStudy = {
           did: "Designed Feed Access Controls with Everyone, Everyone except specific customers, or Only specific customers, using segments. Restricted shoppers see clear app states for posting, commenting or both.",
           why: "When access is limited, shoppers should know why instead of hitting a wall.",
           after: "Brands decide who can view, post and comment, and the app explains it.",
-          media: { caption: "Access control options and the restricted views in the app." },
+          media: { ...sfRow("Access control options, and the restricted views in the app.", sf("ac-only"), sf("a-comment"), sf("a-feed")), phone: false },
           highlights: ["Everyone", "Everyone except", "Only specific customers", "Restricted states"],
         },
         {
@@ -1866,7 +1928,7 @@ const superfansSocialFeed: CaseStudy = {
           why: "Owning quality through the build is part of the job.",
           after: "Every area reviewed against the designs before it was called done.",
           highlights: ["App", "Dashboard", "Posting", "Moderation", "Feed settings"],
-          media: { caption: "A few rows from a QA feedback sheet." },
+          media: sfShot("A few rows from a QA feedback sheet.", "qa"),
         },
       ],
     },
@@ -1907,7 +1969,7 @@ const superfansSocialFeed: CaseStudy = {
           body: "Once each area was built, I reviewed it against the designs and logged every issue with a screenshot and the matching design for developers to fix. Most issues were visual: spacing, alignment and states that didn't match.",
         },
       ],
-      media: { caption: "The version log cards from the dashboard." },
+      media: sfShot("The version log cards from the design file.", "log"),
     },
     {
       kind: "future",

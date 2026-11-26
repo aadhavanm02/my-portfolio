@@ -1829,13 +1829,14 @@ function ShotMotion({ kind }: { kind: string }) {
 
   if (kind === "superfans-social-feed") {
     return (
+      // The phone preview swipes through five feed posts like reels, and the tabs switch along with it.
       <div className="shot-motion shot-motion--superfans">
-        <span className="shot-row" />
-        <span className="shot-side" />
-        <span className="shot-cursor">
-          {cursorIcon}
-          <span className="shot-cursor__ripple" />
-        </span>
+        <img className="sf-tab sf-tab--app" src={resolveSrc("/assets/superfans/card-tab-app.webp?v=2026-11-26")} alt="" />
+        <img className="sf-tab sf-tab--ig" src={resolveSrc("/assets/superfans/card-tab-ig.webp?v=2026-11-26")} alt="" />
+        <div className="sf-reel">
+          <img src={resolveSrc("/assets/superfans/card-reels.webp?v=2026-11-26")} alt="" />
+        </div>
+        <img className="sf-phone" src={resolveSrc("/assets/superfans/card-phone.webp?v=2026-11-26")} alt="" />
       </div>
     );
   }
