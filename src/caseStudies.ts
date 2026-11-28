@@ -681,36 +681,14 @@ const cartAbandonment: CaseStudy = {
         },
         {
           label: "Why it was worth solving",
-          text: "A store owner who can see recovered revenue rising over time trusts the plugin and keeps using it. A store owner who sees six static numbers has no idea what's working.",
-        },
-      ],
-      pains: [
-        {
-          title: "One page, two jobs",
-          body: "The Report tab was both the dashboard and the report, with six number cards, no chart and a table of carts below.",
-        },
-        {
-          title: "Data you couldn't use",
-          body: "Reports had no search, no filters beyond date, and no export, so tracking and acting on the data was hard.",
-        },
-        {
-          title: "Emails without results",
-          body: "The follow-up email list showed name, subject and timing, but not how many were sent, opened or clicked.",
-        },
-        {
-          title: "One long settings page",
-          body: "Every setting sat on one page, with long columns of checkboxes for roles and order statuses.",
-        },
-        {
-          title: "No room to grow",
-          body: "Product reports, SMS, WhatsApp and popups were planned, and the old three-tab layout had nowhere to put them.",
+          text: "Every cart that isn't recovered is a sale lost after the shopper had already picked what to buy. When the admin hides which emails work, owners leave the defaults on and stop checking, so more of those sales slip away. Once recovered revenue is visible and rising, owners rely on the plugin and keep it installed, and that number makes the case for Pro better than any upgrade banner.",
         },
       ],
       media: caShot("The old Report page, with six number cards and a plain table.", "old-report"),
       mapping: [
         ["One page mixed the dashboard and the report", "Recovery at a glance, details one click away", "Existing users knew the old plugin"],
-        ["Data was hard to track or export", "Every report searchable, filterable and exportable", "No access to store owners for testing"],
-        ["The layout had no room for new features", "A structure that can grow", "Feature list agreed up front"],
+        ["Reports and email results were hard to track or export", "Every report and email searchable, with sends, opens and clicks", "No access to store owners for testing"],
+        ["One long settings page, and no room for new features", "Settings split by topic, in a structure that can grow", "Feature list agreed up front"],
         ["The UI didn't follow the design system", "Every screen in line with ForceUI", "Stay inside ForceUI"],
       ],
     },
@@ -720,7 +698,7 @@ const cartAbandonment: CaseStudy = {
       nav: "Final Solution",
       eyebrow: "Final Solution",
       title: "How a forgotten checkout turns into a recovered sale",
-      intro: "Recovery has two sides, the owner watching the results and the shopper who leaves and comes back.",
+      intro: "Recovery has two sides, the owner watching the results and the shopper who leaves and comes back. In the video, Kavya sets up recovery for her store, then Rohan leaves his cart, gets her follow-up email and comes back to finish the order. Both are made up for this story.",
       story: [
         {
           text: "**Kavya** runs Leaf & Loom, a small home decor store on WooCommerce, with Cart Abandonment Recovery Pro. **Rohan** is browsing her store for a new lamp. The video follows both, Kavya setting up recovery and checking what came back, and Rohan leaving his cart and returning to buy.",
@@ -921,7 +899,7 @@ const cartAbandonment: CaseStudy = {
       items: [
         {
           title: "Guide the popup decision",
-          body: "The popup already counts “No thanks” clicks. The next step would be turning that number into guidance, for example showing how many skipped shoppers still bought, so store owners know whether making the email mandatory is worth it.",
+          body: "The popup already counts “No thanks” clicks. Showing how many of those shoppers still bought would tell store owners whether a mandatory email is worth it.",
         },
         {
           title: "Compare recovery by channel",
@@ -964,7 +942,7 @@ const cartAbandonment: CaseStudy = {
       nav: "Outcome",
       eyebrow: "Outcome",
       title: "From a settings page to a recovery dashboard",
-      intro: "Cart Abandonment Recovery started as three plain tabs that showed six numbers. Over May and June, it became a full admin with a visual dashboard, searchable and exportable reports, detailed email logs, new recovery channels, and an email capture popup for Pro. The designs shipped, and today the plugin has 300K+ active installs.",
+      intro: "Cart Abandonment Recovery started as three plain tabs that showed six numbers. It became a full admin with a visual dashboard, searchable and exportable reports, detailed email logs, new recovery channels, and an email capture popup for Pro. The designs shipped, and today the plugin has 300K+ active installs.",
       before: "Three plain tabs, six numbers with no chart, and no way to search or export a report",
       beforeStat: { value: "3 tabs", label: "Report, Follow-Up Emails, Settings" },
       after: "A dashboard, reports, logs, new channels and a Pro popup",
@@ -1595,20 +1573,6 @@ const superfansSocialFeed: CaseStudy = {
         },
         { title: "Connect content to sales", body: "So every video can lead to a product or a collection." },
       ],
-      pains: [
-        {
-          title: "For shoppers",
-          body: "Brand apps were built for buying, not browsing. No feed to watch, nothing to comment on, no way to share their own look.",
-        },
-        {
-          title: "For merchants",
-          body: "Fresh video for one more channel takes time, and once shoppers can post, merchants need ways to review and control it.",
-        },
-        {
-          title: "For the product",
-          body: "Video, comments, posting, moderation and access all had to fit an app and dashboard brands used every day.",
-        },
-      ],
       note: {
         title: "What competitors offered",
         body: "Tapcart, a competing app platform, offers shoppable video mainly through third party integrations such as Tolstoy's “For You” feed and Yotpo's shoppable Instagram gallery. That content is curated by the brand, and shoppers don't post or comment inside the app. We set out to build a native feed that works as a community, where shoppers take part.",
@@ -1627,7 +1591,7 @@ const superfansSocialFeed: CaseStudy = {
       eyebrow: "Final Solution",
       title: "How a brand's short video becomes a sale in the app",
       intro:
-        "Riya manages the app for Thread & Care, a scrubs brand on Superfans. Karan is a nurse who shops with them. Both are made up for this story.",
+        "Riya manages the app for Thread & Care, a scrubs brand on Superfans. Karan is a nurse who shops with them. In the video, Riya fills the feed from the dashboard, then Karan watches it in the app, shops a tagged product, comments and posts his own. Both are made up for this story.",
       video: {
         kind: "video",
         caption: "",
@@ -1740,31 +1704,54 @@ const superfansSocialFeed: CaseStudy = {
       id: "process",
       nav: "Process",
       eyebrow: "Process",
-      title: "How it came together: ten months, five stages",
+      title: "How it came together over ten months",
       intro:
         "Social Feed didn't arrive in one release. It grew in stages, each building on the last, while earlier parts were already being built.",
       steps: [
-        { label: "Shopper feed", body: "January to June: three app versions before the June version was marked ready for development." },
-        { label: "Dashboard", body: "February to September: from the first layouts to the grid, comments, Instagram import and post properties." },
-        { label: "Shoppers posting", body: "June and July: the posting flow, posting from the product page, and onboarding." },
-        { label: "Moderation and access", body: "July to September: reported content, reviews, feed settings and who can see the feed." },
-        { label: "Design QA", body: "October: reviewing the built product area by area." },
-      ],
-      notes: [
         {
-          title: "Where the idea came from",
-          body: "Instagram Reels and TikTok, where brands show products inside a stream of videos. The PM's spec split the work into two releases, first a brand-run feed with imports, likes, comments and reporting, then shopper posting with the moderation it needs. It also fixed rules like vertical 9:16 media, 3 to 60 second videos and a 500 character comment limit.",
+          label: "The spec",
+          title: "Starting from the PM's spec",
+          body: "The idea came from Instagram Reels and TikTok, where brands show products inside a stream of videos. The PM's spec split the work into two releases, first a brand-run feed with imports, likes, comments and reporting, then shopper posting with the moderation it needs.",
+          details: ["It also fixed rules like vertical 9:16 media, 3 to 60 second videos and a 500 character comment limit."],
+          media: { ...sfShot("The four things shoppers do in the feed, explore, engage, shop and share.", "banner"), caption: "", browser: false },
         },
         {
+          label: "Shopper feed",
+          title: "The shopper feed first",
+          body: "The app came first. It went through three versions before the feed was marked ready for development.",
+          media: { ...sfRow("The feed and a single post in the app.", sf("p-feed", "Feed"), sf("a-post", "Post")), caption: "" },
+        },
+        {
+          label: "Dashboard",
+          title: "The dashboard, built alongside",
+          body: "While the app was in development, the dashboard went from its first layouts to the grid, comments, Instagram import and post properties.",
+          media: { ...sfShot("The dashboard grid of posts.", "d-grid"), caption: "" },
+        },
+        {
+          label: "Shoppers posting",
+          title: "Shoppers posting, and onboarding",
+          body: "The second release let shoppers post, from the feed or a product page, with onboarding that introduces the feed the first time they open it.",
+          media: { ...sfRow("Picking media to post, and the onboarding swipe.", sf("u-picker", "Pick media"), sf("o-swipe", "Onboarding")), caption: "" },
+        },
+        {
+          label: "Moderation",
+          title: "Moderation and access",
+          body: "Once shoppers could post, merchants needed control. This stage covered reported content, reviews, feed settings and who can see the feed.",
+          media: { ...sfRow("Reviewing posts and the feed settings.", sf("m-review", "Review"), sf("m-settings", "Feed settings")), caption: "" },
+        },
+        {
+          label: "Reviews",
           title: "Versions and reviews",
-          body: "Every change was reviewed by the design team, the PM and the CEO, with a version log on the canvas. The dashboard, posting flow, moderation and access controls took the most iterations; access controls moved from three radio options, which felt repetitive, to the live dropdown.",
+          body: "Every change was reviewed by the design team, the PM and the CEO, with a version log on the canvas. Access controls took the most rounds, moving from three repetitive radio options to the live dropdown.",
+          media: { ...sfShot("The version log cards from the design file.", "log"), caption: "" },
         },
         {
+          label: "Design QA",
           title: "Design QA",
-          body: "Once each area was built, I reviewed it against the designs and logged every issue with a screenshot and the matching design for developers to fix. Most issues were visual, like spacing, alignment and states that didn't match.",
+          body: "Once each area was built, I reviewed it against the designs and logged every issue with a screenshot and the matching design for developers to fix. Most were visual, like spacing, alignment and states that didn't match.",
+          media: { ...sfShot("The design QA sheet, each issue next to its design.", "qa"), caption: "", browser: false },
         },
       ],
-      media: sfShot("The version log cards from the design file.", "log"),
     },
     {
       kind: "future",
@@ -2063,22 +2050,15 @@ const expenzo: CaseStudy = {
         { title: "Show where money goes", body: "A clear picture of income and spending each month." },
         { title: "Stay ready for GST", body: "Records organized in the format an accountant files." },
       ],
-      pains: [
-        { title: "Typing everything twice", body: "Receipts go into a ledger first, then into Excel or Tally." },
-        { title: "Receipts go missing", body: "Lost or damaged paper leaves gaps in the records." },
-        { title: "Small costs slip through", body: "Kumar, who runs a 40-room hostel, said small expenses he forgets to note throw off his totals." },
-        { title: "A monthly deadline scramble", body: "Invoices are sorted for the accountant in a hurry before filing." },
-      ],
       note: {
         title: "What existing apps offered",
         body: "Of the five apps I studied, only Zoho Expense could scan receipts, and it tracked expenses without income. Bookipi, FinArt, Zenmoney and Axio had no scanning and no export.",
       },
-      media: { ...exShot("A real expense notebook and the Excel sheet sent to an auditor.", "ledger-excel"), wide: true },
       mapping: [
         ["Typing receipts in by hand", "Scan a receipt and review what it read", "OCR is never 100% accurate"],
-        ["Records scattered across paper and Excel", "Income and expenses in one place", "Owners who aren't tech-savvy"],
+        ["Records scattered across paper and Excel, and receipts get lost", "Income and expenses in one place", "Owners who aren't tech-savvy"],
         ["A rush to prepare GST files", "An export shaped for the accountant", "Indian GST rules"],
-        ["Regular bills entered every month", "Transactions that repeat on their own", "Solo concept project"],
+        ["Small and regular costs forgotten or retyped each month", "Transactions that repeat on their own", "Solo concept project"],
       ],
     },
     {
@@ -2137,15 +2117,10 @@ const expenzo: CaseStudy = {
       intro: "I worked in milestones, and each one ended with a review that changed the next.",
       steps: [
         {
-          label: "Choosing the problem",
-          title: "Picking one problem out of 18",
-          body: "I reviewed 18 problem statements and chose expense management for small businesses, then split it into the user's problem and the business goal.",
-          points: ["Fintech", "Small business owners", "India"],
-        },
-        {
           label: "Hypothesis",
-          title: "Sketching the first guess",
-          body: "My first hypothesis was a scan button that reads a receipt, saves it as an expense and exports a monthly Excel file for the auditor. I sketched it on paper, screen by screen.",
+          title: "Picking a problem, then sketching a first guess",
+          body: "Out of 18 problem statements, I chose expense management for small businesses. My first hypothesis was a scan button that reads a receipt, saves it as an expense and exports a monthly Excel file for the auditor. I sketched it on paper, screen by screen.",
+          points: ["Fintech", "Small business owners", "India"],
           details: [
             "Secondary research on small business finance left me with more questions than answers, and for a while the project stalled. Writing down a hypothesis turned that fog into specific questions I could go and answer.",
           ],
@@ -2162,6 +2137,7 @@ const expenzo: CaseStudy = {
             "Should a scan block the screen?",
             "What if a receipt has no invoice or GST number?",
           ],
+          media: { ...exShot("The tax type sheet, where 18% GST splits into 9% central and 9% state.", "tax-sheet"), browser: false, phone: true },
         },
         {
           label: "Competitors",
@@ -2181,6 +2157,7 @@ const expenzo: CaseStudy = {
             "Not everyone wanted automation. Hareendran, the manufacturer, prefers manual entry because “it gives us more control over the data”. That pushed me to make every scan easy to review and correct.",
           ],
           points: ["Paper plus Excel everywhere", "Automation only if accurate", "Excel for the accountant", "Reminders and repeats"],
+          media: { ...exShot("A real expense notebook and the Excel sheet sent to an auditor.", "ledger-excel"), wide: true },
         },
         {
           label: "First cut",
@@ -2230,11 +2207,11 @@ const expenzo: CaseStudy = {
       intro: "These ideas came from interviews, testing and competitors, and were left out to keep the first version focused.",
       tag: "Next",
       items: [
-        { title: "Reading bank SMS", body: "FinArt and Axio create transactions from bank messages. For owners who rely on SMS alerts as their record, this would remove even more typing." },
-        { title: "Tally and Excel import", body: "Ajay asked for bulk import, and Kalim and Hareendran both run their books in Tally. Syncing with it would meet them where they already work." },
+        { title: "Reading bank SMS", body: "FinArt and Axio create transactions from bank messages. For owners whose SMS alerts are their record, that removes more typing." },
+        { title: "Tally and Excel import", body: "Ajay asked for bulk import, and Kalim and Hareendran keep their books in Tally. Syncing with it meets them where they work." },
         { title: "Copy into the GST tool", body: "The government's offline GST tool accepts data pasted from Excel. A matching export would turn filing into a copy and paste." },
         { title: "Several people, one account", body: "Let an owner give staff access to add expenses while keeping control of sensitive numbers, as Zoho Books does." },
-        { title: "Matching receipts to the ledger", body: "Check uploaded receipts against existing entries and flag duplicates or mismatches." },
+        { title: "Matching receipts to the ledger", body: "Check uploaded receipts against entries already in the ledger, and flag duplicates or amounts that don't match." },
         { title: "Working offline", body: "Record expenses without a connection and sync later, for owners on the road or with patchy internet." },
       ],
     },
