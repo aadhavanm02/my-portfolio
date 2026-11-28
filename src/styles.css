@@ -10945,3 +10945,21 @@ body.is-video-expanded .case-topic-nav {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* ---------- Copyright line and image protection ---------- */
+.footer {
+  flex-wrap: wrap;
+}
+
+.footer__rights {
+  flex-basis: 100%;
+  order: 10;
+  margin-top: 8px;
+  color: var(--color-muted);
+  font-size: 13px;
+}
+
+main img {
+  -webkit-user-drag: none;
+  user-select: none;
+}

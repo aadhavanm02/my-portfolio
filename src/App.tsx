@@ -1733,6 +1733,7 @@ function SiteFooter() {
       <a className="footer__social" href={linkedInUrl} rel="noreferrer" target="_blank">
         LinkedIn
       </a>
+      <small className="footer__rights">© Aadhavan M. All rights reserved.</small>
     </footer>
   );
 }
