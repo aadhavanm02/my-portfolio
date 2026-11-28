@@ -164,7 +164,7 @@ export type CaseSection = SectionBase &
     | { kind: "process"; steps: ProcessStep[]; notes?: CardItem[]; media?: MediaItem }
     | { kind: "future"; tag: string; items: CardItem[]; media?: MediaItem[] }
     | { kind: "learnings"; items: CardItem[] }
-    | { kind: "outcome"; before: string; after: string; stat: Stat; feedback?: string }
+    | { kind: "outcome"; before: string; after: string; stat: Stat; beforeStat?: Stat; feedback?: string }
   );
 
 export type CaseStudy = {
@@ -186,6 +186,8 @@ export type CaseStudy = {
   stats: Stat[];
   meta: Array<[string, string]>;
   hero: MediaItem;
+  // The address in the browser bar on desktop screenshots, like the walkthrough video preview.
+  browserUrl?: string;
   sections: CaseSection[];
 };
 
@@ -639,6 +641,7 @@ const cartAbandonment: CaseStudy = {
   tone: "peach",
   image: "/assets/cart-abandonment.png?v=2026-11-17",
   imageClass: "project-image--cart",
+  browserUrl: "leafandloom.com/wp-admin · Cart Abandonment Recovery",
   headline: "Redesigning Cart Abandonment Recovery to show 300K+ stores the revenue they win back",
   hook: "The plugin's whole job is to bring back lost sales. Yet its own admin showed six numbers, no chart, and no way to export them.",
   summary:
@@ -816,42 +819,11 @@ const cartAbandonment: CaseStudy = {
         {
           label: "My part in creating it",
           text: [
-            "I worked on its atoms and molecules, while other designers built the larger patterns and templates.",
+            "I worked on its atoms and molecules, while other designers built the larger patterns and templates. The ModernCart case study walks through those levels.",
             "One rule kept Figma and code in sync. Nobody changed a component on their own. If something needed to change, it went through a ticket, so the two never drifted apart. The developers also kept a React Storybook of every component, which we used as a reference for how and where each one should be used.",
           ],
         },
-        {
-          label: "Four levels, all used here",
-          text: "ForceUI is built in layers, from the smallest pieces up to full page layouts, and this plugin uses every level.",
-        },
       ],
-      levels: [
-        {
-          title: "Atoms",
-          body: "The smallest pieces, like buttons, toggles, badges, inputs and dropdowns. Here they are the enable toggles, the status chips and the Export button.",
-        },
-        {
-          title: "Molecules",
-          body: "Atoms combined into a reusable unit, like a toggle with its label and description. Every setting card is one of these.",
-        },
-        {
-          title: "Patterns",
-          body: "Larger sections that repeat across products, like the top bar, sub-menus, drawers and tables. The email drawer and the settings sub-menu come from here.",
-        },
-        {
-          title: "Templates",
-          body: "Full page layouts. The Dashboard and Settings pages follow ForceUI's admin templates, with product navigation on top and cards of content below.",
-        },
-      ],
-      levelsMedia: {
-        caption: "",
-        alt: "Pages from the ForceUI library in Figma, from atoms to molecules.",
-        row: [
-          { src: "/assets/modern-cart/forceui/buttons.webp?v=2026-11-20", size: [440, 625], label: "Atoms: Buttons", full: { src: "/assets/modern-cart/forceui/full-buttons.webp?v=2026-11-20", size: [1432, 1008], crop: [0.317, 0.0744, 0.3073, 0.62] } },
-          { src: "/assets/modern-cart/forceui/input.webp?v=2026-11-20", size: [432, 414], label: "Atoms: Input Base", full: { src: "/assets/modern-cart/forceui/full-input.webp?v=2026-11-20", size: [1425, 999], crop: [0.4477, 0.0511, 0.3032, 0.4144] } },
-          { src: "/assets/modern-cart/forceui/date-picker.webp?v=2026-11-20", size: [705, 626], label: "Molecules: Date Picker", full: { src: "/assets/modern-cart/forceui/full-date-picker.webp?v=2026-11-20", size: [1430, 900], crop: [0.0636, 0.1133, 0.493, 0.6956] } },
-        ],
-      },
       patterns: [
         {
           title: "Top navigation",
@@ -989,7 +961,8 @@ const cartAbandonment: CaseStudy = {
       eyebrow: "Outcome",
       title: "From a settings page to a recovery dashboard",
       intro: "Cart Abandonment Recovery started as three plain tabs that showed six numbers. Over May and June, it became a full admin with a visual dashboard, searchable and exportable reports, detailed email logs, new recovery channels, and an email capture popup for Pro. The designs shipped, and today the plugin has 300K+ active installs.",
-      before: "Three plain tabs and six numbers",
+      before: "Three plain tabs, six numbers with no chart, and no way to search or export a report",
+      beforeStat: { value: "3 tabs", label: "Report, Follow-Up Emails, Settings" },
       after: "A dashboard, reports, logs, new channels and a Pro popup",
       stat: { value: "300K+", label: "Active installs today" },
     },
@@ -1005,6 +978,7 @@ const modernCart: CaseStudy = {
   tone: "peach",
   image: "/assets/modern-cart.png?v=2026-11-17c",
   imageClass: "project-image--modern",
+  browserUrl: "dnk-store.com/wp-admin · ModernCart",
   headline: "How an unreleased side cart grew to 60K+ stores by keeping shoppers adding more to their carts",
   hook: "ModernCart had been built by developers and left unreleased. Then the PM decided it would go live in one week.",
   summary:
@@ -1148,37 +1122,37 @@ const modernCart: CaseStudy = {
       ],
       variants: {
         title: "Styles store owners can choose from",
-        intro: "Not every store wants the same cart, so the parts that vary most got options.",
+        intro: "The parts that vary most from store to store got options.",
         items: [
           {
             count: "2",
             name: "Cart types",
-            body: "Slide-out or popup. The slide-out keeps the page visible behind it, and the popup takes the shopper's full attention.",
+            body: "Slide-out keeps the page in view. Popup takes full attention.",
           },
           {
             count: "6",
             name: "Item layouts",
-            body: "Layouts that change where the remove and quantity controls sit. Some stores want editing front and center, others prefer it quiet.",
+            body: "Where the remove and quantity controls sit.",
           },
           {
             count: "2",
             name: "Order summaries",
-            body: "A simple list sitting above checkout, or a card with its own heading and the total inside the button.",
+            body: "A simple list, or a card with the total in the button.",
           },
           {
             count: "2",
             name: "Coupon styles",
-            body: "One handles a single code. The other shows several as tags, for stores that let shoppers stack discounts.",
+            body: "One code, or several stacked as tags.",
           },
           {
             count: "1 or 2",
             name: "Carousel sizes",
-            body: "One or two products at a time, so it fits narrow carts and wider ones.",
+            body: "One or two products, for narrow or wide carts.",
           },
           {
             count: "2",
             name: "Cart footers",
-            body: "View Cart and Checkout, or Checkout only. Some stores want a full basket page first, others the fastest path to paying.",
+            body: "View Cart and Checkout, or Checkout only.",
           },
         ],
       },
@@ -1196,9 +1170,51 @@ const modernCart: CaseStudy = {
       id: "design-system",
       nav: "Design System",
       eyebrow: "Design System",
-      title: "Built on ForceUI",
+      title: "Built on ForceUI, from atoms to templates",
       intro:
-        "Every screen in ModernCart, the dashboard and the shopper's cart, is made from ForceUI components, so nothing was drawn from scratch. In launch week that meant swapping the old screens for ForceUI parts rather than redesigning them. The one place I bent the system was Styling, where number fields needed their unit (px, % or ms) inside the input.",
+        "Every screen in ModernCart, the dashboard and the shopper's cart, is made from ForceUI components, so nothing was drawn from scratch. In launch week that meant swapping the old screens for ForceUI parts rather than redesigning them.",
+      story: [
+        {
+          label: "Four levels, all used in ModernCart",
+          text: "ForceUI is built in layers, from the smallest pieces up to full page layouts. ModernCart uses every level.",
+        },
+      ],
+      levels: [
+        {
+          title: "Atoms",
+          body: "The smallest pieces, like buttons, toggles, badges, inputs and dropdowns. In ModernCart they are the toggles on each setting, the Upgrade buttons and the badges.",
+        },
+        {
+          title: "Molecules",
+          body: "Atoms combined into a reusable unit, like a toggle with its label and description. Every settings row in the dashboard is one of these.",
+        },
+        {
+          title: "Patterns",
+          body: "Larger sections that repeat across products, like the top bar, the sidebar, modals and cards. ModernCart's top navigation, left menu and upgrade modal come from here.",
+        },
+        {
+          title: "Templates",
+          body: "Full page layouts. ForceUI's Admin Settings template is the shape of the ModernCart dashboard, with product navigation on top, a sidebar and cards of settings.",
+        },
+      ],
+      levelsMedia: {
+        caption: "",
+        alt: "Pages from the ForceUI library in Figma, from atoms to molecules.",
+        row: [
+          { src: "/assets/modern-cart/forceui/buttons.webp?v=2026-11-20", size: [440, 625], label: "Atoms: Buttons", full: { src: "/assets/modern-cart/forceui/full-buttons.webp?v=2026-11-20", size: [1432, 1008], crop: [0.317, 0.0744, 0.3073, 0.62] } },
+          { src: "/assets/modern-cart/forceui/input.webp?v=2026-11-20", size: [432, 414], label: "Atoms: Input Base", full: { src: "/assets/modern-cart/forceui/full-input.webp?v=2026-11-20", size: [1425, 999], crop: [0.4477, 0.0511, 0.3032, 0.4144] } },
+          { src: "/assets/modern-cart/forceui/date-picker.webp?v=2026-11-20", size: [705, 626], label: "Molecules: Date Picker", full: { src: "/assets/modern-cart/forceui/full-date-picker.webp?v=2026-11-20", size: [1430, 900], crop: [0.0636, 0.1133, 0.493, 0.6956] } },
+        ],
+      },
+      tokens: [
+        { sample: "type", label: "Type", value: "Figtree, four weights" },
+        { sample: "color", label: "Accent", value: "Flamingo, CartFlows' orange" },
+        { sample: "icons", label: "Icons", value: "Lucide plus a WordPress set" },
+      ],
+      note: {
+        title: "The one rule I bent",
+        body: "In Styling, number fields needed their unit (px, % or ms) inside the field, so store owners always know what the number means. ForceUI's input didn't support that, so I broke the component in my design to fit a small unit badge inside it. The team shipped it as plain text instead of a badge, but the unit still sits inside the field.",
+      },
     },
     {
       kind: "process",
@@ -1255,18 +1271,34 @@ const modernCart: CaseStudy = {
             "Custom icon upload for the floating cart icon",
             "A clearer coupon field that opens from a link and shows the code as a removable tag",
           ],
-          media: mcRow("One ticket's designs, the coupon field in its three states.", mc("coupon-link-crop", "Link"), mc("coupon-field-crop", "Field"), mc("coupon-tag-crop", "Tag")),
+          media: mcRow(
+            "Ideas from the list as they shipped, product suggestions, the popup cart, the live preview and custom icon upload.",
+            mc("cart-two-panel", "Product suggestions"),
+            mc("popup-items", "Popup cart"),
+            { ...mc("live-preview", "Live preview"), browser: false },
+            mc("custom-icon-card", "Custom icon upload"),
+          ),
         },
         {
           label: "No wireframes",
           title: "Why no wireframes, and why I built from ForceUI",
           body: "ForceUI already had the pieces I needed, so I worked in high fidelity from the start. Sketching boxes would have meant redrawing components that already existed. The trade-off was less room to explore wild ideas early, which is why the competitor review mattered so much.",
+          media: mcRow(
+            "A ForceUI component page, and a settings card built from those parts.",
+            { src: "/assets/modern-cart/forceui/buttons.webp?v=2026-11-20", size: [440, 625], label: "ForceUI buttons", full: { src: "/assets/modern-cart/forceui/full-buttons.webp?v=2026-11-20", size: [1432, 1008], crop: [0.317, 0.0744, 0.3073, 0.62] } },
+            mc("floating-icon-card", "Built from them"),
+          ),
         },
-      ],
-      notes: [
         {
-          title: "What I assumed",
+          label: "Assumptions",
+          title: "What I assumed, and would test next",
           body: "There were no interviews or usability tests, so a few choices rest on assumptions I'd want to test. Shoppers who open the cart are still in shopping mode, store owners want to change the cart's look and words without touching code, and defaults shown next to each setting make owners more willing to experiment.",
+          media: mcRow(
+            "The three choices those assumptions shaped.",
+            mc("cart-one-panel", "Suggestions in the cart"),
+            mc("text-label-empty-fields", "Words without code"),
+            mc("styling-width", "Defaults beside settings"),
+          ),
         },
       ],
     },
@@ -1281,7 +1313,7 @@ const modernCart: CaseStudy = {
       items: [
         {
           title: "Live preview",
-          body: "Owners changed colors and icons without seeing the result until they opened their store. Competitors showed a preview beside the settings, so I recommended one. It now shows the cart empty and with items ([v1.0.8](https://wordpress.org/plugins/modern-cart/)).",
+          body: "Owners changed colors and icons without seeing the result in their store. Competitors showed a preview beside the settings, so I recommended one. It shows the cart empty and full ([v1.0.8](https://wordpress.org/plugins/modern-cart/)).",
         },
         {
           title: "Custom icon upload",
@@ -1295,7 +1327,7 @@ const modernCart: CaseStudy = {
       media: [
         mcRow(
           "How these ideas look in the plugin today.",
-          mc("live-preview", "Live preview"),
+          { ...mc("live-preview", "Live preview"), browser: false },
           mc("custom-icon-card", "Custom icon upload"),
           mc("icon-preview-card", "Icon preview"),
         ),
@@ -1333,7 +1365,8 @@ const modernCart: CaseStudy = {
       eyebrow: "Outcome",
       title: "From an unreleased build to a cart that keeps shoppers going",
       intro: "ModernCart started as a working build that nobody had designed for. In one week it was ready to publish, and in the weeks after it gained a dashboard organized around tasks, a cart that suggests products, and a second cart type.",
-      before: "A working build nobody had designed for",
+      before: "A working build nobody had designed for, with scattered settings, an empty cart that led nowhere and screens off the design system",
+      beforeStat: { value: "0", label: "Stores, still unreleased" },
       after: "A task-based dashboard, a cart that suggests, and a second cart type",
       stat: { value: "60K+", label: "Active installs today" },
     },
@@ -1521,6 +1554,7 @@ const superfansSocialFeed: CaseStudy = {
   tone: "violet",
   image: "/assets/superfans/overview.webp?v=2026-11-26",
   imageClass: "project-image--superfans",
+  browserUrl: "superfans.io/dashboard · Social Feed",
   headline: "Bringing shoppable short video to Superfans, the app builder behind 5,000+ Shopify brands",
   hook: "Shoppers spend hours scrolling videos on Instagram and TikTok. Superfans wanted that same feed inside every brand's own app, where every video could be shopped.",
   summary:
@@ -1803,7 +1837,8 @@ const superfansSocialFeed: CaseStudy = {
       nav: "Outcome",
       eyebrow: "Outcome",
       title: "From a shopping app to a place to hang out",
-      before: "Brand apps built only for buying",
+      before: "Brand apps built only for buying, with no place for video, shopper posts or a community",
+      beforeStat: { value: "0", label: "Videos inside the app" },
       after: "Videos to shop, comments, shopper posts and tools to keep it safe",
       stat: { value: "Shipped", label: "Across the app and the dashboard, in ten months" },
     },
@@ -2315,7 +2350,8 @@ const expenzo: CaseStudy = {
       eyebrow: "Outcome",
       title: "From typing every receipt to reviewing what the app read",
       intro: "Expenzo started as a guess that owners struggle with receipts. Interviews, five competitor apps and three usability tests turned it into a prototype that scans in the background, records expenses in the format accountants use, repeats regular bills and exports a file ready for GST.",
-      before: "Paper ledgers, Excel and a monthly rush",
+      before: "Paper ledgers, Excel sheets and a rush to type every bill in before the GST deadline",
+      beforeStat: { value: "By hand", label: "Every receipt, every month" },
       after: "Scan, review, repeat and export in one app",
       stat: { value: "5", label: "Business owners whose records shaped the design" },
     },

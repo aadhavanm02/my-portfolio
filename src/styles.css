@@ -10056,15 +10056,21 @@ body.is-video-expanded .case-topic-nav {
   }
 }
 
-/* ---------- Browser window bar on full desktop screenshots (G8) ---------- */
+/* ---------- Browser window bar on full desktop screenshots (G8) ----------
+   Dark, with the address in a pill, the same as the walkthrough video previews. */
 .shot-browser {
+  position: relative;
   display: flex;
+  flex: none;
   align-items: center;
+  height: 34px;
+  padding: 0 14px;
+  background: #1d1d20;
+}
+
+.shot-browser__dots {
+  display: flex;
   gap: 7px;
-  height: 30px;
-  padding: 0 12px;
-  border-bottom: 1px solid rgb(16 16 16 / 8%);
-  background: #f3f3f2;
 }
 
 .shot-browser i {
@@ -10080,6 +10086,69 @@ body.is-video-expanded .case-topic-nav {
 
 .shot-browser i:nth-child(3) {
   background: #28c840;
+}
+
+.shot-browser__url {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  max-width: calc(100% - 140px);
+  overflow: hidden;
+  padding: 3px 16px;
+  border-radius: 999px;
+  background: #34343a;
+  color: #c8c8ce;
+  font-size: 12px;
+  line-height: 1.4;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transform: translate(-50%, -50%);
+}
+
+@media (max-width: 767px) {
+  .shot-browser {
+    height: 24px;
+    padding: 0 9px;
+  }
+
+  .shot-browser__dots {
+    gap: 5px;
+  }
+
+  .shot-browser i {
+    width: 7px;
+    height: 7px;
+  }
+
+  .shot-browser__url {
+    max-width: calc(100% - 80px);
+    padding: 2px 10px;
+    font-size: 9px;
+  }
+}
+
+.shot-image.shot-image--browser {
+  border-color: #1d1d20;
+}
+
+/* Work cards: the bar runs along the top of the screenshot. */
+.project-media--browser > .shot-browser {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  right: 0;
+  left: 0;
+  border-radius: 20px 0 0 0;
+}
+
+.project-media--browser .project-shot {
+  top: 34px;
+}
+
+@media (max-width: 767px) {
+  .project-media--browser .project-shot {
+    top: 24px;
+  }
 }
 
 .shot-image--browser {
@@ -10263,4 +10332,160 @@ body.is-video-expanded .case-topic-nav {
 /* Work cards: a one line heading (W3). */
 .project-copy h2 {
   font-size: min(var(--type-card-title-size), 28px);
+}
+
+/* Overview image: the whole screenshot at its own height, in the browser window and nothing else. */
+.case-hero-media.case-hero-image {
+  height: auto;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: none;
+}
+
+.case-hero-image .shot-image,
+.case-hero-image .zoom-image {
+  overflow: hidden;
+  border-radius: var(--radius-media);
+}
+
+.case-hero-image .shot-image--browser {
+  border: 1px solid #1d1d20;
+  box-shadow: 0 24px 48px -24px rgb(16 16 16 / 30%);
+}
+
+.case-hero-image video,
+.case-hero-image img {
+  height: auto;
+  object-fit: initial;
+}
+
+/* ---------- Zoom inside the full view ---------- */
+.shot-lightbox__frame.can-zoom {
+  cursor: zoom-in;
+}
+
+.shot-lightbox__frame.is-zoomed {
+  cursor: zoom-out;
+}
+
+.shot-lightbox__frame.is-zoomed img,
+.shot-lightbox__frame.can-zoom img.is-out {
+  transition: transform 0.35s cubic-bezier(0.22, 0.8, 0.24, 1), transform-origin 0.12s linear;
+}
+
+.shot-lightbox__zoom {
+  position: fixed;
+  z-index: 2;
+  bottom: 20px;
+  left: 50%;
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 14%);
+  transform: translateX(-50%);
+  cursor: default;
+}
+
+.shot-lightbox__zoom button {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+}
+
+.shot-lightbox__zoom button:hover:not(:disabled) {
+  background: rgb(255 255 255 / 16%);
+}
+
+.shot-lightbox__zoom button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* ---------- Decisions: the hook is the heading, on a tinted panel ---------- */
+.case-decision > header.case-decision__head {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 24px 28px;
+  border-radius: 20px;
+  background: var(--color-peach-bg);
+}
+
+.case-decision__head h3 {
+  margin: 0;
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.4;
+}
+
+@media (max-width: 767px) {
+  .case-decision > header.case-decision__head {
+    padding: 18px 20px;
+  }
+
+  .case-decision__head h3 {
+    font-size: 19px;
+  }
+}
+
+.case-outcome__metric {
+  margin-top: auto;
+}
+
+.case-outcome__metric--before {
+  border-top-color: var(--color-neutral-200);
+}
+
+.case-outcome__metric--before strong {
+  color: var(--color-neutral-500, #8a8a86);
+}
+
+.case-outcome .case-outcome__metric--before span {
+  color: var(--color-muted);
+}
+
+.case-outcome p {
+  font-size: 22px;
+}
+
+/* Process: more room between the step number and its text. */
+.case-process__step,
+.case-process__step:first-child {
+  gap: 40px;
+}
+
+@media (max-width: 1023px) {
+  .case-process__step,
+  .case-process__step:first-child {
+    gap: 12px;
+  }
+}
+
+/* Challenge table: the Constraint column lines up with the others, no divider. */
+.case-mapping__row p.case-mapping__constraint {
+  padding-left: 0;
+  border-left: 0;
+}
+
+/* Keep exploring: Expenzo's phone screens, centered and edge to edge, with no inner rounded frame. */
+.more-case__media--phones {
+  padding: 0;
+  background: none;
+}
+
+.more-case__media--phones img {
+  border-radius: 0;
+  box-shadow: none;
+  object-position: center 30%;
 }

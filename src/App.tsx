@@ -1,6 +1,8 @@
 import {
+  createContext,
   Fragment,
   useCallback,
+  useContext,
   useEffect,
   useId,
   useRef,
@@ -645,12 +647,24 @@ function cropTransform(crop: [number, number, number, number]) {
 // On phone-sized screens the full screenshot would be too small to read, so the crop stays.
 const FULL_SHOT_MIN_WIDTH = 768;
 
-function ShotLightbox({ frame, caption, onClose }: { frame: MediaFrame; caption: string; onClose: () => void }) {
+const LIGHTBOX_ZOOM = 2.5;
+
+function ShotLightbox({ frame, caption, onClose, zoomable = true }: { frame: MediaFrame; caption: string; onClose: () => void; zoomable?: boolean }) {
   const full = typeof window !== "undefined" && window.innerWidth >= FULL_SHOT_MIN_WIDTH ? frame.full : undefined;
   const src = resolveSrc(full?.src ?? frame.src);
   const [w, h] = full?.size ?? frame.size;
   const [loaded, setLoaded] = useState(false);
   const [zoomedOut, setZoomedOut] = useState(!full || reduceMotion());
+  // Once open, a click zooms in on that spot; moving the pointer pans, and another click zooms back out.
+  const [zoom, setZoom] = useState<{ x: number; y: number } | null>(null);
+  const pointAt = (event: { clientX: number; clientY: number; currentTarget: Element }) => {
+    const box = event.currentTarget.getBoundingClientRect();
+    return {
+      x: Math.min(100, Math.max(0, ((event.clientX - box.left) / box.width) * 100)),
+      y: Math.min(100, Math.max(0, ((event.clientY - box.top) / box.height) * 100)),
+    };
+  };
+  const canZoom = zoomable && zoomedOut;
 
   useEffect(() => {
     const previous = document.body.style.overflow;
@@ -678,9 +692,25 @@ function ShotLightbox({ frame, caption, onClose }: { frame: MediaFrame; caption:
       <button aria-label="Close screenshot" className="shot-lightbox__close" onClick={onClose} type="button">
         <X aria-hidden="true" size={22} weight="bold" />
       </button>
+      {canZoom ? (
+        <div className="shot-lightbox__zoom" onClick={(event) => event.stopPropagation()}>
+          <button aria-label="Zoom in" disabled={Boolean(zoom)} onClick={() => setZoom({ x: 50, y: 50 })} type="button">
+            <MagnifyingGlassPlus aria-hidden="true" size={20} weight="bold" />
+          </button>
+          <button aria-label="Zoom out" disabled={!zoom} onClick={() => setZoom(null)} type="button">
+            <MagnifyingGlassMinus aria-hidden="true" size={20} weight="bold" />
+          </button>
+        </div>
+      ) : null}
       <div
-        className={`shot-lightbox__frame${loaded ? " is-loaded" : ""}`}
-        onClick={(event) => event.stopPropagation()}
+        className={`shot-lightbox__frame${loaded ? " is-loaded" : ""}${canZoom ? (zoom ? " is-zoomed" : " can-zoom") : ""}`}
+        onClick={(event) => {
+          event.stopPropagation();
+          if (canZoom) setZoom(zoom ? null : pointAt(event));
+        }}
+        onMouseMove={(event) => {
+          if (zoom) setZoom(pointAt(event));
+        }}
         style={{ ["--w" as string]: `${w}px`, ["--a" as string]: w / h }}
       >
         <img
@@ -692,7 +722,13 @@ function ShotLightbox({ frame, caption, onClose }: { frame: MediaFrame; caption:
             if (node?.complete && node.naturalWidth && !loaded) setLoaded(true);
           }}
           src={src}
-          style={zoomedOut || !full ? undefined : { transform: cropTransform(full.crop) }}
+          style={
+            zoom
+              ? { transform: `scale(${LIGHTBOX_ZOOM})`, transformOrigin: `${zoom.x}% ${zoom.y}%` }
+              : zoomedOut || !full
+                ? undefined
+                : { transform: cropTransform(full.crop) }
+          }
           width={w}
         />
       </div>
@@ -709,12 +745,21 @@ function hasBrowserBar(frame: MediaFrame, item?: MediaItem) {
   return ratio >= 1.25 && ratio <= 2;
 }
 
-function BrowserBar() {
+// The address shown in the browser bar, set per case study (for example "dnk-store.com/wp-admin · ModernCart").
+const BrowserUrl = createContext<string | undefined>(undefined);
+
+// A dark browser window bar, the same as the one in the walkthrough video previews.
+function BrowserBar({ url }: { url?: string }) {
+  const contextUrl = useContext(BrowserUrl);
+  const address = url ?? contextUrl;
   return (
     <span aria-hidden="true" className="shot-browser">
-      <i />
-      <i />
-      <i />
+      <span className="shot-browser__dots">
+        <i />
+        <i />
+        <i />
+      </span>
+      {address ? <span className="shot-browser__url">{address}</span> : null}
     </span>
   );
 }
@@ -769,7 +814,7 @@ function ShotImage({ frame, caption, onOpen, browser }: { frame: MediaFrame; cap
 }
 
 // Any other image: a click opens it large, the same way screenshots open.
-function ZoomImage({ alt, src, browser }: { alt: string; src: string; browser?: boolean }) {
+function ZoomImage({ alt, src, browser, zoomable = true }: { alt: string; src: string; browser?: boolean; zoomable?: boolean }) {
   const [open, setOpen] = useState<MediaFrame | null>(null);
   const imgRef = useRef<HTMLImageElement | null>(null);
   return (
@@ -786,7 +831,7 @@ function ZoomImage({ alt, src, browser }: { alt: string; src: string; browser?: 
         {browser ? <BrowserBar /> : null}
         <img alt={alt} ref={imgRef} src={resolveSrc(src)} />
       </button>
-      {open ? <ShotLightbox caption={alt} frame={open} onClose={() => setOpen(null)} /> : null}
+      {open ? <ShotLightbox caption={alt} frame={open} onClose={() => setOpen(null)} zoomable={zoomable} /> : null}
     </>
   );
 }
@@ -1243,12 +1288,11 @@ function Paragraphs({ items }: { items: string[] }) {
 function DecisionCard({ decision, index }: { decision: DecisionItem; index: number }) {
   return (
     <article className="case-decision">
-      <header>
+      {/* The hook is the heading: one line that sets up the decision, on a tinted panel. */}
+      <header className="case-decision__head">
         <span className="case-index">Decision {pad(index)}</span>
-        <h3>{decision.title}</h3>
+        <h3 title={decision.title}>{decision.hook}</h3>
       </header>
-
-      <p className="case-decision__lead">{decision.hook}</p>
 
       <ol className="case-flow">
         <DecisionStep icon={<ClockCounterClockwise size={18} weight="bold" />} label="Before the decision" variant="before">
@@ -1528,6 +1572,12 @@ function SectionBody({ section }: { section: CaseSection }) {
             <div className="case-outcome__before">
               <span>Before</span>
               <p>{section.before}</p>
+              {section.beforeStat ? (
+                <div className="case-outcome__metric case-outcome__metric--before">
+                  <strong>{section.beforeStat.value}</strong>
+                  <span>{section.beforeStat.label}</span>
+                </div>
+              ) : null}
             </div>
             <span className="case-outcome__arrow" aria-hidden="true">
               <ArrowRight size={28} weight="bold" />
@@ -1943,6 +1993,7 @@ type WorkCard = {
   imageClass?: string;
   href?: string;
   brand?: string;
+  browserUrl?: string;
 };
 
 // Work shown on the home page before it has a full case study. Add `href` once the case study exists.
@@ -1960,6 +2011,7 @@ const workCards: WorkCard[] = [
     imageClass: project.imageClass,
     href: `/work/${project.slug}`,
     brand: project.brand,
+    browserUrl: project.browserUrl,
   })),
 ];
 
@@ -2087,7 +2139,8 @@ function HomePage() {
                   </div>
                 </div>
 
-                <div className="project-media" aria-hidden="true">
+                <div className={`project-media${project.browserUrl ? " project-media--browser" : ""}`} aria-hidden="true">
+                  {project.browserUrl ? <BrowserBar url={project.browserUrl} /> : null}
                   {project.key === "expenzo" ? (
                     <PhoneCarousel screens={expenzoCarousel} />
                   ) : (
@@ -2219,7 +2272,8 @@ function MoreCaseStudies({ current }: { current: CaseStudy }) {
             // Each card uses its own case study's brand, not the page it sits on.
             style={{ ["--brand" as string]: item.brand ?? siteBrand }}
           >
-            <span className="more-case__media" aria-hidden="true">
+            {/* Phone screens fill the card edge to edge, centered, instead of sitting in an inner frame. */}
+            <span className={`more-case__media${item.slug === "expenzo" ? " more-case__media--phones" : ""}`} aria-hidden="true">
               <img alt="" loading="lazy" src={resolveSrc(item.image)} />
             </span>
             <span className="more-case__body">
@@ -2372,7 +2426,7 @@ function CaseStudyPage({ project }: { project: CaseStudy }) {
   }
 
   return (
-    <>
+    <BrowserUrl.Provider value={project.browserUrl}>
       <Header />
 
       <main
@@ -2488,7 +2542,7 @@ function CaseStudyPage({ project }: { project: CaseStudy }) {
                 />
                 </div>
               ) : (
-                <ZoomImage alt={project.hero.caption} browser={project.hero.browser ?? !project.hero.phone} src={project.hero.src ?? project.image} />
+                <ZoomImage alt={project.hero.caption} browser={project.hero.browser ?? !project.hero.phone} src={project.hero.src ?? project.image} zoomable={false} />
               )}
             </figure>
           )}
@@ -2529,7 +2583,7 @@ function CaseStudyPage({ project }: { project: CaseStudy }) {
       </main>
 
       <SiteFooter />
-    </>
+    </BrowserUrl.Provider>
   );
 }
 
