@@ -3655,10 +3655,24 @@ function DesktopTip() {
     }
   };
 
+  // While the pop-up is open the page behind it stays put, and Escape closes it.
+  useEffect(() => {
+    if (!open) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (event: globalThis.KeyboardEvent) => event.key === "Escape" && close();
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = previous;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
   if (!open) return null;
 
   return (
-    <aside aria-label="Best viewed on desktop" className="desktop-tip" role="status">
+    <div className="desktop-tip-overlay" onClick={close} role="presentation">
+    <aside aria-label="Best viewed on desktop" aria-modal="true" className="desktop-tip" onClick={(event) => event.stopPropagation()} role="dialog">
       <button aria-label="Close" className="desktop-tip__close" onClick={close} type="button">
         <X aria-hidden="true" size={16} weight="bold" />
       </button>
@@ -3667,7 +3681,7 @@ function DesktopTip() {
       </span>
       <div className="desktop-tip__text">
         <strong>Best on a bigger screen</strong>
-        <p>The case studies are full of detailed screenshots and videos. Feel free to browse here, but they read best on a laptop or desktop.</p>
+        <p>The case studies are full of detailed screenshots and videos, so they read best on a laptop or desktop. You can still continue on your phone.</p>
       </div>
       <div className="desktop-tip__actions">
         <button
@@ -3680,10 +3694,11 @@ function DesktopTip() {
           {copied ? "Link copied" : "Copy link for later"}
         </button>
         <button className="desktop-tip__stay" onClick={close} type="button">
-          Continue here
+          Continue on mobile
         </button>
       </div>
     </aside>
+    </div>
   );
 }
 
