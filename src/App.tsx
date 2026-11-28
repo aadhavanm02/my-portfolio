@@ -1070,11 +1070,6 @@ function ProblemView({ section }: { section: Extract<CaseSection, { kind: "probl
         ))}
         </div>
       </div>
-      {hasConstraints ? (
-        <p className="case-mapping__hint" aria-hidden="true">
-          Swipe to see goals and constraints <ArrowRight size={14} weight="bold" />
-        </p>
-      ) : null}
     </>
   );
 }

@@ -10746,10 +10746,6 @@ body.is-video-expanded .case-topic-nav {
 }
 
 /* Challenge table on phones: keep the desktop columns and scroll sideways instead of stacking. */
-.case-mapping__hint {
-  display: none;
-}
-
 @media (max-width: 767px) {
   .case-mapping--3 {
     overflow-x: auto;
@@ -10793,12 +10789,4 @@ body.is-video-expanded .case-topic-nav {
     font-size: 14px;
   }
 
-  .case-mapping__hint {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin: 10px 0 0;
-    color: var(--color-muted);
-    font-size: 13px;
-  }
 }
