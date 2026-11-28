@@ -1630,7 +1630,10 @@ const superfansSocialFeed: CaseStudy = {
         "Riya manages the app for Thread & Care, a scrubs brand on Superfans. Karan is a nurse who shops with them. Both are made up for this story.",
       video: {
         kind: "video",
-        caption: "Prototype walkthrough, where a merchant imports an Instagram video, then a shopper watches it, comments and buys the tagged product.",
+        caption: "",
+        alt: "Social Feed walkthrough. Riya fills the feed from the dashboard, then Karan watches, shops, comments and posts in the app.",
+        src: "/assets/videos/superfans-walkthrough.mp4?v=2026-11-28",
+        poster: "/assets/videos/superfans-walkthrough.jpg?v=2026-11-28",
       },
       lanes: [
         {
@@ -2140,7 +2143,13 @@ const expenzo: CaseStudy = {
       eyebrow: "Final Solution",
       title: "How one GST reminder becomes a file ready for the accountant",
       intro: "The prototype follows Ravi, a 47-year-old owner of a small printing business, through one month's filing day.",
-      video: { kind: "video", caption: "Prototype walkthrough video, to be added." },
+      video: {
+        kind: "video",
+        caption: "",
+        alt: "Expenzo walkthrough. Ravi scans his receipts, fixes a category, sets a bill to repeat and exports a file for his accountant.",
+        src: "/assets/videos/expenzo-walkthrough.mp4?v=2026-11-28",
+        poster: "/assets/videos/expenzo-walkthrough.jpg?v=2026-11-28",
+      },
       lanes: [
         {
           name: "Ravi",
