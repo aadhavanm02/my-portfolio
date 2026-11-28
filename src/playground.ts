@@ -53,13 +53,13 @@ const allPlaygroundItems: PlaygroundItem[] = [
     title: "The Library",
     tagline: "A calm neighbourhood library you walk through, borrow from and read in.",
     description:
-      "A 3D library that runs in the browser on desktop and phone. Make a library card, walk the racks, pick up real public-domain books, sign the register at the issue desk and read with real page turns: two pages on a big screen, one on a phone.",
+      "A 3D library that runs in the browser on desktop and phone. Make a library card, walk the racks, pick up real public-domain books, sign the register at the issue desk and read with real page turns, two pages on a big screen and one on a phone.",
     status: "live",
     icon: "books",
     tags: ["3D", "Web and phone", "Reading"],
     src: "/playground/projects/library/index.html",
     preview: "/assets/playground/library.jpg",
-    note: "Real-time 3D: it takes a few seconds to open, and works best on a recent phone or laptop.",
+    note: "Real-time 3D takes a few seconds to open, and works best on a recent phone or laptop.",
     study: {
       kind: "Concept · 3D web app for desktop and phone",
       demoNote: "This is the working app. Switch between desktop and iPhone, make your library card and walk in. Arrow keys or WASD on desktop, the joystick on a phone. Only one view runs at a time, and both share your progress.",
@@ -78,7 +78,7 @@ const allPlaygroundItems: PlaygroundItem[] = [
         title: "Reading apps are lists. Libraries are places.",
         body: [
           "The best part of a library is not search. It is walking past a shelf and stopping, the librarian who remembers you, and the stamp that makes a book yours for two weeks.",
-          "The challenge was to make that feel calm rather than like a game: no score, no quests, no clutter over the room. And it had to work with one thumb on a phone as well as with a keyboard on a laptop.",
+          "The challenge was to make that feel calm rather than like a game, with no score, no quests and no clutter over the room. And it had to work with one thumb on a phone as well as with a keyboard on a laptop.",
         ],
       },
       audience: [
@@ -95,9 +95,9 @@ const allPlaygroundItems: PlaygroundItem[] = [
         { title: "A reader that feels like paper", body: "Page curls you can drag, light, sepia and night themes, text size, and ribbon bookmarks. On a big screen the book opens as two pages; on a phone it is one." },
       ],
       decisions: [
-        { title: "A library card, not a game HUD", body: "Everything on top of the room is a library object: a brass plaque for where you are, a library card for your status, a stamp-red badge for counts. Cream paper, library green and stamp red, with a serif for titles and another for reading." },
+        { title: "A library card, not a game HUD", body: "Everything on top of the room is a library object, a brass plaque for where you are, a library card for your status, a stamp-red badge for counts. Cream paper, library green and stamp red, with a serif for titles and another for reading." },
         { title: "Real text, or honest samples", body: "Books marked with a ribbon open with their real public-domain text. The others say Sample pages up front and link to the full book on Project Gutenberg, instead of pretending." },
-        { title: "Limits that feel like a library", body: "You can only carry five books, and borrowing means signing the register. The limits are explained the way a librarian would: “Your hands are full. Register or put some back first.”" },
+        { title: "Limits that feel like a library", body: "You can only carry five books, and borrowing means signing the register. The limits are explained the way a librarian would. “Your hands are full. Register or put some back first.”" },
         { title: "Built for one thumb", body: "On a phone the joystick sits under the right thumb, the card folds into a pill, the map grows when tapped, and prompts sit above the thumb zone. Graphics run a little lighter on touch screens to save battery." },
         { title: "Two pages on desktop, one on a phone", body: "A wide screen opens the book flat, and the right-hand page turns over the spine with the next page printed on its back. A phone keeps a single page so the text never gets small." },
         { title: "Never break on a bad save", body: "Progress is saved in the browser and checked every time the app opens, so an old or edited save can't break it. If a device can't run 3D it says so plainly, and reduced motion turns the page-turn animation off." },
@@ -159,7 +159,7 @@ const allPlaygroundItems: PlaygroundItem[] = [
       problem: {
         title: "Three jobs that shouldn't be separate",
         body: [
-          "Finding a role, tailoring a resume and getting referred are usually three different apps and a lot of copy and paste. Referrals are the most valuable and the least fair: they depend on who you know, and the people willing to refer get flooded.",
+          "Finding a role, tailoring a resume and getting referred are usually three different apps and a lot of copy and paste. Referrals are the most valuable and the least fair. They depend on who you know, and the people willing to refer get flooded.",
           "So the design had two sides to serve. Candidates need a clear, honest path to a referral. Referrers need a way to help without being spammed.",
         ],
       },
@@ -176,7 +176,7 @@ const allPlaygroundItems: PlaygroundItem[] = [
       decisions: [
         { title: "One person per opening, first come first served", body: "Referrers refer one candidate at a time and the opening locks while they do. It protects referrers from a flood and gives candidates a fair queue instead of a lottery." },
         { title: "Openings reopen on their own", body: "If a candidate isn't selected, withdraws, or a request gets no reply in 7 days, the opening reopens and the next person moves up. Nobody waits on a slot forever." },
-        { title: "AI that only rewrites what's true", body: "Tailoring suggests edits rather than writing a new resume, and every change can be rejected. The rule on screen is simple: it never invents anything." },
+        { title: "AI that only rewrites what's true", body: "Tailoring suggests edits rather than writing a new resume, and every change can be rejected. The rule on screen is simple. It never invents anything." },
         { title: "Limits that keep it fair", body: "Five active requests per candidate, one request per opening, and a 7-day timer on every reply." },
       ],
       edges: {
@@ -227,7 +227,7 @@ const allPlaygroundItems: PlaygroundItem[] = [
       problem: {
         title: "Medicine apps don't look like medicine",
         body: [
-          "Lakshmi leaves the clinic with a handwritten prescription and a bag of strips. Her busy mornings come down to one question: did I take it or not? A list of names and times doesn't answer it. The strip does.",
+          "Lakshmi leaves the clinic with a handwritten prescription and a bag of strips. Her busy mornings come down to one question. Did I take it or not? A list of names and times doesn't answer it. The strip does.",
           "Setting up also has to take a minute, not a typing session, for someone who might be 60 and not comfortable with apps.",
         ],
       },
@@ -244,8 +244,8 @@ const allPlaygroundItems: PlaygroundItem[] = [
       decisions: [
         { title: "One scan instead of two", body: "Scanning both sides and choosing a layout was too much for someone at 60. Now it's a single scan of the back, and the database fills in the strip size." },
         { title: "The strip updates when you take a dose", body: "Early designs logged a dose without changing the strip. Now the pockets visibly open, so the screen always matches what's in her hand." },
-        { title: "Every gap in the journey got a screen", body: "A journey map from clinic to follow-up showed missing pieces: no camera step for the prescription, a video call with no screen, a refill with no way to send it. Each one got designed." },
-        { title: "Same glance for every form", body: "Syrups, bottles, insulin pens and eye drops get the same treatment: a level line drops by 5 ml, a cartridge shows units left, drops show days until they must be thrown away." },
+        { title: "Every gap in the journey got a screen", body: "A journey map from clinic to follow-up showed missing pieces, no camera step for the prescription, a video call with no screen, a refill with no way to send it. Each one got designed." },
+        { title: "Same glance for every form", body: "Syrups, bottles, insulin pens and eye drops get the same treatment. A level line drops by 5 ml, a cartridge shows units left, drops show days until they must be thrown away." },
       ],
       edges: {
         intro: "Five short “What if” stories cover the moments that break a simple tracker:",
@@ -260,7 +260,7 @@ const allPlaygroundItems: PlaygroundItem[] = [
       images: [
         { src: "/assets/playground/strip/app-screens.webp", size: [2180, 893], caption: "The working app: a prescription read from a photo, Today with a strip you can pop, a half dose, the strip report and Ask." },
         { src: "/assets/playground/strip/journey.webp", size: [2000, 1000], caption: "The journey from clinic to follow-up, with the gap found at each stage and how it was fixed." },
-        { src: "/assets/playground/strip/stripkit.webp", size: [2000, 1400], caption: "One component draws any strip from four facts: name, tablet colour, tablets per strip and how many are left." },
+        { src: "/assets/playground/strip/stripkit.webp", size: [2000, 1400], caption: "One component draws any strip from four facts, the name, tablet colour, tablets per strip and how many are left." },
       ],
       next: [
         "Test the one-scan setup with older users, in Tamil and Hindi as well as English.",
@@ -285,7 +285,7 @@ const allPlaygroundItems: PlaygroundItem[] = [
       kind: "Working prototype · mobile",
       demoNote: "This is the real app running in a phone frame. Type a line, press Enter and tap Look up. Answers come live from Gemini, so they take a few seconds and can be wrong.",
       intro: [
-        "People write down things they don't fully understand: an ingredient a relative mentioned, a spice in a photo, a link someone sent. Then they open another app to find out what it is.",
+        "People write down things they don't fully understand, like an ingredient a relative mentioned, a spice in a photo, a link someone sent. Then they open another app to find out what it is.",
         "Quanvas keeps both on one page. Write anything, and the lines that look searchable get a small Look up pill. One tap turns the line into a card that explains it.",
       ],
       facts: [
@@ -309,10 +309,10 @@ const allPlaygroundItems: PlaygroundItem[] = [
         { title: "Look up any line", body: "Type, press Enter, tap the pill. The line becomes a card with what it is, how it looks and how to use it, with sources." },
         { title: "Recipes with steps", body: "A dish opens as a recipe block with visual steps and a cook mode, and its ingredients can become a shopping list." },
         { title: "Shop online or in a store", body: "A to-do list turns into one shopping block. Buy it online, or shop in store with photos, local names and a big-text view to show the shopkeeper." },
-        { title: "Photos, files and links", body: "Each one lands on the canvas with its own pills: What is this, Find where it's from, Summarise, Explain." },
+        { title: "Photos, files and links", body: "Each one lands on the canvas with its own pills, What is this, Find where it's from, Summarise, Explain." },
       ],
       decisions: [
-        { title: "A pill you tap, not automatic search", body: "Three triggers were explored: a smart margin icon, searching every line in some canvas types, and a Look up pill. The pill won because nothing is ever searched without a tap, so there are no wrong searches." },
+        { title: "A pill you tap, not automatic search", body: "Three triggers were explored, a smart margin icon, searching every line in some canvas types, and a Look up pill. The pill won because nothing is ever searched without a tap, so there are no wrong searches." },
         { title: "Enter always makes a plain line", body: "Typing stays typing. The pill appears only after Enter, and only on lines that look searchable, so reminders and personal notes never get one." },
         { title: "Ignored pills get out of the way", body: "An unused pill shrinks to a small dot after 4 seconds, and you can swipe it away or say “Stop suggesting this”. Long-pressing any line still offers Look up." },
         { title: "Maths and links get special handling", body: "Sums like 120 + 85 + 240 show their answer inline, worked out on the phone. A pasted link becomes a preview with an Explain pill." },
@@ -385,7 +385,7 @@ const allPlaygroundItems: PlaygroundItem[] = [
     title: "Weave Notebook",
     tagline: "Docs, tasks and links that connect to each other.",
     description:
-      "A small notebook where anything can be linked to anything: write docs, add tasks with reminders, save links into folders, and mention one inside another. Try it with the example items.",
+      "A small notebook where anything can be linked to anything. Write docs, add tasks with reminders, save links into folders, and mention one inside another. Try it with the example items.",
     status: "live",
     icon: "notebook",
     tags: ["Productivity", "Responsive", "Local-first"],

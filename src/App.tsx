@@ -12,6 +12,7 @@ import {
   type MouseEvent,
   type PointerEvent,
   type ReactNode,
+  type VideoHTMLAttributes,
 } from "react";
 import {
   ArrowRight,
@@ -699,7 +700,45 @@ function ShotLightbox({ frame, caption, onClose }: { frame: MediaFrame; caption:
   );
 }
 
-function ShotImage({ frame, caption, onOpen }: { frame: MediaFrame; caption: string; onOpen: (frame: MediaFrame) => void }) {
+// Full desktop screenshots sit in a browser window. Crops, phone screens and other images do not.
+function hasBrowserBar(frame: MediaFrame, item?: MediaItem) {
+  if (frame.browser !== undefined) return frame.browser;
+  if (item?.browser !== undefined) return item.browser;
+  if (item?.phone || frame.full) return false;
+  const ratio = frame.size[0] / frame.size[1];
+  return ratio >= 1.25 && ratio <= 2;
+}
+
+function BrowserBar() {
+  return (
+    <span aria-hidden="true" className="shot-browser">
+      <i />
+      <i />
+      <i />
+    </span>
+  );
+}
+
+// Looping screen recordings play only while they are on screen.
+function InViewVideo(props: VideoHTMLAttributes<HTMLVideoElement>) {
+  const ref = useRef<HTMLVideoElement | null>(null);
+  useEffect(() => {
+    const video = ref.current;
+    if (!video) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !reduceMotion()) void video.play().catch(() => undefined);
+        else video.pause();
+      },
+      { threshold: 0.4 },
+    );
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, []);
+  return <video loop muted playsInline preload="metadata" ref={ref} {...props} />;
+}
+
+function ShotImage({ frame, caption, onOpen, browser }: { frame: MediaFrame; caption: string; onOpen: (frame: MediaFrame) => void; browser?: boolean }) {
   const src = resolveSrc(frame.src);
   // Start fetching the full screenshot on hover or focus, so it is ready by the click.
   const preload = () => {
@@ -708,22 +747,47 @@ function ShotImage({ frame, caption, onOpen }: { frame: MediaFrame; caption: str
   if (/\.mp4(\?|$)/.test(frame.src)) {
     // A looping, silent screen recording shown in place of a still.
     return (
-      <div className="shot-image shot-image--video">
-        <video aria-label={frame.label ?? caption} autoPlay loop muted playsInline preload="metadata" src={src} width={frame.size[0]} height={frame.size[1]} />
+      <div className={`shot-image shot-image--video${browser ? " shot-image--browser" : ""}`}>
+        {browser ? <BrowserBar /> : null}
+        <InViewVideo aria-label={frame.label ?? caption} src={src} width={frame.size[0]} height={frame.size[1]} />
       </div>
     );
   }
   return (
     <button
       aria-label={`View full size: ${frame.label ?? caption}`}
-      className="shot-image"
+      className={`shot-image${browser ? " shot-image--browser" : ""}`}
       onClick={() => onOpen(frame)}
       onFocus={preload}
       onPointerEnter={preload}
       type="button"
     >
+      {browser ? <BrowserBar /> : null}
       <img alt={frame.label ?? caption} height={frame.size[1]} loading="lazy" src={src} width={frame.size[0]} />
     </button>
+  );
+}
+
+// Any other image: a click opens it large, the same way screenshots open.
+function ZoomImage({ alt, src, browser }: { alt: string; src: string; browser?: boolean }) {
+  const [open, setOpen] = useState<MediaFrame | null>(null);
+  const imgRef = useRef<HTMLImageElement | null>(null);
+  return (
+    <>
+      <button
+        aria-label={`View full size: ${alt}`}
+        className={`zoom-image${browser ? " shot-image shot-image--browser" : ""}`}
+        onClick={() => {
+          const img = imgRef.current;
+          setOpen({ src, size: [img?.naturalWidth || 1600, img?.naturalHeight || 1000] });
+        }}
+        type="button"
+      >
+        {browser ? <BrowserBar /> : null}
+        <img alt={alt} ref={imgRef} src={resolveSrc(src)} />
+      </button>
+      {open ? <ShotLightbox caption={alt} frame={open} onClose={() => setOpen(null)} /> : null}
+    </>
   );
 }
 
@@ -747,7 +811,7 @@ function ShotMedia({ item, thumb }: { item: MediaItem; thumb?: boolean }) {
         <div className="shot-stage__frames" style={{ ["--n" as string]: frames.length }}>
           {frames.map((frame, index) => (
             <div className="shot-stage__item" key={`${frame.src}-${index}`} style={{ ["--a" as string]: frame.size[0] / frame.size[1] }}>
-              <ShotImage caption={item.alt ?? item.caption} frame={frame} onOpen={setOpen} />
+              <ShotImage browser={hasBrowserBar(frame, item)} caption={item.alt ?? item.caption} frame={frame} onOpen={setOpen} />
               {frame.label || frame.status ? (
                 <span className="shot-stage__label">
                   <StatusTag status={frame.status} />
@@ -796,7 +860,7 @@ function MediaThumb({ item }: { item: MediaItem }) {
   if (item.src) {
     return (
       <figure className="case-media-image case-media--thumb">
-        <img alt={item.caption} src={resolveSrc(item.src)} />
+        <ZoomImage alt={item.alt ?? item.caption} src={item.src} />
         <figcaption>{item.caption}</figcaption>
       </figure>
     );
@@ -831,7 +895,7 @@ function MediaGroup({ items }: { items: MediaItem[] }) {
       {items.map((item) =>
         item.src ? (
           <figure className="case-media-image" key={item.caption}>
-            <img alt={item.caption} src={resolveSrc(item.src)} />
+            <ZoomImage alt={item.alt ?? item.caption} src={item.src} />
             <figcaption>{item.caption}</figcaption>
           </figure>
         ) : (
@@ -862,6 +926,8 @@ function StatStrip({ stats }: { stats: Stat[] }) {
 }
 
 function ProblemView({ section }: { section: Extract<CaseSection, { kind: "problem" }> }) {
+  // Each row reads Challenge, Goal, Constraint.
+  const hasConstraints = section.mapping.some((row) => row[2]);
   return (
     <>
       {section.goals ? (
@@ -882,6 +948,7 @@ function ProblemView({ section }: { section: Extract<CaseSection, { kind: "probl
         </div>
       ) : null}
 
+      {section.pains?.length ? (
       <div className="case-pains">
         {section.pains.map((pain, index) => (
           <article key={pain.title}>
@@ -891,6 +958,7 @@ function ProblemView({ section }: { section: Extract<CaseSection, { kind: "probl
           </article>
         ))}
       </div>
+      ) : null}
 
       {section.media ? <MediaGroup items={[section.media]} /> : null}
 
@@ -901,27 +969,31 @@ function ProblemView({ section }: { section: Extract<CaseSection, { kind: "probl
         </aside>
       ) : null}
 
-      <div className="case-mapping">
+      <div className={`case-mapping${hasConstraints ? " case-mapping--3" : ""}`}>
         <div className="case-mapping__head" aria-hidden="true">
           <span>Challenge</span>
           <span />
           <span>Goal</span>
+          {hasConstraints ? <span>Constraint</span> : null}
         </div>
-        {section.mapping.map(([challenge, goal]) => (
+        {section.mapping.map(([challenge, goal, constraint]) => (
           <div className="case-mapping__row" key={challenge}>
-            <p>{challenge}</p>
+            <p>
+              {hasConstraints ? <span className="case-mapping__label">Challenge</span> : null}
+              {challenge}
+            </p>
             <ArrowRight aria-label="becomes" size={22} weight="bold" />
-            <p>{goal}</p>
+            <p>
+              {hasConstraints ? <span className="case-mapping__label">Goal</span> : null}
+              {goal}
+            </p>
+            {hasConstraints ? (
+              <p className="case-mapping__constraint">
+                <span className="case-mapping__label">Constraint</span>
+                {constraint}
+              </p>
+            ) : null}
           </div>
-        ))}
-      </div>
-
-      <div className="case-chips">
-        <span className="case-chips__label">Constraints</span>
-        {section.constraints.map((constraint) => (
-          <span className="case-chip" key={constraint}>
-            {constraint}
-          </span>
         ))}
       </div>
     </>
@@ -1176,10 +1248,7 @@ function DecisionCard({ decision, index }: { decision: DecisionItem; index: numb
         <h3>{decision.title}</h3>
       </header>
 
-      <blockquote className="case-decision__hook">
-        <span>Hook</span>
-        <p>{decision.hook}</p>
-      </blockquote>
+      <p className="case-decision__lead">{decision.hook}</p>
 
       <ol className="case-flow">
         <DecisionStep icon={<ClockCounterClockwise size={18} weight="bold" />} label="Before the decision" variant="before">
@@ -1280,6 +1349,7 @@ function SystemView({ section }: { section: Extract<CaseSection, { kind: "system
         </div>
       ) : null}
 
+      {section.tokens?.length ? (
       <div className="case-tokens">
         {section.tokens.map((token) => (
           <article key={token.label}>
@@ -1306,6 +1376,7 @@ function SystemView({ section }: { section: Extract<CaseSection, { kind: "system
           </article>
         ))}
       </div>
+      ) : null}
 
       {section.note ? (
         <aside className="case-note">
@@ -1328,7 +1399,6 @@ function ProcessView({ section }: { section: Extract<CaseSection, { kind: "proce
             <article className="case-process__step" key={step.label}>
               <div className="case-process__aside">
                 <span className="case-process__num">{pad(index)}</span>
-                <span className="case-tag">{step.label}</span>
               </div>
               <div className="case-process__content">
               <h3>{step.title ?? step.label}</h3>
@@ -1340,6 +1410,15 @@ function ProcessView({ section }: { section: Extract<CaseSection, { kind: "proce
                   <RichText text={detail} />
                 </p>
               ))}
+              {step.bullets ? (
+                <ul className="case-process__bullets">
+                  {step.bullets.map((bullet) => (
+                    <li key={bullet}>
+                      <RichText text={bullet} />
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
               {step.points ? (
                 <ul className="case-feature__highlights" aria-label="Key details">
                   {step.points.map((point) => (
@@ -1456,15 +1535,17 @@ function SectionBody({ section }: { section: CaseSection }) {
             <div className="case-outcome__after">
               <span>After</span>
               <p>{section.after}</p>
+              <div className="case-outcome__metric">
+                <strong>{section.stat.value}</strong>
+                <span>{section.stat.label}</span>
+              </div>
             </div>
           </div>
-          <div className="case-outcome__stat">
-            <strong>{section.stat.value}</strong>
-            <span>{section.stat.label}</span>
-          </div>
-          <p className="case-feedback">
-            <RichText text={section.feedback} />
-          </p>
+          {section.feedback ? (
+            <p className="case-feedback">
+              <RichText text={section.feedback} />
+            </p>
+          ) : null}
         </>
       );
   }
@@ -1760,17 +1841,19 @@ function curveY(x: number) {
 const chartValue = (y: number) => Math.round(((719 - y) / 79) * 1000 + 2000);
 const money = (n: number) => `$${n.toLocaleString("en-US")}`;
 
-function CartChartMotion() {
+function CartChartMotion({ playing }: { playing: boolean }) {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const [x, setX] = useState(560);
+  // Where the loop was when it paused, so it carries on from there.
+  const startOffset = useRef(0);
 
   useEffect(() => {
     const root = rootRef.current;
     if (!root || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
+    if (!playing) return;
     let frame = 0;
-    let visible = false;
-    const start = performance.now();
+    const start = performance.now() - startOffset.current;
     const [minX, maxX] = [cartCurve[0][0], cartCurve[cartCurve.length - 1][0]];
     const loop = 9000;
 
@@ -1780,20 +1863,13 @@ function CartChartMotion() {
       const phase = p < 0.42 ? p / 0.42 : p < 0.5 ? 1 : p < 0.92 ? 1 - (p - 0.5) / 0.42 : 0;
       const eased = phase < 0.5 ? 2 * phase * phase : 1 - Math.pow(-2 * phase + 2, 2) / 2;
       setX(minX + (maxX - minX) * eased);
-      if (visible) frame = requestAnimationFrame(tick);
+      startOffset.current = now - start;
+      frame = requestAnimationFrame(tick);
     }
 
-    const observer = new IntersectionObserver(([entry]) => {
-      visible = entry.isIntersecting;
-      cancelAnimationFrame(frame);
-      if (visible) frame = requestAnimationFrame(tick);
-    });
-    observer.observe(root);
-    return () => {
-      observer.disconnect();
-      cancelAnimationFrame(frame);
-    };
-  }, []);
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [playing]);
 
   const orangeY = curveY(x);
   const yellowY = orangeY + cartImage.yellowOffset;
@@ -1822,9 +1898,9 @@ function CartChartMotion() {
   );
 }
 
-function ShotMotion({ kind }: { kind: string }) {
+function ShotMotion({ kind, playing }: { kind: string; playing: boolean }) {
   if (kind === "cart-abandonment-recovery") {
-    return <CartChartMotion />;
+    return <CartChartMotion playing={playing} />;
   }
 
   if (kind === "superfans-social-feed") {
@@ -1905,9 +1981,56 @@ function PhoneCarousel({ screens }: { screens: string[] }) {
   );
 }
 
+// Only one work card animates at a time: the one most in view, or the one under the pointer.
+function usePlayingCard() {
+  const [inView, setInView] = useState<string | null>(null);
+  const [hovered, setHovered] = useState<string | null>(null);
+  const ratios = useRef(new Map<string, number>());
+  const observer = useRef<IntersectionObserver | null>(null);
+
+  useEffect(() => {
+    observer.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => ratios.current.set((entry.target as HTMLElement).dataset.card ?? "", entry.intersectionRatio));
+        let best: string | null = null;
+        let bestRatio = 0.35;
+        ratios.current.forEach((ratio, key) => {
+          if (ratio > bestRatio) {
+            best = key;
+            bestRatio = ratio;
+          }
+        });
+        setInView(best);
+      },
+      { threshold: [0, 0.2, 0.35, 0.5, 0.65, 0.8, 1] },
+    );
+    document.querySelectorAll<HTMLElement>("[data-card]").forEach((node) => observer.current?.observe(node));
+    return () => observer.current?.disconnect();
+  }, []);
+
+  const watch = (node: HTMLElement | null) => {
+    if (node && observer.current) observer.current.observe(node);
+  };
+
+  return { playing: hovered ?? inView, setHovered, watch };
+}
+
+// The ModernCart card video plays and pauses with its card.
+function CardVideo({ playing, poster, src }: { playing: boolean; poster: string; src: string }) {
+  const ref = useRef<HTMLVideoElement | null>(null);
+  useEffect(() => {
+    const video = ref.current;
+    if (!video) return;
+    if (playing && !reduceMotion()) void video.play().catch(() => undefined);
+    else video.pause();
+  }, [playing]);
+  return <video loop muted playsInline poster={poster} preload="metadata" ref={ref} src={src} />;
+}
+
 function HomePage() {
   const [showMoreProjects, setShowMoreProjects] = useState(false);
   const visibleProjects = showMoreProjects ? workCards : workCards.slice(0, 4);
+  const { playing, setHovered, watch } = usePlayingCard();
 
   return (
     <>
@@ -1938,8 +2061,12 @@ function HomePage() {
           <div className="project-list">
             {visibleProjects.map((project) => (
               <article
-                className={`project-card${project.brand ? " brand-scope" : ""}`}
+                className={`project-card${project.brand ? " brand-scope" : ""}${playing === project.key ? " is-playing" : ""}`}
+                data-card={project.key}
                 key={project.key}
+                onMouseEnter={() => setHovered(project.key)}
+                onMouseLeave={() => setHovered(null)}
+                ref={watch}
                 style={project.brand ? { ["--brand" as string]: project.brand } : undefined}
               >
                 <div className="project-content">
@@ -1967,11 +2094,11 @@ function HomePage() {
                   <div className={`project-shot ${project.imageClass ?? ""}`}>
                     {project.key === "modern-cart" ? (
                       // The dashboard tabs, clicked and scrolled through on a loop.
-                      <video autoPlay loop muted playsInline poster={resolveSrc("/assets/videos/modern-cart-card.jpg?v=2026-11-21")} src={resolveSrc("/assets/videos/modern-cart-card.mp4?v=2026-11-21")} />
+                      <CardVideo playing={playing === project.key} poster={resolveSrc("/assets/videos/modern-cart-card.jpg?v=2026-11-21")} src={resolveSrc("/assets/videos/modern-cart-card.mp4?v=2026-11-28")} />
                     ) : (
                       <>
                         <img src={resolveSrc(project.image)} alt="" />
-                        <ShotMotion kind={project.key} />
+                        <ShotMotion kind={project.key} playing={playing === project.key} />
                       </>
                     )}
                   </div>
@@ -2352,17 +2479,16 @@ function CaseStudyPage({ project }: { project: CaseStudy }) {
           ) : (
             <figure className="case-hero-media case-hero-image">
               {/\.mp4(\?|$)/.test(heroCover) ? (
-                <video
+                <div className="shot-image shot-image--video shot-image--browser case-hero-browser">
+                <BrowserBar />
+                <InViewVideo
                   aria-label={project.hero.caption}
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
                   poster={project.hero.poster ? resolveSrc(project.hero.poster) : undefined}
                   src={heroCover}
                 />
+                </div>
               ) : (
-                <img alt={project.hero.caption} src={heroCover} />
+                <ZoomImage alt={project.hero.caption} browser={project.hero.browser ?? !project.hero.phone} src={project.hero.src ?? project.image} />
               )}
             </figure>
           )}

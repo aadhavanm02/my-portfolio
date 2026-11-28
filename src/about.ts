@@ -32,27 +32,27 @@ export const about = {
   ] satisfies AboutFact[],
   journey: [
     {
-      period: "Aug 2025 – Present",
+      period: "Aug 2025 to Present",
       title: "Senior Product Designer",
       place: "Superfans.io",
       body: "Redesigning the merchant dashboard end to end for a no-code mobile app builder. Full-time, remote from Chennai.",
       tags: ["Merchant dashboard", "No-code", "Mobile apps"],
     },
     {
-      period: "Sep 2022 – Aug 2025",
+      period: "Sep 2022 to Aug 2025",
       title: "Product Designer",
       place: "Brainstorm Force",
       body: "Designed for products like Astra and Spectra, then the CartFlows family, shipping the end-to-end redesign of Cart Abandonment Recovery and launching ModernCart. Helped build ForceUI, the shared design system, and received a Certificate of Recognition.",
       tags: ["Astra", "Spectra", "CartFlows", "ModernCart", "Cart Abandonment Recovery", "ForceUI"],
     },
     {
-      period: "May 2021 – Oct 2021",
+      period: "May 2021 to Oct 2021",
       title: "UI/UX Designer",
       place: "Indie Spirit Technologies",
       body: "Internship, remote from Chennai.",
     },
     {
-      period: "Nov 2020 – Apr 2021",
+      period: "Nov 2020 to Apr 2021",
       title: "Graphic Designer",
       place: "Tactii (formerly TalentAccurate)",
       body: "Internship, remote for a Toronto-based team.",

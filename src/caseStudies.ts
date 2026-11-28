@@ -21,6 +21,8 @@ export type MediaFrame = {
   full?: FullShot;
   // Tags one screenshot in a row as a dropped version or the one that shipped.
   status?: "dropped" | "shipped";
+  // Draws a browser window bar on top. Full desktop screenshots get one automatically.
+  browser?: boolean;
 };
 
 export type MediaItem = {
@@ -43,6 +45,8 @@ export type MediaItem = {
   status?: "dropped" | "shipped";
   // Phone screens: keeps a row of tall screens to a comfortable width instead of filling the column.
   phone?: boolean;
+  // Draws a browser window bar on top. Full desktop screenshots get one automatically.
+  browser?: boolean;
 };
 
 export type CardItem = {
@@ -109,6 +113,8 @@ export type ProcessStep = {
   title?: string;
   details?: string[];
   points?: string[];
+  // A plain bullet list under the text.
+  bullets?: string[];
   media?: MediaItem;
 };
 
@@ -132,12 +138,12 @@ export type CaseSection = SectionBase &
         // Optional business goals, shown as numbered cards before the pain points.
         goalsIntro?: string;
         goals?: CardItem[];
-        pains: CardItem[];
+        pains?: CardItem[];
         // Optional callout, for example what competitors offered.
         note?: CardItem;
         media?: MediaItem;
-        mapping: Array<[string, string]>;
-        constraints: string[];
+        // Each row reads Challenge, Goal and, optionally, Constraint.
+        mapping: Array<[string, string, string?]>;
       }
     | { kind: "journey"; video?: MediaItem; lanes: JourneyLane[] }
     | {
@@ -152,13 +158,13 @@ export type CaseSection = SectionBase &
         // Screenshots of the system itself, shown under the levels.
         levelsMedia?: MediaItem;
         patterns?: CardItem[];
-        tokens: Array<{ sample: "type" | "color" | "icons"; label: string; value: string }>;
+        tokens?: Array<{ sample: "type" | "color" | "icons"; label: string; value: string }>;
         note?: CardItem;
       }
     | { kind: "process"; steps: ProcessStep[]; notes?: CardItem[]; media?: MediaItem }
     | { kind: "future"; tag: string; items: CardItem[]; media?: MediaItem[] }
     | { kind: "learnings"; items: CardItem[] }
-    | { kind: "outcome"; before: string; after: string; stat: Stat; feedback: string }
+    | { kind: "outcome"; before: string; after: string; stat: Stat; feedback?: string }
   );
 
 export type CaseStudy = {
@@ -182,9 +188,6 @@ export type CaseStudy = {
   hero: MediaItem;
   sections: CaseSection[];
 };
-
-const feedback = (question: string) =>
-  `${question} Feedback is welcome on [LinkedIn](https://www.linkedin.com/in/aadhavan-m/) or by [email](mailto:aadhavanm.design@gmail.com).`;
 
 // ---------- Cart Abandonment screenshots ----------
 // Bumped whenever these screenshots are replaced, so browsers fetch the new files.
@@ -290,7 +293,7 @@ const cartAbandonmentDecisions: DecisionItem[] = [
     before: [
       "The old plugin had three tabs. As the plan grew to include Product Report, Email Logs, Integrations and Popup Templates, each report sitting as its own tab would have crowded the top bar.",
     ],
-    turningIntro: "I explored four directions:",
+    turningIntro: "I explored four directions.",
     options: [
       {
         title: "A tab for each report",
@@ -320,7 +323,7 @@ const cartAbandonmentDecisions: DecisionItem[] = [
       "I designed the Reports dropdown with Email Report and Product Report, and kept the same table layout across both so they feel like one area.",
     ],
     result: [
-      "It shipped. The live plugin's top bar has five items: Dashboard, Follow Up Emails, Reports, Integrations and Settings.",
+      "It shipped. The live plugin's top bar has five items, Dashboard, Follow Up Emails, Reports, Integrations and Settings.",
     ],
     media: [
       { caption: "A tab for each report.", status: "dropped", alt: "Top bar with Email Logs and Product Report as separate tabs.", ...ca("nav-per-report"), wide: true },
@@ -336,12 +339,12 @@ const cartAbandonmentDecisions: DecisionItem[] = [
     before: [
       "In the new design, editing a follow-up email opened in a side drawer beside the list. Email Logs, the detailed view of one cart, needed a home too.",
     ],
-    turningIntro: "Two options:",
+    turningIntro: "There were two options.",
     options: [
       {
         title: "A side drawer",
         body: "Consistent with the email editor, and the list stays in view.",
-        dropped: "Email Logs holds a lot: scheduled emails, billing and shipping addresses, and the full order. In a drawer, the addresses can't sit side by side and the order table gets cramped.",
+        dropped: "Email Logs holds a lot, from scheduled emails to billing and shipping addresses and the full order. In a drawer, the addresses can't sit side by side and the order table gets cramped.",
         badge: "My first proposal",
       },
       {
@@ -355,12 +358,12 @@ const cartAbandonmentDecisions: DecisionItem[] = [
       "The old plugin also showed these details on a full page, so existing users would recognise it.",
     ],
     next: [
-      "I redesigned Email Logs as a full page: email details first, then billing and shipping side by side, then the order items with totals.",
+      "I redesigned Email Logs as a full page, with email details first, then billing and shipping side by side, then the order items with totals.",
     ],
     result: [
-      "The full page shipped. It reinforced something I now ask early: is this a quick edit or a detailed read? The answer decides the pattern, not consistency alone.",
+      "The full page shipped. It reinforced something I now ask early. Is this a quick edit or a detailed read? The answer decides the pattern, not consistency alone.",
     ],
-    media: [{ caption: "The drawer version, my first proposal.", status: "dropped", alt: "Email Log in a side drawer beside the list: addresses, order items and scheduled emails.", ...ca("logs-drawer") }, { caption: "The full page version.", status: "shipped", alt: "Email Logs on a full page: scheduled emails, billing and shipping, order items.", ...ca("logs-full-page") }],
+    media: [{ caption: "The drawer version, my first proposal.", status: "dropped", alt: "Email Log in a side drawer beside the list, with addresses, order items and scheduled emails.", ...ca("logs-drawer") }, { caption: "The full page version.", status: "shipped", alt: "Email Logs on a full page, with scheduled emails, billing and shipping, and order items.", ...ca("logs-full-page") }],
   },
   {
     title: "Why the dashboard chart always compares two numbers",
@@ -368,7 +371,7 @@ const cartAbandonmentDecisions: DecisionItem[] = [
     before: [
       "The old Report page had six number cards and no chart at all. Store owners could see totals, but not whether recovery was improving.",
     ],
-    turningIntro: "Two options:",
+    turningIntro: "There were two options.",
     options: [
       {
         title: "One chart that switches with the cards",
@@ -377,7 +380,7 @@ const cartAbandonmentDecisions: DecisionItem[] = [
       },
       {
         title: "A fixed chart comparing two metrics",
-        body: "Recoverable revenue and recovered revenue, always shown together. Less flexible, but the most important story is always visible: how much was at risk, and how much came back.",
+        body: "Recoverable revenue and recovered revenue, always shown together. Less flexible, but the most important story is always visible, how much was at risk and how much came back.",
         chosen: true,
       },
     ],
@@ -401,7 +404,7 @@ const cartAbandonmentDecisions: DecisionItem[] = [
     before: [
       "The popup asks for an email when a shopper adds to cart, so the store can follow up if they leave. A shopper who isn't logged in might see it again and again.",
     ],
-    turningIntro: "Two options:",
+    turningIntro: "There were two options.",
     options: [
       {
         title: "Always require the email",
@@ -490,6 +493,8 @@ const mcFull: Partial<Record<McShot, [string, [number, number], [number, number,
   "popup-empty": ["full/popup-empty", [2000, 1250], [419, 125, 1162, 1000]],
   "popup-suggest": ["full/popup-suggest", [2000, 1250], [419, 125, 1162, 1000]],
   "popup-items": ["popup-full", [2000, 1250], [452, 124, 1093, 1001]],
+  "popup-items-tablet-box": ["full/popup-tablet", [1536, 2048], [170, 144, 1196, 1760]],
+  "popup-items-mobile-box": ["full/popup-mobile", [780, 1690], [40, 100, 700, 1491]],
 };
 
 function mcFullShot(name: McShot): FullShot | undefined {
@@ -513,7 +518,7 @@ const modernCartDecisions: DecisionItem[] = [
     before: [
       "The PM shared the list of which features stayed Free and which moved to Pro. Nothing was decided yet about how Pro features would appear inside the free dashboard.",
     ],
-    turningIntro: "Two options:",
+    turningIntro: "There were two ways to handle it.",
     options: [
       {
         title: "Hide Pro features completely",
@@ -530,14 +535,13 @@ const modernCartDecisions: DecisionItem[] = [
     ],
     reasoning: [
       "I proposed showing them, as an option for the PM and leadership to weigh. A feature that quietly disappears feels like something was taken away. A feature that's visible but locked tells people exactly what upgrading gets them.",
-      "ForceUI already used PRO badges on cards, so the pattern fit the system.",
     ],
     next: [
       "I designed PRO badges, disabled fields with an inline “Upgrade now” note, an upgrade modal, and a Free vs Pro tab comparing every feature side by side.",
     ],
     result: [
       "The team chose to keep the free version focused on free features, so Pro features stay out of view for free users, and the live plugin still works this way. Both directions were on the table when that call was made, which is what I set out to do.",
-      "It reinforced how I approach this kind of work: give decision makers clear options with the reasoning behind each, knowing the right answer depends on how the business wants to position its product.",
+      "It reinforced how I approach this kind of work. I give decision makers clear options with the reasoning behind each, knowing the right answer depends on how the business wants to position its product.",
     ],
     media: [
       { ...mcShot("My proposal for General: a PRO badge and an inline “Upgrade now” note on each locked setting.", "general-pro"), status: "dropped" },
@@ -549,9 +553,9 @@ const modernCartDecisions: DecisionItem[] = [
     title: "Why I added product suggestions to the cart to keep shoppers browsing",
     hook: "A shopper opens the cart before adding anything. In ModernCart, all they found was an “empty cart” message.",
     before: [
-      "The empty cart showed only a message saying it was empty, with no next step. Once items were added, the cart was just a list of what the shopper had picked.",
+      "There was no next step from that message. Once items were added, the cart was just a list of what the shopper had picked.",
     ],
-    turningIntro: "Two options:",
+    turningIntro: "There were two ways to go.",
     options: [
       {
         title: "Keep the cart as a plain list",
@@ -565,7 +569,7 @@ const modernCartDecisions: DecisionItem[] = [
       },
     ],
     reasoning: [
-      "I chose to suggest products, for two reasons. For the business, every suggestion is a chance to raise the average order value. For the shopper, a suggestion turns an empty screen into something to explore: they can tap it to see the product in detail, or add it straight from the cart.",
+      "I chose to suggest products, for two reasons. For the business, every suggestion is a chance at a bigger order. For the shopper, a suggestion turns an empty screen into something to explore. They can tap it to see the product in detail, or add it straight from the cart.",
       "The idea came from looking at competitors. [FunnelKit Cart](https://funnelkit.com/woocommerce-cart/), one of the plugins I reviewed, already suggests products inside its side cart. I kept the suggestions small so they never take over the cart.",
     ],
     next: [],
@@ -574,7 +578,7 @@ const modernCartDecisions: DecisionItem[] = [
       "**Cart with items:** a small “You might also like” carousel below the items, showing one or two products as a style owners can pick.",
     ],
     result: [
-      "The PM and the team agreed straight away, and both shipped while I was on the team. I carried the idea through the rest of the product: the popup cart uses the same suggestions, and store owners can rewrite the suggestion titles from the Text Label tab.",
+      "The PM and the team agreed straight away, and both shipped. I carried the idea through the rest of the product. The popup cart uses the same suggestions, and store owners can rewrite the suggestion titles from the Text Label tab.",
       "Whether it's empty or full, the cart now always gives the shopper something to explore.",
     ],
     media: [
@@ -588,11 +592,11 @@ const modernCartDecisions: DecisionItem[] = [
   },
   {
     title: "Why I proposed a popup cart for stores that want the cart front and center",
-    hook: "ModernCart opened one way: a panel sliding in from the side. Not every store wants its cart at the edge.",
+    hook: "ModernCart opened one way, with a panel sliding in from the side. Not every store wants its cart at the edge.",
     before: [
-      "ModernCart had one way to open the cart: a panel sliding in from the side. Slide-out was the only cart type.",
+      "Every store got the same slide-out panel, whatever it sold and however its pages were laid out.",
     ],
-    turningIntro: "Exploring new cart styles, I weighed two directions:",
+    turningIntro: "Exploring new cart styles, I weighed two directions.",
     options: [
       {
         title: "Keep only the slide-out",
@@ -610,10 +614,10 @@ const modernCartDecisions: DecisionItem[] = [
       "Centered popup carts were already a familiar pattern in WooCommerce (for example, [WooCommerce Fast Cart](https://barn2.com/woocommerce-cart/) offers a lightbox cart in the middle of the screen), so store owners would recognize it.",
     ],
     next: [
-      "I designed the full popup set: empty, empty with suggestions, and with items and suggestions in two item styles. Each one for desktop, tablet and mobile. On smaller screens the carousel drops from two products to one so the cards stay readable.",
+      "I designed the full popup set, empty, empty with suggestions, and with items and suggestions in two item styles, each for desktop, tablet and mobile. On smaller screens the carousel drops from two products to one so the cards stay readable.",
     ],
     result: [
-      "It shipped after I left, as a Cart Type setting (Slide-out or Popup). The plugin's WordPress.org listing is now named “Modern Cart: WooCommerce Side Cart & Popup Cart.”",
+      "It shipped as a Cart Type setting (Slide-out or Popup), and the plugin's WordPress.org listing now names both cart types in its title.",
     ],
     media: [
       mcRow(
@@ -622,28 +626,23 @@ const modernCartDecisions: DecisionItem[] = [
         mc("popup-items-tablet-box", "Tablet"),
         mc("popup-items-mobile-box", "Mobile"),
       ),
-      mcRow(
-        "The same cart as a slide-out and as a popup.",
-        mc("slideout-full", "Slide-out"),
-        mc("popup-full", "Popup"),
-      ),
     ],
   },
 ];
 
 const cartAbandonment: CaseStudy = {
   slug: "cart-abandonment-recovery",
-  cardTitle: "Cart Abandonment Recovery for WooCommerce",
+  cardTitle: "Cart Abandonment Recovery",
   cardSummary:
-    "A full admin redesign so store owners can finally see the sales the plugin wins back, plus the new features planned for it.",
-  proof: "300K+ active installs. Redesigned end to end on ForceUI.",
+    "An admin that finally shows store owners the sales the plugin wins back.",
+  proof: "300K+ active installs, redesigned end to end",
   tone: "peach",
   image: "/assets/cart-abandonment.png?v=2026-11-17",
   imageClass: "project-image--cart",
   headline: "Redesigning Cart Abandonment Recovery to show 300K+ stores the revenue they win back",
   hook: "The plugin's whole job is to bring back lost sales. Yet its own admin showed six numbers, no chart, and no way to export them.",
   summary:
-    "Cart Abandonment Recovery tracks shoppers who leave their cart, sends timed follow-up emails and shows store owners what came back. I redesigned the whole admin on ForceUI and designed its new features: a visual dashboard, detailed reports, new recovery channels and an email capture popup.",
+    "Cart Abandonment Recovery tracks shoppers who leave their cart, sends timed follow-up emails and shows store owners what came back. I redesigned the whole admin on ForceUI and designed its new features, a visual dashboard, detailed reports, new recovery channels and an email capture popup.",
   lead: [
     "As the only designer, working with a PM and developers, I took the plugin from three plain tabs to a full admin. The challenge was rebuilding something people already used every day, while making room for features it had never had. The toughest question was how to ask shoppers for an email without turning Add to Cart into a login wall.",
     "Today, Cart Abandonment Recovery has 300K+ active installs ([CartFlows](https://cartflows.com/cart-abandonment), [WP Hive](https://wphive.com/plugins/woo-cart-abandonment-recovery)).",
@@ -651,8 +650,8 @@ const cartAbandonment: CaseStudy = {
   stats: [
     { value: "300K+", label: "Active installs" },
     { value: "2 months", label: "May to June 2025" },
-    { value: "Product Designer", label: "Role, with a PM and developers" },
-    { value: "WooCommerce", label: "Platform, a WordPress plugin" },
+    { value: "Designer", label: "With a PM and developers" },
+    { value: "WooCommerce", label: "WordPress plugin" },
   ],
   meta: [],
   hero: {
@@ -671,7 +670,7 @@ const cartAbandonment: CaseStudy = {
       story: [
         {
           label: "The business problem",
-          text: "For a store owner, the only reason to use a recovery plugin is the revenue it brings back. If they can't see that clearly, they can't trust it, tune it, or justify paying for more. For Brainstorm Force, that meant two things: keeping the free plugin competitive, and giving store owners a clear reason to upgrade to Pro.",
+          text: "For a store owner, the only reason to use a recovery plugin is the revenue it brings back. If they can't see that clearly, they can't trust it, tune it, or justify paying for more. For Brainstorm Force, that meant two things, keeping the free plugin competitive and giving store owners a clear reason to upgrade to Pro.",
         },
         {
           label: "Why it was worth solving",
@@ -681,7 +680,7 @@ const cartAbandonment: CaseStudy = {
       pains: [
         {
           title: "One page, two jobs",
-          body: "The Report tab was both the dashboard and the report: six number cards with no chart, then a table of carts below.",
+          body: "The Report tab was both the dashboard and the report, with six number cards, no chart and a table of carts below.",
         },
         {
           title: "Data you couldn't use",
@@ -700,18 +699,12 @@ const cartAbandonment: CaseStudy = {
           body: "Product reports, SMS, WhatsApp and popups were planned, and the old three-tab layout had nowhere to put them.",
         },
       ],
-      media: caShot("The old Report page: six number cards and a plain table.", "old-report"),
+      media: caShot("The old Report page, with six number cards and a plain table.", "old-report"),
       mapping: [
-        ["One page mixed the dashboard and the report", "Recovery at a glance, details one click away"],
-        ["Data was hard to track or export", "Every report searchable, filterable and exportable"],
-        ["The layout had no room for new features", "A structure that can grow"],
-        ["The UI didn't follow the design system", "Every screen in line with ForceUI"],
-      ],
-      constraints: [
-        "Existing users knew the old plugin",
-        "Stay inside ForceUI",
-        "Feature list agreed up front",
-        "No access to store owners for testing",
+        ["One page mixed the dashboard and the report", "Recovery at a glance, details one click away", "Existing users knew the old plugin"],
+        ["Data was hard to track or export", "Every report searchable, filterable and exportable", "No access to store owners for testing"],
+        ["The layout had no room for new features", "A structure that can grow", "Feature list agreed up front"],
+        ["The UI didn't follow the design system", "Every screen in line with ForceUI", "Stay inside ForceUI"],
       ],
     },
     {
@@ -720,10 +713,10 @@ const cartAbandonment: CaseStudy = {
       nav: "Final Solution",
       eyebrow: "Final Solution",
       title: "How a forgotten checkout turns into a recovered sale",
-      intro: "Recovery has two sides: the owner watching the results, and the shopper who leaves and comes back.",
+      intro: "Recovery has two sides, the owner watching the results and the shopper who leaves and comes back.",
       story: [
         {
-          text: "**Kavya** runs Leaf & Loom, a small home decor store on WooCommerce, with Cart Abandonment Recovery Pro. **Rohan** is browsing her store for a new lamp. The video follows both: Kavya setting up recovery and checking what came back, and Rohan leaving his cart and returning to buy.",
+          text: "**Kavya** runs Leaf & Loom, a small home decor store on WooCommerce, with Cart Abandonment Recovery Pro. **Rohan** is browsing her store for a new lamp. The video follows both, Kavya setting up recovery and checking what came back, and Rohan leaving his cart and returning to buy.",
         },
       ],
       video: {
@@ -741,51 +734,18 @@ const cartAbandonment: CaseStudy = {
       nav: "Solution Explanation",
       eyebrow: "Solution Explanation",
       title: "From six numbers to a dashboard, reports and new channels",
-      intro: "Every change traces back to one of four problems: a page doing two jobs, data that was hard to use, no room to grow, and screens that didn't follow the design system.",
+      intro: "The dashboard, the navigation, the email logs and the popup each get a full story in the decisions below. These are the other changes, each tracing back to data that was hard to use or a layout with no room to grow.",
       items: [
         {
-          area: "Structure",
-          title: "Navigation built to grow",
-          noticed: "The old plugin had three plain tabs, and every new feature needed a place.",
-          did: "Rebuilt the top bar on ForceUI as Dashboard, Follow Up Emails, Reports, Integrations and Settings, with Popup Templates for Pro. Reports became a dropdown. More in Decision 1.",
-          why: "Grouping related pages lets the menu expand without getting crowded.",
-          before: "Three plain tabs: Report, Follow-Up Emails, Settings.",
-          after: "Five sections with room to grow.",
-          media: { ...caRow("Old tabs vs the new top navigation.", ca("old-tabs", "Before: three plain tabs"), ca("topbar-live", "After: the new top navigation, with Reports open")), caption: "", stack: true },
-          highlights: ["ForceUI product bar", "Reports dropdown", "Room for new features"],
-        },
-        {
-          area: "Dashboard",
-          title: "Recovery at a glance",
-          noticed: "The old Report page showed six numbers and nothing else.",
-          did: "Kept the six stat cards and added a chart comparing recoverable and recovered revenue, one date picker for both, and recent Follow Up and Product tables with View All. More in Decision 3.",
-          why: "Owners see the trend first, and the details are one click away.",
-          before: "Six numbers and nothing else.",
-          after: "Numbers, trend and recent activity in one view.",
-          media: { ...caRow("Old Report page vs the new Dashboard.", ca("old-report-cards", "Before"), ca("dashboard-overview", "After")), caption: "" },
-          highlights: ["Six stat cards", "Revenue comparison chart", "One date picker for everything", "Recent follow-ups", "Product Report"],
-        },
-        {
           area: "Emails",
-          title: "A list that shows what works",
-          noticed: "Store owners couldn't tell which emails were bringing shoppers back.",
-          did: "Added sent count, open rate, click rate, conversion and unsubscribe rate beside each template.",
-          why: "With results next to every template, owners can spot the one doing most of the work and tune the rest.",
-          before: "Name, subject and timing only.",
-          after: "Results beside every template.",
+          title: "Follow-up emails that show results",
+          noticed: "Store owners couldn't tell which emails brought shoppers back, and editing one meant a long WordPress form on its own page.",
+          did: "Put sent count, open, click, conversion and unsubscribe rates beside each template. Editing moved into a drawer beside the list, with subject, body, timing, coupon, test email and a simple rule builder.",
+          why: "Owners can spot the template doing most of the work and tune the rest without losing their place.",
+          before: "Name, subject and timing, edited on a separate page.",
+          after: "Results beside every template, edited in a drawer.",
           media: { ...caRow("The old Follow-Up Emails list vs the new list with sent, open, click, conversion and unsubscribe rates.", ca("old-email-list", "Before"), ca("email-list", "After")), caption: "" },
-          highlights: ["Sent count", "Open rate", "Click rate"],
-        },
-        {
-          area: "Emails",
-          title: "Editing in a drawer",
-          noticed: "The old editor was a long WordPress form on its own page, and the rule engine was missing options.",
-          did: "Moved editing into a drawer beside the list, grouping subject, body, variables, timing, coupon, test email and style. Rules became a toggle that reveals a simple condition builder.",
-          why: "Keeping the list in view means owners never lose their place.",
-          before: "A long WordPress form on its own page.",
-          after: "Everything in a drawer, with the list still in view.",
-          media: caShot("The edit drawer with the rule engine turned on.", "rule-engine"),
-          highlights: ["Subject, body and variables", "Send timing", "Auto coupon", "Test email", "Rule engine"],
+          highlights: ["Sent count", "Open and click rates", "Edit drawer", "Rule engine"],
         },
         {
           area: "Reports",
@@ -799,16 +759,6 @@ const cartAbandonment: CaseStudy = {
           highlights: ["Search", "Status filter", "Export", "Status chips", "Row actions", "New Product Report"],
         },
         {
-          area: "Reports",
-          title: "Every detail of one cart",
-          noticed: "One abandoned cart holds a lot: emails, addresses and the order itself.",
-          did: "Each cart's log opens on a full page: scheduled emails with coupon and status, billing and shipping side by side, order items with totals, and a Reschedule button right beside them. More in Decision 2.",
-          why: "A detailed read deserves room, and the action belongs next to what prompts it.",
-          after: "The full story of one cart, on one page.",
-          media: { ...caRow("The old cart detail page vs the new Email Logs page.", ca("old-cart", "Before"), ca("email-logs", "After")), caption: "" },
-          highlights: ["Scheduled emails", "Coupon and status", "Billing and shipping", "Order items and totals"],
-        },
-        {
           area: "Settings",
           title: "Settings split by topic",
           noticed: "Settings sat on one endless page, full of role and status checkbox columns.",
@@ -816,7 +766,7 @@ const cartAbandonment: CaseStudy = {
           why: "Small groups and plain explanations make a big settings area feel light.",
           before: "One long page of checkbox columns.",
           after: "Six groups, one card per setting.",
-          media: caShot("General settings: a sub-menu by topic, one card per setting and a save confirmation.", "settings-general"),
+          media: caShot("General settings, with a sub-menu by topic, one card per setting and a save confirmation.", "settings-general"),
           highlights: ["Six setting groups", "Chip multi-selects", "One card per setting", "Save confirmation", "New GDPR settings"],
         },
         {
@@ -827,19 +777,8 @@ const cartAbandonment: CaseStudy = {
           why: "Owners can follow up wherever their shoppers actually reply.",
           before: "Email was the only channel.",
           after: "Four new channels, each with its own page.",
-          media: { ...caRow("Integrations: the Webhook page with its sub-menu, and the OttoKit page.", ca("integrations-webhook", "Webhook"), ca("integrations-ottokit", "OttoKit")), caption: "" },
+          media: { ...caRow("The Webhook page with its sub-menu, and the OttoKit page.", ca("integrations-webhook", "Webhook"), ca("integrations-ottokit", "OttoKit")), caption: "" },
           highlights: ["Webhook", "SMS", "WhatsApp", "OttoKit"],
-        },
-        {
-          area: "Pro",
-          title: "Popup Templates",
-          noticed: "There was no way to reach shoppers who left before checkout.",
-          did: "Designed a Pro popup that asks for an email on add to cart or exit intent, with a list showing type, views, emails captured and “No thanks” clicks. Editing opens in Spectra, while rules and coupons stay in the plugin. More in Decision 4.",
-          why: "Getting the address earlier gives recovery a chance before the shopper is gone.",
-          before: "No way to reach shoppers who leave before checkout.",
-          after: "Emails captured before checkout, with results tracked.",
-          media: { ...caRow("The Popups list, and the drawer where rules and coupons stay.", ca("popups-list", "Popups list"), ca("popup-rules", "Rules and coupons")), caption: "" },
-          highlights: ["Add to cart popups", "Exit popups", "Captures and views", "“No thanks” clicks", "Designed in Spectra"],
         },
         {
           area: "Pro",
@@ -866,8 +805,53 @@ const cartAbandonment: CaseStudy = {
       id: "design-system",
       nav: "Design System",
       eyebrow: "Design System",
-      title: "Built on ForceUI, so it feels like family",
-      intro: "Cart Abandonment Recovery sits in the CartFlows family, next to ModernCart. Rebuilding it on ForceUI, Brainstorm Force's shared design system, meant a store owner moving between these plugins finds the same layout, the same controls and the same behavior.",
+      title: "Built on ForceUI, a system I helped create",
+      intro:
+        "Cart Abandonment Recovery sits in the CartFlows family, next to ModernCart. Rebuilding it on ForceUI, Brainstorm Force's shared design system, means a store owner moving between these plugins finds the same layout, the same controls and the same behavior.",
+      story: [
+        {
+          label: "Why ForceUI existed",
+          text: "When I joined Brainstorm Force, each plugin had its own design system, so every product looked and behaved a little differently. The team decided to bring them together into one shared system, ForceUI. It lives in Figma and as React code, so designers and developers work from the same components.",
+        },
+        {
+          label: "My part in creating it",
+          text: [
+            "I worked on its atoms and molecules, while other designers built the larger patterns and templates.",
+            "One rule kept Figma and code in sync. Nobody changed a component on their own. If something needed to change, it went through a ticket, so the two never drifted apart. The developers also kept a React Storybook of every component, which we used as a reference for how and where each one should be used.",
+          ],
+        },
+        {
+          label: "Four levels, all used here",
+          text: "ForceUI is built in layers, from the smallest pieces up to full page layouts, and this plugin uses every level.",
+        },
+      ],
+      levels: [
+        {
+          title: "Atoms",
+          body: "The smallest pieces, like buttons, toggles, badges, inputs and dropdowns. Here they are the enable toggles, the status chips and the Export button.",
+        },
+        {
+          title: "Molecules",
+          body: "Atoms combined into a reusable unit, like a toggle with its label and description. Every setting card is one of these.",
+        },
+        {
+          title: "Patterns",
+          body: "Larger sections that repeat across products, like the top bar, sub-menus, drawers and tables. The email drawer and the settings sub-menu come from here.",
+        },
+        {
+          title: "Templates",
+          body: "Full page layouts. The Dashboard and Settings pages follow ForceUI's admin templates, with product navigation on top and cards of content below.",
+        },
+      ],
+      levelsMedia: {
+        caption: "",
+        alt: "Pages from the ForceUI library in Figma, from atoms to molecules.",
+        row: [
+          { src: "/assets/modern-cart/forceui/buttons.webp?v=2026-11-20", size: [440, 625], label: "Atoms: Buttons", full: { src: "/assets/modern-cart/forceui/full-buttons.webp?v=2026-11-20", size: [1432, 1008], crop: [0.317, 0.0744, 0.3073, 0.62] } },
+          { src: "/assets/modern-cart/forceui/input.webp?v=2026-11-20", size: [432, 414], label: "Atoms: Input Base", full: { src: "/assets/modern-cart/forceui/full-input.webp?v=2026-11-20", size: [1425, 999], crop: [0.4477, 0.0511, 0.3032, 0.4144] } },
+          { src: "/assets/modern-cart/forceui/date-picker.webp?v=2026-11-20", size: [705, 626], label: "Molecules: Date Picker", full: { src: "/assets/modern-cart/forceui/full-date-picker.webp?v=2026-11-20", size: [1430, 900], crop: [0.0636, 0.1133, 0.493, 0.6956] } },
+        ],
+      },
       patterns: [
         {
           title: "Top navigation",
@@ -892,8 +876,9 @@ const cartAbandonment: CaseStudy = {
         { title: "Chip multi-selects", body: "Replacing long columns of checkboxes for roles and order statuses." },
       ],
       tokens: [
-        { sample: "type", label: "Type", value: "Figtree" },
+        { sample: "type", label: "Type", value: "Figtree, four weights" },
         { sample: "color", label: "Accent", value: "Flamingo, CartFlows' orange" },
+        { sample: "icons", label: "Icons", value: "Lucide plus a WordPress set" },
       ],
     },
     {
@@ -908,13 +893,13 @@ const cartAbandonment: CaseStudy = {
           label: "Research",
           title: "Learning from other recovery plugins",
           body: "Before any design, the team researched what the plugin was missing, and I was part of it. We studied competing recovery plugins, including YITH Recover Abandoned Cart and VillaTheme, and collected their screens on a References board in Figma.",
-          media: caShot("Where we started: the old plugin's email editor, a long WordPress form.", "old-editor"),
+          media: caShot("Where we started, the old plugin's email editor in a long WordPress form.", "old-editor"),
         },
         {
           label: "Feature list",
           title: "Agreeing on what to build",
           body: "Everything we wanted to add went into a shared sheet, and the team decided what made the cut. That list became my brief, agreed up front with the PM and developers.",
-          media: { ...caRow("Two features that made the list: new recovery channels and the email capture popup.", ca("integrations-webhook", "New channels"), ca("popups-list", "Email capture popup")), caption: "" },
+          media: { ...caRow("Two features that made the list, new recovery channels and the email capture popup.", ca("integrations-webhook", "New channels"), ca("popups-list", "Email capture popup")), caption: "" },
         },
         {
           label: "Full design",
@@ -925,16 +910,16 @@ const cartAbandonment: CaseStudy = {
         {
           label: "Phase 1",
           title: "Shipping the core admin",
-          body: "The core admin came first: Dashboard, Follow Up Emails with the rule engine and coupons, Reports, Integrations and Settings.",
+          body: "The core admin came first, with Dashboard, Follow Up Emails with the rule engine and coupons, Reports, Integrations and Settings.",
           points: ["Dashboard", "Follow Up Emails", "Reports", "Integrations", "Settings"],
-          media: { ...caRow("Phase 1 screens: the Follow Up Reports table and General settings.", ca("email-report-top", "Reports"), ca("settings-general", "Settings")), caption: "" },
+          media: { ...caRow("Phase 1 screens, the Follow Up Reports table and General settings.", ca("email-report-top", "Reports"), ca("settings-general", "Settings")), caption: "" },
         },
         {
           label: "Phase 2",
           title: "Popup Templates, and where the plan changed",
-          body: "I first designed popup editing inside the plugin itself: a drawer with a live preview, text, colors and the “No thanks” option. In discussion, the team decided to open popups in Spectra, Brainstorm Force's page builder, where store owners can customize every detail visually. The plugin keeps the popup's settings, rules and coupons.",
+          body: "I first designed popup editing inside the plugin itself, as a drawer with a live preview, text, colors and the “No thanks” option. In discussion, the team decided to open popups in Spectra, Brainstorm Force's page builder, where store owners can customize every detail visually. The plugin keeps the popup's settings, rules and coupons.",
           details: [
-            "It wasn't a choice I disagreed with, just one I didn't expect: Spectra already does visual editing well, and reusing it lets the two plugins work together.",
+            "It wasn't a choice I disagreed with, just one I didn't expect. Spectra already does visual editing well, and reusing it lets the two plugins work together.",
           ],
           media: {
             ...caRow("My in-plugin popup editor beside the Spectra editor that shipped.", ca("popup-in-plugin", "My first version, in the plugin"), ca("spectra-editor", "Shipped, in Spectra")),
@@ -1007,38 +992,37 @@ const cartAbandonment: CaseStudy = {
       before: "Three plain tabs and six numbers",
       after: "A dashboard, reports, logs, new channels and a Pro popup",
       stat: { value: "300K+", label: "Active installs today" },
-      feedback: feedback("How would you have handled the Email Logs drawer versus full page question?"),
     },
   ],
 };
 
 const modernCart: CaseStudy = {
   slug: "modern-cart",
-  cardTitle: "ModernCart for WooCommerce",
+  cardTitle: "ModernCart, a side cart",
   cardSummary:
-    "Took an unreleased side cart plugin to launch in one week, then turned an empty cart into a place shoppers keep browsing.",
-  proof: "60K+ active installs. Ready to launch in one week.",
+    "A side cart that keeps shoppers browsing instead of leaving the page.",
+  proof: "60K+ active installs, launch-ready in one week",
   tone: "peach",
   image: "/assets/modern-cart.png?v=2026-11-17c",
   imageClass: "project-image--modern",
   headline: "How an unreleased side cart grew to 60K+ stores by keeping shoppers adding more to their carts",
-  hook: "ModernCart had been built by developers and left unreleased. Then the PM made the call: it goes live in one week.",
+  hook: "ModernCart had been built by developers and left unreleased. Then the PM decided it would go live in one week.",
   summary:
     "ModernCart adds a side cart to WooCommerce stores, so shoppers can see and change their order from any page without leaving it. The features worked, but nobody had designed them around the owners who set it up or the people buying with it.",
   lead: [
-    "As the only designer, working with a PM and developers, I made it launch-ready in that week. Until I left at the end of June 2025, I then designed what came next: a dashboard organized around what store owners actually do, and a cart that offers products when it would otherwise sit empty.",
+    "As the only designer, working with a PM and developers, I made it launch-ready in that week. Then I designed what came next, a dashboard organized around what store owners actually do and a cart that offers products when it would otherwise sit empty.",
     "The challenge was doing both on a product that was already built, inside a design system the team was still building. The hardest call came later, when ModernCart split into Free and Pro and features existing users relied on were about to vanish.",
   ],
   stats: [
-    { value: "60K+", label: "Active installs on [WordPress.org](https://wordpress.org/plugins/modern-cart/)" },
+    { value: "60K+", label: "Active installs" },
     { value: "3 months", label: "April to June 2025" },
-    { value: "4.9 / 5", label: "Rating from 17 reviews on [WordPress.org](https://wordpress.org/plugins/modern-cart/#reviews)" },
-    { value: "Product Designer", label: "Role, with a PM and developers" },
+    { value: "4.9 / 5", label: "[Rated on WordPress.org](https://wordpress.org/plugins/modern-cart/#reviews)" },
+    { value: "Designer", label: "With a PM and developers" },
   ],
   meta: [],
   hero: {
     caption: "The ModernCart dashboard, clicking through each settings tab and the Free vs Pro page.",
-    src: "/assets/videos/modern-cart-tour.mp4?v=2026-11-21",
+    src: "/assets/videos/modern-cart-tour.mp4?v=2026-11-28",
     poster: "/assets/videos/modern-cart-tour.jpg?v=2026-11-21",
   },
   sections: [
@@ -1049,45 +1033,25 @@ const modernCart: CaseStudy = {
       eyebrow: "The Problem",
       title: "Built, but not ready for the people using it",
       intro:
-        "ModernCart was built by developers at Brainstorm Force but had never been released. The features worked, but nobody had designed it around the store owners who set it up or the shoppers who use it. With launch a week away, that gap had to close fast.",
+        "With launch a week away, the cart had to work for two groups at once, the store owners setting it up and the shoppers using it.",
       story: [
         {
           label: "The business problem",
-          text: "WooCommerce's default cart sends shoppers to a separate cart page, which breaks their flow right when they are about to buy. Side cart plugins fix this by opening the cart on the page shoppers are already on, and competitors were already selling them. Brainstorm Force wanted ModernCart in that market as part of the CartFlows family. From a business point of view, that meant two things: more shoppers finishing checkout, and a higher average order value.",
+          text: "WooCommerce's default cart sends shoppers to a separate cart page, which breaks their flow right when they are about to buy. Side cart plugins fix this by opening the cart on the page shoppers are already on, and competitors were already selling them. Brainstorm Force wanted ModernCart in that market as part of the CartFlows family. For the business, that meant two things, more shoppers finishing checkout and a higher average order value.",
         },
         {
           label: "Why it was worth solving",
-          text: "A store owner who struggles with the settings won't set the cart up well, and a badly set up cart loses shoppers. An empty cart is also the moment a shopper is already looking for something to buy. Showing them nothing wastes it.",
-        },
-      ],
-      pains: [
-        {
-          title: "Scattered settings",
-          body: "Related options sat in different tabs, and some, like the floating cart settings, sat inside General where nobody would look for them.",
-        },
-        {
-          title: "Off the design system",
-          body: "Spacing, type and colors didn't follow ForceUI, so the dashboard felt unfinished.",
-        },
-        {
-          title: "Nowhere to go",
-          body: "Open the cart empty and you saw one line saying so, with nothing to look at and nowhere to go.",
-        },
-        {
-          title: "Just a list",
-          body: "Add items and the cart was a plain list, with no reason to stay and browse.",
+          text: [
+            "Store owners who can't find their way around the settings leave the cart on its defaults, or never switch it on. Shoppers who open an empty cart and find one line of text have nowhere to go, even though that is exactly when they are looking for something to buy. A full cart that is only a list gives them no reason to keep browsing either.",
+            "Each of those costs the store a sale. A badly set up cart loses shoppers at the last step, and every empty cart that shows nothing is a missed chance to add one more item. For Brainstorm Force, a cart that owners could set up in minutes was also what would win installs and good reviews against side carts that were already on the market.",
+          ],
         },
       ],
       mapping: [
-        ["Scattered settings, no clear structure", "Settings grouped around owners' tasks"],
-        ["An empty cart with no next step", "An empty cart that suggests something"],
-        ["UI off the design system", "Every screen on ForceUI"],
-      ],
-      constraints: [
-        "One week to launch",
-        "ForceUI components unchanged",
-        "Build on the existing developer build",
-        "No access to owners or shoppers",
+        ["Scattered settings, with options like the floating cart buried in General", "Settings grouped around owners' tasks", "Build on the existing developer build"],
+        ["An empty cart with one line of text and no next step", "An empty cart that suggests something", "No access to owners or shoppers"],
+        ["A full cart that was only a list", "Suggestions below the items", "ForceUI components unchanged"],
+        ["Spacing, type and colors off the design system", "Every screen on ForceUI", "One week to launch"],
       ],
     },
     {
@@ -1096,10 +1060,14 @@ const modernCart: CaseStudy = {
       nav: "Final Solution",
       eyebrow: "Final Solution",
       title: "How shoppers end up adding more without searching again",
-      intro: "ModernCart has two parts: a dashboard where store owners shape the cart, and the cart shoppers actually use. Every choice in the first shows up in the second.",
+      intro: "ModernCart has two parts, a dashboard where store owners shape the cart and the cart shoppers actually use. Every choice in the first shows up in the second.",
       story: [
         {
-          text: "**Meera** runs DNK, a small clothing and footwear store on WooCommerce. **Arjun** is shopping there for a new pair of shoes. The video follows both: Meera setting up her cart, then Arjun shopping with it.",
+          text: [
+            "**Meera** runs DNK, a small clothing and footwear store on WooCommerce. **Arjun** is shopping there for a new pair of shoes. The video follows both of them.",
+            "Meera works through the dashboard one tab at a time. She switches the cart on, rewrites the empty cart message in her store's voice, places the floating cart icon and matches the colors to her brand.",
+            "Arjun adds a pair of shoes and the cart slides in without taking him off the page. It suggests something to go with them, shows the full total with shipping, and takes him to checkout in one tap.",
+          ],
         },
       ],
       video: {
@@ -1117,16 +1085,16 @@ const modernCart: CaseStudy = {
       nav: "Solution Explanation",
       eyebrow: "Solution Explanation",
       title: "From scattered settings to a cart that suggests",
-      intro: "Every change traces back to one of the three problems: scattered settings, a cart that led nowhere, and screens that didn't follow the design system.",
+      intro: "Every change traces back to scattered settings, a cart that led nowhere, or screens that didn't follow the design system.",
       items: [
         {
           title: "Settings grouped by task",
           noticed: "Store owners had to hunt across tabs for basic settings.",
-          did: "Split the dashboard into five tabs, each with one job: My Account, General, Text Label, Floating Cart Icon and Styling.",
+          did: "Split the dashboard into five tabs with one job each, My Account, General, Text Label, Floating Cart Icon and Styling.",
           why: "When every tab has a single purpose, owners know where to look before they click.",
           before: "Settings scattered across tabs.",
           after: "Five tabs, one job each.",
-          media: { caption: "", alt: "The dashboard tabs one after another: My Account, General, Text Label, Floating Cart Icon and Styling, each scrolled through.", src: "/assets/videos/modern-cart-tabs.mp4?v=2026-11-20c", size: [1546, 964] },
+          media: { caption: "", alt: "The dashboard tabs one after another, My Account, General, Text Label, Floating Cart Icon and Styling, each scrolled through.", src: "/assets/videos/modern-cart-tabs.mp4?v=2026-11-20c", size: [1546, 964] },
         },
         {
           title: "Cart text that sounds like the store",
@@ -1144,7 +1112,7 @@ const modernCart: CaseStudy = {
         {
           title: "The floating cart in its own tab",
           noticed: "The icon shoppers see on every page was buried inside General.",
-          did: "Gave it a dedicated tab with position, hide when empty and presets. Custom upload came from my competitor review, and the team built it after I left.",
+          did: "Gave it a dedicated tab with position, hide when empty and presets. Custom upload came from my competitor review and shipped later.",
           why: "Settings should be as easy to find as the thing they control is to see.",
           before: "Buried inside General.",
           after: "Its own tab, with custom upload later.",
@@ -1164,58 +1132,17 @@ const modernCart: CaseStudy = {
           ),
         },
         {
-          title: "Product suggestions",
-          noticed: "An empty cart showed nothing, and a full one gave shoppers no reason to stay.",
-          did: "Added a featured product with Shop Now to the empty state, and a “You might also like” carousel below added items.",
-          why: "A shopper who opens the cart is still shopping, so give them somewhere to go.",
-          before: "Empty carts showed nothing; full carts were just lists.",
-          after: "Something to explore, empty or full.",
+          title: "A clearer coupon field and order summary",
+          noticed: "My first collapsible “Got a Discount Code?” row didn't feel like applying anything, as the CEO pointed out in a review. Shoppers also couldn't see what made up their total.",
+          did: "Turned the coupon into a link that opens into a field with a button and shows the active code as a removable tag. The summary now lists shipping, tax, subtotal and savings.",
+          why: "Shoppers always see which discount is on and what they will pay, so nothing surprises them at checkout.",
+          before: "A vague coupon row and no breakdown.",
+          after: "Removable code tags and the full total.",
           media: mcRow(
-            "A featured product when the cart is empty, then one or two suggestions below the items.",
-            mc("cart-empty-panel", "Empty"),
-            mc("cart-one-panel", "One suggestion"),
-            mc("cart-two-panel", "Two suggestions"),
-          ),
-        },
-        {
-          title: "A clearer coupon field",
-          noticed: "My first collapsible “Got a Discount Code?” row didn't feel like applying anything, as the CEO pointed out in a review.",
-          did: "Redesigned it as a link that opens into a field with a button, and shows the active code as a removable tag. This also led to the coupon styles owners pick from today.",
-          why: "Shoppers should always see which discount is on.",
-          before: "A collapsible “Got a Discount Code?” row.",
-          after: "Link, field, removable tag.",
-          media: mcRow(
-            "A quiet link, then a field, then a tag you remove in one tap.",
+            "A quiet link opens into a field, the code becomes a tag, and the summary shows the full total.",
             mc("coupon-link-crop", "A quiet link"),
-            mc("coupon-field-crop", "Opens into a field"),
-            mc("coupon-tag-crop", "Becomes a tag"),
-          ),
-        },
-        {
-          title: "A complete order summary",
-          noticed: "Shoppers couldn't see what made up their total.",
-          did: "Laid out shipping, tax, subtotal and savings in the summary.",
-          why: "No surprises at checkout means fewer abandoned orders.",
-          before: "No breakdown of the total.",
-          after: "The full breakdown, before checkout.",
-          media: mcRow(
-            "Two order summary styles, and several codes stacked as tags.",
-            mc("coupon-link-crop", "Simple list"),
-            mc("summary-card-crop", "Card, total in the button"),
-            mc("summary-tags-crop", "Several codes"),
-          ),
-        },
-        {
-          title: "A popup cart",
-          noticed: "Some stores want the cart front and center, not at the edge.",
-          did: "Designed a second cart type that opens mid-page, for desktop, tablet and mobile.",
-          why: "Different stores sell differently, so the cart should let them choose.",
-          before: "Slide-out was the only option.",
-          after: "A centered popup on every screen.",
-          media: mcRow(
-            "The popup cart, empty with a suggestion and with items.",
-            mc("popup-suggest", "Empty, with a suggestion"),
-            mc("popup-items", "With items"),
+            mc("coupon-tag-crop", "Code as a tag"),
+            mc("summary-card-crop", "Full summary"),
           ),
         },
       ],
@@ -1226,7 +1153,7 @@ const modernCart: CaseStudy = {
           {
             count: "2",
             name: "Cart types",
-            body: "Slide-out or popup. The slide-out keeps the page visible behind it; the popup takes the shopper's full attention.",
+            body: "Slide-out or popup. The slide-out keeps the page visible behind it, and the popup takes the shopper's full attention.",
           },
           {
             count: "6",
@@ -1244,7 +1171,7 @@ const modernCart: CaseStudy = {
             body: "One handles a single code. The other shows several as tags, for stores that let shoppers stack discounts.",
           },
           {
-            count: "1–2",
+            count: "1 or 2",
             name: "Carousel sizes",
             body: "One or two products at a time, so it fits narrow carts and wider ones.",
           },
@@ -1269,58 +1196,9 @@ const modernCart: CaseStudy = {
       id: "design-system",
       nav: "Design System",
       eyebrow: "Design System",
-      title: "Built on ForceUI, a system I helped create",
+      title: "Built on ForceUI",
       intro:
-        "Every screen in ModernCart, the dashboard and the shopper's cart, is assembled from ForceUI. Nothing was drawn from scratch.",
-      story: [
-        {
-          label: "Why ForceUI existed",
-          text: [
-            "When I joined Brainstorm Force, each plugin had its own design system. During this project, the team decided to bring them together into one shared system, ForceUI, and I worked on its atoms and molecules, while other designers built the larger patterns and templates. It lives in Figma and as React code, so designers and developers work from the same components.",
-            "One rule kept the two in sync: nobody changes a component on their own. If something needed to change, it went through a ticket, so the Figma file and the code never drifted apart. The developers also kept a React Storybook of every component, which we used as a reference for how and where each one should be used.",
-          ],
-        },
-        {
-          label: "Four levels, all used in ModernCart",
-          text: "ForceUI is built in layers, from the smallest pieces up to full page layouts. ModernCart uses every level.",
-        },
-      ],
-      levels: [
-        {
-          title: "Atoms",
-          body: "The smallest pieces: buttons, toggles, badges, inputs, dropdowns. In ModernCart, they're the toggles on each setting, the Upgrade buttons and the badges.",
-        },
-        {
-          title: "Molecules",
-          body: "Atoms combined into a reusable unit, like a toggle with its label and description. Every settings row in the dashboard is one of these.",
-        },
-        {
-          title: "Patterns",
-          body: "Larger sections that repeat across products: the top bar, the sidebar, modals and cards. ModernCart's top navigation, left menu and upgrade modal come from here.",
-        },
-        {
-          title: "Templates",
-          body: "Full page layouts. ForceUI's Admin Settings template is the shape of the ModernCart dashboard: product navigation on top, a sidebar, and cards of settings.",
-        },
-      ],
-      levelsMedia: {
-        caption: "",
-        alt: "Pages from the ForceUI library in Figma, from atoms to molecules.",
-        row: [
-          { src: "/assets/modern-cart/forceui/buttons.webp?v=2026-11-20", size: [440, 625], label: "Atoms: Buttons", full: { src: "/assets/modern-cart/forceui/full-buttons.webp?v=2026-11-20", size: [1432, 1008], crop: [0.317, 0.0744, 0.3073, 0.62] } },
-          { src: "/assets/modern-cart/forceui/input.webp?v=2026-11-20", size: [432, 414], label: "Atoms: Input Base", full: { src: "/assets/modern-cart/forceui/full-input.webp?v=2026-11-20", size: [1425, 999], crop: [0.4477, 0.0511, 0.3032, 0.4144] } },
-          { src: "/assets/modern-cart/forceui/date-picker.webp?v=2026-11-20", size: [705, 626], label: "Molecules: Date Picker", full: { src: "/assets/modern-cart/forceui/full-date-picker.webp?v=2026-11-20", size: [1430, 900], crop: [0.0636, 0.1133, 0.493, 0.6956] } },
-        ],
-      },
-      tokens: [
-        { sample: "type", label: "Type", value: "Figtree, four weights" },
-        { sample: "color", label: "Accent", value: "Flamingo, CartFlows' orange" },
-        { sample: "icons", label: "Icons", value: "Lucide plus a WordPress set" },
-      ],
-      note: {
-        title: "The one rule I bent",
-        body: "In Styling, number fields needed their unit (px, % or ms) inside the field, so store owners always know what the number means. ForceUI's input didn't support that, so I broke the component in my design to fit a small unit badge inside it. The team shipped it as plain text instead of a badge, but the unit still sits inside the field.",
-      },
+        "Every screen in ModernCart, the dashboard and the shopper's cart, is made from ForceUI components, so nothing was drawn from scratch. In launch week that meant swapping the old screens for ForceUI parts rather than redesigning them. The one place I bent the system was Styling, where number fields needed their unit (px, % or ms) inside the input.",
     },
     {
       kind: "process",
@@ -1333,7 +1211,7 @@ const modernCart: CaseStudy = {
         {
           label: "Week 1",
           title: "Getting it ready to publish",
-          body: "The PM's call was simple: publish ModernCart within a week. There was no time to redesign from scratch, so the goal was to make what existed feel finished.",
+          body: "The PM wanted ModernCart published within a week. There was no time to redesign from scratch, so the goal was to make what existed feel finished.",
           details: [
             "I rebuilt the screens with ForceUI components, then reviewed the developer build with the PM. I logged 20 to 30 issues in a shared Google Sheet, each with a screenshot and a note on spacing, alignment, type, color or responsiveness.",
             "Developers fixed them in parallel while I prepared the assets they needed. The free version went live on schedule.",
@@ -1346,7 +1224,7 @@ const modernCart: CaseStudy = {
           title: "Learning from five competitors",
           body: "With the product live, the question changed from “is it ready?” to “what should it do next?” The company bought licenses for five competing cart plugins. I installed each one on a demo site and used it as a store owner would, comparing settings, features and how much store owners could customize.",
           details: [
-            "That review shaped most of what came next: preset cart icons and custom icon upload, cart position controls, style options for the cart, header and order summary, and product suggestions in the cart.",
+            "That review shaped most of what came next, from preset cart icons and custom icon upload to cart position controls, style options for the cart, header and order summary, and product suggestions in the cart.",
           ],
           points: [
             "[Side Cart WooCommerce](https://wordpress.org/plugins/side-cart-woocommerce/)",
@@ -1368,27 +1246,27 @@ const modernCart: CaseStudy = {
         {
           label: "Tickets",
           title: "Turning ideas into tickets",
-          body: "I shared what I found with the team, and the PM decided what to build first. I wrote a Jira ticket for each feature, with a description and the designs.",
-          details: [
-            "The Figma file was organized the same way, one section per ticket, so anyone could match a design to its ticket.",
+          body: "My competitor review turned into a list of ideas. I shared them with the team, the PM decided the order, and I wrote a Jira ticket for each one with a description and the designs. The Figma file followed the same structure, one section per ticket. These ideas from that list shipped.",
+          bullets: [
+            "Product suggestions inside the cart, later reused in the popup cart",
+            "A popup cart, now a Cart Type setting next to the slide-out",
+            "A live cart preview in the dashboard, showing the floating icon and the cart, empty and with items (version 1.0.8)",
+            "Cart header styling in the Styling tab (version 1.0.1)",
+            "Custom icon upload for the floating cart icon",
+            "A clearer coupon field that opens from a link and shows the code as a removable tag",
           ],
-          media: mcRow("One ticket's designs: the coupon field in its three states.", mc("coupon-link-crop", "Link"), mc("coupon-field-crop", "Field"), mc("coupon-tag-crop", "Tag")),
+          media: mcRow("One ticket's designs, the coupon field in its three states.", mc("coupon-link-crop", "Link"), mc("coupon-field-crop", "Field"), mc("coupon-tag-crop", "Tag")),
         },
         {
-          label: "Free and Pro",
-          title: "Planning the Free and Pro split",
-          body: "The team then started planning a Free and Pro version. The PM decided which features went where, and I designed how Pro features would appear to free users (Decision 1).",
-          media: mcShot("The Free vs Pro tab, comparing every feature.", "free-vs-pro"),
+          label: "No wireframes",
+          title: "Why no wireframes, and why I built from ForceUI",
+          body: "ForceUI already had the pieces I needed, so I worked in high fidelity from the start. Sketching boxes would have meant redrawing components that already existed. The trade-off was less room to explore wild ideas early, which is why the competitor review mattered so much.",
         },
       ],
       notes: [
         {
-          title: "Why no wireframes",
-          body: "ForceUI already had the pieces I needed, so I worked in high fidelity from the start. Sketching boxes would have meant redrawing components that already existed. The trade-off was less room to explore wild ideas early, which is why the competitor review mattered so much.",
-        },
-        {
           title: "What I assumed",
-          body: "There were no interviews or usability tests, so a few choices rest on assumptions I'd want to test: shoppers who open the cart are still in shopping mode, store owners want to change the cart's look and words without touching code, and defaults shown next to each setting make owners more willing to experiment.",
+          body: "There were no interviews or usability tests, so a few choices rest on assumptions I'd want to test. Shoppers who open the cart are still in shopping mode, store owners want to change the cart's look and words without touching code, and defaults shown next to each setting make owners more willing to experiment.",
         },
       ],
     },
@@ -1397,21 +1275,21 @@ const modernCart: CaseStudy = {
       id: "future-scope",
       nav: "Future Scope",
       eyebrow: "Future Scope",
-      title: "Ideas that shipped after I left",
-      intro: "These three ideas came out of my competitor review. I suggested them and talked through with the team where each would sit; the team designed and shipped them after I left at the end of June 2025.",
+      title: "Ideas from my review that shipped later",
+      intro: "These three ideas came out of my competitor review. I suggested them and talked through with the team where each would sit, and they shipped in later versions.",
       tag: "Shipped later",
       items: [
         {
           title: "Live preview",
-          body: "Store owners were changing colors, icons and sizes without seeing the result until they opened their storefront. Competitors showed a preview right next to the settings, so I recommended the same. The team later designed and added a cart preview to the dashboard, showing the floating icon and the cart, both empty and with items ([v1.0.8](https://wordpress.org/plugins/modern-cart/)).",
+          body: "Owners changed colors and icons without seeing the result until they opened their store. Competitors showed a preview beside the settings, so I recommended one. It now shows the cart empty and with items ([v1.0.8](https://wordpress.org/plugins/modern-cart/)).",
         },
         {
           title: "Custom icon upload",
-          body: "The preset icons cover most stores, but a brand with its own icon style still couldn't match it. I proposed letting store owners upload their own icon. It now sits in the Floating Cart Icon tab, under the preset icons.",
+          body: "The preset icons cover most stores, but a brand with its own icon style couldn't match it. I proposed letting owners upload their own icon. It now sits in the Floating Cart Icon tab, under the presets.",
         },
         {
           title: "Cart header styling",
-          body: "The competitor review showed that stores wanted control over the top of the cart, not just its colors. I suggested header styling as one of the style options, and the team added it to the Styling tab ([v1.0.1](https://wordpress.org/plugins/modern-cart/)).",
+          body: "The competitor review showed that stores wanted control over the top of the cart, not just its colors. I suggested header styling as a style option, and it was added to Styling ([v1.0.1](https://wordpress.org/plugins/modern-cart/)).",
         },
       ],
       media: [
@@ -1454,11 +1332,10 @@ const modernCart: CaseStudy = {
       nav: "Outcome",
       eyebrow: "Outcome",
       title: "From an unreleased build to a cart that keeps shoppers going",
-      intro: "ModernCart started as a working build that nobody had designed for. In one week it was ready to publish. In the weeks after, it gained a dashboard organized around tasks, a cart that suggests products, and a second cart type. Several of those ideas shipped after I left, and today the plugin has 60K+ active installs.",
+      intro: "ModernCart started as a working build that nobody had designed for. In one week it was ready to publish, and in the weeks after it gained a dashboard organized around tasks, a cart that suggests products, and a second cart type.",
       before: "A working build nobody had designed for",
       after: "A task-based dashboard, a cart that suggests, and a second cart type",
       stat: { value: "60K+", label: "Active installs today" },
-      feedback: feedback("How would you have handled the Free and Pro question?"),
     },
   ],
 };
@@ -1531,9 +1408,9 @@ const superfansDecisions: DecisionItem[] = [
     title: "Why the dashboard shows posts as a grid, not a table",
     hook: "A feed of short videos is about what you see. Our first two dashboard layouts made merchants read instead.",
     before: [
-      "The Superfans dashboard already had a familiar pattern from the app builder: a side panel of blocks and a properties panel for editing. The obvious start was to reuse it for Social Feed.",
+      "The Superfans dashboard already had a familiar pattern from the app builder, a side panel of blocks with a properties panel for editing. The obvious start was to reuse it for Social Feed.",
     ],
-    turningIntro: "We tried two directions before landing on a third:",
+    turningIntro: "We tried two directions before landing on a third.",
     options: [
       {
         title: "Reuse the builder layout",
@@ -1568,7 +1445,7 @@ const superfansDecisions: DecisionItem[] = [
     before: [
       "Opening a post in the dashboard showed the comments first. To edit the post itself, merchants had to find the menu inside the comments panel.",
     ],
-    turningIntro: "There were three options:",
+    turningIntro: "There were three options.",
     options: [
       {
         title: "A YouTube Shorts style view",
@@ -1590,7 +1467,7 @@ const superfansDecisions: DecisionItem[] = [
       "We chose to improve the existing view. The feature was close to release, and a bigger redesign would have delayed it for a gain we could add later.",
     ],
     next: [
-      "I added a simple header to the post: its title, when it was posted, likes and comments, and a menu for Edit, Copy Post ID, Hide and Delete. I also explored showing post metrics (CTR, unique views, likes, comments) in the same header.",
+      "I added a simple header to the post with its title, when it was posted, likes and comments, and a menu for Edit, Copy Post ID, Hide and Delete. I also explored showing post metrics (CTR, unique views, likes, comments) in the same header.",
     ],
     result: ["The improved header shipped. The metrics version is a next step the team may add later."],
     media: [{ ...sfShot("The single post view with the improved header that shipped.", "d-single"), status: "shipped" }],
@@ -1599,9 +1476,9 @@ const superfansDecisions: DecisionItem[] = [
     title: "Why moderation uses a dropdown, not tick and cross buttons",
     hook: "I argued for the faster design. After several rounds of debate, the team chose a different one, and I designed that one.",
     before: [
-      "The spec first said reported content should stay visible while it waited for review, like on Instagram and TikTok. The flow changed: reported content is now hidden automatically, and the brand reviews it afterwards. So merchants needed a quick way to decide, item by item, whether something goes back to visible or stays hidden.",
+      "The spec first said reported content should stay visible while it waited for review, like on Instagram and TikTok. Then the flow changed. Reported content is now hidden automatically, and the brand reviews it afterwards. So merchants needed a quick way to decide, item by item, whether something goes back to visible or stays hidden.",
     ],
-    turningIntro: "Two options:",
+    turningIntro: "There were two options.",
     options: [
       {
         title: "Tick and cross buttons",
@@ -1617,7 +1494,7 @@ const superfansDecisions: DecisionItem[] = [
       },
     ],
     reasoning: [
-      "We discussed it over several rounds. The PM's point was that the buttons didn't clearly say what each action does, and our design didn't show the current status of a reported item. A status dropdown on hover solved both: the action is written out, and the status is always visible. The team went with the dropdown.",
+      "We discussed it over several rounds. The PM's point was that the buttons didn't clearly say what each action does, and our design didn't show the current status of a reported item. A status dropdown on hover solved both. The action is written out, and the status is always visible. The team went with the dropdown.",
     ],
     next: ["I updated the moderation designs to match the PM's prototype:"],
     nextList: [
@@ -1639,27 +1516,27 @@ const superfansSocialFeed: CaseStudy = {
   brand: "#915EE9",
   cardTitle: "Social Feed for Superfans",
   cardSummary:
-    "A shoppable short video feed inside brands' own apps, where shoppers watch, comment, buy and post, and merchants keep it safe from the Superfans dashboard.",
-  proof: "Shipped across iOS, Android and the merchant dashboard.",
+    "A video feed shoppers can buy from, and merchants can moderate.",
+  proof: "TikTok-style shopping inside every brand's own app",
   tone: "violet",
   image: "/assets/superfans/overview.webp?v=2026-11-26",
   imageClass: "project-image--superfans",
   headline: "Bringing shoppable short video to Superfans, the app builder behind 5,000+ Shopify brands",
   hook: "Shoppers spend hours scrolling videos on Instagram and TikTok. Superfans wanted that same feed inside every brand's own app, where every video could be shopped.",
   summary:
-    "Superfans is a mobile app platform for Shopify and Shopify Plus brands. Social Feed adds a short video feed to a brand's app: shoppers watch, like, comment, buy tagged products and post their own content, while merchants publish posts, bring in their Instagram videos, and moderate what their community shares. I designed both sides of the feature, from the first wireframes to design QA on the built product.",
+    "Superfans is a mobile app platform for Shopify and Shopify Plus brands. Social Feed adds a short video feed to a brand's app. Shoppers watch, like, comment, buy tagged products and post their own content, while merchants publish posts, bring in their Instagram videos, and moderate what their community shares. I designed both sides of the feature, from the first wireframes to design QA on the built product.",
   lead: [
     "Along the way, I argued for a faster moderation flow, lost that debate, and then designed the option the team picked.",
   ],
   stats: [
     { value: "10 months", label: "January to October 2026" },
-    { value: "2 sides", label: "Shopper app and merchant dashboard" },
-    { value: "iOS, Android", label: "Platforms, plus the merchant dashboard" },
-    { value: "Product Designer", label: "Role from the start, with a PM and developers" },
+    { value: "2 sides", label: "Shopper app and dashboard" },
+    { value: "iOS, Android", label: "Plus the merchant dashboard" },
+    { value: "Designer", label: "From the start, with a PM" },
   ],
   meta: [],
   hero: {
-    caption: "The merchant's Social Feed dashboard: a post in the phone preview beside its comments.",
+    caption: "The merchant's Social Feed dashboard, with a post in the phone preview beside its comments.",
     src: "/assets/superfans/overview.webp?v=2026-11-26",
   },
   sections: [
@@ -1671,7 +1548,7 @@ const superfansSocialFeed: CaseStudy = {
       title: "Brands were selling on social platforms, not in their own apps",
       intro:
         "Brands on Superfans have their own shopping apps, but much of their selling and engagement happens elsewhere. They post videos on Instagram and TikTok, run live sales on social platforms, and send shoppers back and forth between apps. Inside their own app, there was no place for that kind of content.",
-      goalsIntro: "Social Feed was part of a wider Community push at Superfans. The product spec set three goals for it:",
+      goalsIntro: "Social Feed was part of a wider Community push at Superfans. The product spec set three goals for it.",
       goals: [
         { title: "Bring shoppers back every day", body: "With fresh content from the brand." },
         {
@@ -1699,16 +1576,10 @@ const superfansSocialFeed: CaseStudy = {
         body: "Tapcart, a competing app platform, offers shoppable video mainly through third party integrations such as Tolstoy's “For You” feed and Yotpo's shoppable Instagram gallery. That content is curated by the brand, and shoppers don't post or comment inside the app. We set out to build a native feed that works as a community, where shoppers take part.",
       },
       mapping: [
-        ["Brand apps had no place for video content", "Bring a shoppable video feed into the app"],
-        ["Merchants lacked time to create new content", "Let them reuse their Instagram videos"],
-        ["Shopper posts and comments needed control", "Give merchants moderation and access tools"],
-        ["Social features are new to brand apps", "Introduce the feed clearly to shoppers"],
-      ],
-      constraints: [
-        "Fit existing brand apps and the Superfans dashboard",
-        "Work on both iOS and Android",
-        "Merchants control anything shoppers post",
-        "Ship parts while others were still in design",
+        ["Brand apps had no place for video content", "Bring a shoppable video feed into the app", "Work on both iOS and Android"],
+        ["Merchants lacked time to create new content", "Let them reuse their Instagram videos", "Ship parts while others were still in design"],
+        ["Shopper posts and comments needed control", "Give merchants moderation and access tools", "Merchants control anything shoppers post"],
+        ["Social features are new to brand apps", "Introduce the feed clearly to shoppers", "Fit existing brand apps and the Superfans dashboard"],
       ],
     },
     {
@@ -1721,7 +1592,7 @@ const superfansSocialFeed: CaseStudy = {
         "Riya manages the app for Thread & Care, a scrubs brand on Superfans. Karan is a nurse who shops with them. Both are made up for this story.",
       video: {
         kind: "video",
-        caption: "Prototype walkthrough: a merchant imports an Instagram video, then a shopper watches it, comments and buys the tagged product.",
+        caption: "Prototype walkthrough, where a merchant imports an Instagram video, then a shopper watches it, comments and buys the tagged product.",
       },
       lanes: [
         {
@@ -1787,27 +1658,17 @@ const superfansSocialFeed: CaseStudy = {
       eyebrow: "Solution Explanation",
       title: "Video, posting and moderation, built for both sides",
       intro:
-        "Every part traces back to one of four goals: bring video into the app, save merchants time, keep shopper content under control, and introduce something new clearly.",
+        "The grid view, the post view and moderation each get a full story in the decisions below. The rest traces back to four goals, bringing video into the app, saving merchants time, keeping shopper content under control and introducing something new clearly.",
       items: [
         {
           area: "App",
-          title: "A feed one tap away",
-          noticed: "Brand apps had no place for video.",
-          did: "Added a Feed tab to the bottom bar beside Home, Cart, Wishlist and Account, opening a full screen vertical feed.",
-          why: "Borrowing a pattern shoppers use every day means nothing new to learn.",
-          after: "A Feed tab with a full screen vertical video feed.",
-          highlights: ["Feed tab", "Full screen", "Vertical video"],
-          media: sfRow("The feed with the Feed tab in the bottom bar, playing and paused.", sf("p-feed"), sf("p-feed-paused")),
-        },
-        {
-          area: "App",
-          title: "Videos you can shop",
-          noticed: "A video that can't be bought from is just entertainment.",
-          did: "Gave each post a product tag that opens the product page in one tap, plus likes, comments, an expandable caption and play and pause.",
-          why: "Watching turns into buying without leaving the feed.",
-          after: "From watching to the product page in one tap.",
-          highlights: ["Product tag", "Likes and comments", "Expandable caption", "Play and pause"],
-          media: sfRow("A product tag on the video, and the expanded caption.", sf("u-posted"), sf("p-caption")),
+          title: "Watch, shop and answer in one feed",
+          noticed: "Brand apps had no place for video, and a video that can't be bought from is just entertainment.",
+          did: "Added a Feed tab to the bottom bar that opens a full screen vertical feed. Each post carries a product tag that opens the product page in one tap, plus likes, comments and an expandable caption. Polls and this or that questions fill a slot like a video, so brands collect first hand answers inside the scroll.",
+          why: "Shoppers already know this pattern, and buying and answering are built into it.",
+          after: "Watching, buying and answering in one feed.",
+          highlights: ["Feed tab", "Product tag", "Polls", "This or that"],
+          media: sfRow("The feed with the Feed tab, a product tag on a post, and the expanded caption.", sf("p-feed"), sf("u-posted"), sf("p-caption")),
         },
         {
           area: "App",
@@ -1821,23 +1682,13 @@ const superfansSocialFeed: CaseStudy = {
         },
         {
           area: "Posting",
-          title: "Posting your own content",
-          noticed: "Shoppers needed a simple way to share.",
-          did: "Covered choosing media, with clear messages for unsupported or oversized files, captions, tagging several products and a preview, then every state after sharing: under review, rejected, published, edited, deleted or failed to upload. First time and returning users get slightly different flows.",
-          why: "A shopper should always know what happened to their post.",
-          after: "A full posting flow, with every state after posting covered.",
-          highlights: ["Multiple product tags", "Under review", "Upload failed", "First time flow"],
-          media: sfRow("The posting flow: file picker, a file that is too large, tagging products, preview and under review.", sf("u-picker"), sf("u-large"), sf("u-multi"), sf("u-preview"), sf("u-review")),
-        },
-        {
-          area: "Posting",
-          title: "Posting from a product page",
-          noticed: "The best moment to post about a product is while looking at it.",
-          did: "Added a feed icon on the product page that starts a post with that item already tagged.",
-          why: "Meeting shoppers in the moment removes a step.",
-          after: "Share a product right where you're looking at it.",
-          highlights: ["Feed icon on the product page", "Product pre-tagged"],
-          media: sfRow("Customer posts on the product page, then the posting screen with the product tagged.", sf("pdp-feed"), sf("pdp-post")),
+          title: "Posting, from the feed or a product page",
+          noticed: "Shoppers needed a simple way to share, and the best moment to post about a product is while looking at it.",
+          did: "Covered choosing media, captions, tagging several products and a preview, then every state after sharing, from under review to rejected, published or failed to upload. A feed icon on the product page starts a post with that item already tagged.",
+          why: "A shopper always knows what happened to their post, and posting about a product takes one step less.",
+          after: "A full posting flow, also one tap away on the product page.",
+          highlights: ["Multiple product tags", "Under review", "Upload failed", "Product pre-tagged"],
+          media: sfRow("Tagging products, the preview, under review, and posting from a product page.", sf("u-multi"), sf("u-preview"), sf("u-review"), sf("pdp-post")),
         },
         {
           area: "Onboarding",
@@ -1850,65 +1701,14 @@ const superfansSocialFeed: CaseStudy = {
           media: { ...sfRow("The Introducing Social Feed sheet, the version on the product page, and the feature banner.", sf("o-sheet"), sf("o-pdp"), sf("banner")), phone: false },
         },
         {
-          area: "App",
-          title: "Interactive blocks in the feed",
-          noticed: "One goal in the spec was collecting first hand data from shoppers.",
-          did: "Designed blocks that fill a slot like a video: a single choice poll (“What matters most in your scrubs?”) that reveals how others voted, and a this or that question with two product images, each built custom per brand.",
-          why: "People answer more readily when a question feels like part of the scroll.",
-          after: "First hand data, collected inside the feed itself.",
-          media: sfShot("The poll, this or that and open question blocks, before and after answering.", "polls"),
-          highlights: ["Single choice poll", "This or that", "Custom per brand"],
-        },
-        {
           area: "Dashboard",
-          title: "Posts as a visual grid",
-          noticed: "Video posts are visual, but the first layouts made merchants read.",
-          did: "Switched to a grid of thumbnails, with a single view that puts each video next to its comments. More in Decision 1.",
-          why: "Let the content type decide the layout.",
-          before: "The app builder's block layout, then a table of posts.",
-          after: "A grid of thumbnails and a single post view beside its comments.",
-          highlights: ["Grid view", "Single post view", "Phone preview"],
-          media: sfRow("Grid view and single post view.", sf("d-grid"), sf("d-single")),
-        },
-        {
-          area: "Dashboard",
-          title: "Creating and editing posts",
-          noticed: "Merchants needed one place to set up everything about a post.",
-          did: "Designed a New Post panel covering media upload, description, redirection, like and comment toggles and visibility, beside a live phone preview. Loading and error states handle slow or failed uploads.",
-          why: "Seeing the result while editing removes guesswork.",
-          after: "Everything about a post in one panel, with a live preview.",
-          highlights: ["Redirection", "Likes and comments toggles", "Conditional visibility", "Live preview"],
-          media: sfRow("New Post panel with the preview, and the error state for a file that is too large.", sf("d-newpost"), sf("d-error")),
-        },
-        {
-          area: "Dashboard",
-          title: "Reusing Instagram content",
-          noticed: "Merchants shouldn't have to create content twice.",
-          did: "Let them link Instagram and import from All, Your Posts or Tagged Posts, picking several at once.",
-          why: "What brands already have fills the feed in a few clicks.",
-          after: "Existing Instagram videos fill the feed in a few clicks.",
-          highlights: ["Link account", "Your and tagged posts", "Multi-select"],
-          media: sfRow("Link Account, then the import modal.", sf("d-link"), sf("d-import")),
-        },
-        {
-          area: "Dashboard",
-          title: "Managing comments",
-          noticed: "Merchants had no way to join the conversation or see what was reported.",
-          did: "Added replying, editing and deleting their own comments from the dashboard, plus report counts and reasons on anything flagged.",
-          why: "Brands that answer shoppers build the community they want.",
-          after: "Merchants take part in the conversation and see what's been reported.",
-          highlights: ["Reply", "Edit and delete", "Report counts and reasons"],
-          media: sfRow("Comments in the single post view, and report details.", sf("d-single"), sf("d-reports")),
-        },
-        {
-          area: "Moderation",
-          title: "Moderation",
-          noticed: "Once shoppers can post, merchants need to review what's shared.",
-          did: "Flagged content is hidden automatically. Feed Moderation adds a Reported tab with bulk select, a Reviewed tab, and a step where merchants restore each item or keep it out of view. More in Decision 3.",
-          why: "Hiding first and deciding later protects the community without slowing merchants down.",
-          after: "A review queue where reported content waits hidden until a merchant decides.",
-          highlights: ["Auto hidden", "Reported tab", "Bulk select", "Reviewed tab"],
-          media: sfRow("Reported tab with bulk select, and the review modal.", sf("m-multi"), sf("m-review")),
+          title: "Merchant posts, new or from Instagram",
+          noticed: "Merchants needed one place to set up a post, and shouldn't have to create content twice.",
+          did: "Designed a New Post panel with media upload, description, redirection, like and comment toggles and visibility beside a live phone preview. Merchants can also link Instagram and import several posts at once from their own or tagged posts.",
+          why: "Seeing the result while editing removes guesswork, and what brands already have fills the feed in a few clicks.",
+          after: "New posts with a live preview, or existing Instagram videos in a few clicks.",
+          highlights: ["Live preview", "Redirection", "Instagram import", "Multi-select"],
+          media: sfRow("The New Post panel with its preview, and the Instagram import modal.", sf("d-newpost"), sf("d-import")),
         },
         {
           area: "Access",
@@ -1919,16 +1719,6 @@ const superfansSocialFeed: CaseStudy = {
           after: "Brands decide who can view, post and comment, and the app explains it.",
           media: { ...sfRow("Access control options, and the restricted views in the app.", sf("ac-only"), sf("a-comment"), sf("a-feed")), phone: false },
           highlights: ["Everyone", "Everyone except", "Only specific customers", "Restricted states"],
-        },
-        {
-          area: "After build",
-          title: "Design QA",
-          noticed: "Designs only matter if the build matches them.",
-          did: "Reviewed each area of the app, dashboard, posting, moderation and settings against the designs, logged issues with screenshots, and worked with developers until they were fixed.",
-          why: "Owning quality through the build is part of the job.",
-          after: "Every area reviewed against the designs before it was called done.",
-          highlights: ["App", "Dashboard", "Posting", "Moderation", "Feed settings"],
-          media: sfShot("A few rows from a QA feedback sheet.", "qa"),
         },
       ],
     },
@@ -1958,7 +1748,7 @@ const superfansSocialFeed: CaseStudy = {
       notes: [
         {
           title: "Where the idea came from",
-          body: "Instagram Reels and TikTok, where brands show products inside a stream of videos. The PM's spec split the work into two releases: first a brand-run feed with imports, likes, comments and reporting, then shopper posting with the moderation it needs. It also fixed rules like vertical 9:16 media, 3 to 60 second videos and a 500 character comment limit.",
+          body: "Instagram Reels and TikTok, where brands show products inside a stream of videos. The PM's spec split the work into two releases, first a brand-run feed with imports, likes, comments and reporting, then shopper posting with the moderation it needs. It also fixed rules like vertical 9:16 media, 3 to 60 second videos and a 500 character comment limit.",
         },
         {
           title: "Versions and reviews",
@@ -1966,7 +1756,7 @@ const superfansSocialFeed: CaseStudy = {
         },
         {
           title: "Design QA",
-          body: "Once each area was built, I reviewed it against the designs and logged every issue with a screenshot and the matching design for developers to fix. Most issues were visual: spacing, alignment and states that didn't match.",
+          body: "Once each area was built, I reviewed it against the designs and logged every issue with a screenshot and the matching design for developers to fix. Most issues were visual, like spacing, alignment and states that didn't match.",
         },
       ],
       media: sfShot("The version log cards from the design file.", "log"),
@@ -2016,7 +1806,6 @@ const superfansSocialFeed: CaseStudy = {
       before: "Brand apps built only for buying",
       after: "Videos to shop, comments, shopper posts and tools to keep it safe",
       stat: { value: "Shipped", label: "Across the app and the dashboard, in ten months" },
-      feedback: feedback("If you've designed social or community features, how would you approach moderation for brand communities?"),
     },
   ],
 };
@@ -2056,7 +1845,7 @@ const expenzoDecisions: DecisionItem[] = [
     before: [
       "In my first flow, a scan opened a pop-up that stayed until the receipt was read. Checking on a scan meant opening a separate “Receipt Being Scanned” page, and failed scans sat in their own list.",
     ],
-    turningIntro: "I worked through three versions:",
+    turningIntro: "I worked through three versions.",
     options: [
       {
         title: "Wait on the scanning pop-up",
@@ -2099,7 +1888,7 @@ const expenzoDecisions: DecisionItem[] = [
     before: [
       "Following Zoho Expense, the first scanning pop-up offered Wait for Autoscan, Add Manually and Delete Receipt. OCR reads receipts with 85% to 95% accuracy, dropping to about 75% on poor photos or handwriting, so a manual route felt necessary.",
     ],
-    turningIntro: "I weighed three versions of that pop-up:",
+    turningIntro: "I weighed three versions of that pop-up.",
     options: [
       {
         title: "Wait, Add Manually and Delete",
@@ -2118,7 +1907,7 @@ const expenzoDecisions: DecisionItem[] = [
       },
     ],
     reasoning: [
-      "The manual route didn't disappear. It moved to the moment it matters: when a scan fails, with the receipt photo already attached to the empty form.",
+      "The manual route didn't disappear. It moved to the moment it matters, when a scan fails, with the receipt photo already attached to the empty form.",
     ],
     next: [
       "I rebuilt the scanning pop-up with two actions and designed a separate “Scanning Failed” pop-up offering Add Manually or Retake Receipt.",
@@ -2128,7 +1917,7 @@ const expenzoDecisions: DecisionItem[] = [
     ],
     media: [
       exRow(
-        "The first scanning pop-up with three buttons, then the final pop-ups: two actions while scanning, and the failure state.",
+        "The first scanning pop-up with three buttons, then the final pop-ups with two actions while scanning, and the failure state.",
         ex("first-scanning", "Three buttons", "dropped"),
         ex("scanning", "While scanning", "shipped"),
         ex("failed-popup", "When a scan fails", "shipped"),
@@ -2141,12 +1930,12 @@ const expenzoDecisions: DecisionItem[] = [
     before: [
       "My early expense form had a name, an amount and a category. General research on small businesses was too broad to say which fields mattered for GST.",
     ],
-    turningIntro: "Two ways to decide the fields:",
+    turningIntro: "There were two ways to decide the fields.",
     options: [
       {
         title: "A generic expense form",
         body: "Quick to fill and familiar from personal finance apps.",
-        dropped: "It missed what accountants need for GST: invoice number, GST number, merchant and tax split.",
+        dropped: "It missed what accountants need for GST, like invoice number, GST number, merchant and tax split.",
       },
       {
         title: "Fields taken from real records",
@@ -2158,7 +1947,7 @@ const expenzoDecisions: DecisionItem[] = [
       "A small business owner who runs a 10-person printing company showed me his handwritten expense book and the Excel sheet he sends his auditor. Interviews with four more owners confirmed the same structure.",
     ],
     next: [
-      "Record Expense follows that format: date, time, name, invoice or reference number, GST number, merchant, category, amount and tax type. A secondary-research question shaped the tax field: within a state, 18% GST splits into 9% CGST and 9% SGST, while sales across states use IGST.",
+      "Record Expense follows that format, with date, time, name, invoice or reference number, GST number, merchant, category, amount and tax type. A secondary-research question shaped the tax field. Within a state, 18% GST splits into 9% CGST and 9% SGST, while sales across states use IGST.",
     ],
     result: [
       "An owner can check a scanned receipt against the same columns they already know, and the export lines up with what the accountant expects.",
@@ -2174,7 +1963,7 @@ const expenzoDecisions: DecisionItem[] = [
     before: [
       "In the first cut, the Analytic Report had a three-dot menu with Share, Export as PDF and Export as XLS. Analytics only listed data by week, month or year.",
     ],
-    turningIntro: "Two versions:",
+    turningIntro: "There were two versions.",
     options: [
       {
         title: "Export from a three-dot menu",
@@ -2211,10 +2000,10 @@ const expenzoDecisions: DecisionItem[] = [
 const expenzo: CaseStudy = {
   slug: "expenzo",
   brand: "#3F6E4E",
-  cardTitle: "Expenzo, an expense tracker for small businesses",
+  cardTitle: "Expenzo, an expense tracker",
   cardSummary:
-    "A concept app that scans receipts, fills in GST details and exports a file an accountant can use, designed from interviews with five business owners.",
-  proof: "5 business owners interviewed. 3 usability tests.",
+    "Scan a receipt, get the GST details filled in, export it for the accountant.",
+  proof: "5 owner interviews, 3 usability tests",
   tone: "peach",
   image: "/assets/expenzo/card.png?v=2026-11-22b",
   imageClass: "project-image--expenzo",
@@ -2227,15 +2016,16 @@ const expenzo: CaseStudy = {
     "The challenge was that the people who need automation most trust it least. One owner had tried scanning apps and found that correcting their mistakes took as long as typing. The hardest call was how much of the scanning to hide, and how much to show.",
   ],
   stats: [
-    { value: "Concept", label: "Self-initiated mobile app, not shipped" },
-    { value: "3 months", label: "September to November 2024" },
-    { value: "5 owners", label: "Interviewed, from printing to car travel" },
-    { value: "Product Designer", label: "Solo, research to prototype" },
+    { value: "Concept", label: "Self-initiated, not shipped" },
+    { value: "3 months", label: "Sep to Nov 2024" },
+    { value: "5 owners", label: "Interviewed for research" },
+    { value: "Designer", label: "Solo, research to prototype" },
   ],
   meta: [],
   hero: {
     caption: "Expenzo's home, a receipt being scanned, the filled-in expense and the Export screen.",
     src: "/assets/expenzo/hero.webp?v=2026-11-22b",
+    browser: false,
   },
   sections: [
     {
@@ -2259,7 +2049,7 @@ const expenzo: CaseStudy = {
           text: "Missed entries and wrong categories lead to inaccurate reports, and inaccurate GST records can mean penalties. Owners also lose time they'd rather spend running the business.",
         },
       ],
-      goalsIntro: "What the app needed to do for a business:",
+      goalsIntro: "What the app needed to do for a business.",
       goals: [
         { title: "Save time", body: "Take repetitive entry off the owner's plate." },
         { title: "Cut errors", body: "Read receipts instead of retyping them." },
@@ -2278,16 +2068,10 @@ const expenzo: CaseStudy = {
       },
       media: { ...exShot("A real expense notebook and the Excel sheet sent to an auditor.", "ledger-excel"), wide: true },
       mapping: [
-        ["Typing receipts in by hand", "Scan a receipt and review what it read"],
-        ["Records scattered across paper and Excel", "Income and expenses in one place"],
-        ["A rush to prepare GST files", "An export shaped for the accountant"],
-        ["Regular bills entered every month", "Transactions that repeat on their own"],
-      ],
-      constraints: [
-        "Solo concept project",
-        "Indian GST rules",
-        "Owners who aren't tech-savvy",
-        "OCR is never 100% accurate",
+        ["Typing receipts in by hand", "Scan a receipt and review what it read", "OCR is never 100% accurate"],
+        ["Records scattered across paper and Excel", "Income and expenses in one place", "Owners who aren't tech-savvy"],
+        ["A rush to prepare GST files", "An export shaped for the accountant", "Indian GST rules"],
+        ["Regular bills entered every month", "Transactions that repeat on their own", "Solo concept project"],
       ],
     },
     {
@@ -2333,24 +2117,6 @@ const expenzo: CaseStudy = {
           media: exRow("Home, and the add menu for entering income or an expense by hand.", ex("home", "Home"), ex("fab-menu", "Add income or expense")),
         },
         {
-          title: "Scanning that doesn't make you wait",
-          noticed: "A month of receipts means many scans, and nobody wants to watch each one.",
-          did: "Scans run in the background with a single status row on All Transactions, and a notification opens each finished receipt.",
-          why: "Automation only saves time if it stays out of the way.",
-          before: "Wait on a pop-up, then check a status page.",
-          after: "Scan, keep going, get notified.",
-          media: exRow("Taking the photo, waiting or moving on, and the notification when reading finishes.", ex("camera", "Single, quick or multipage"), ex("scanning", "Scanning"), ex("scan-done", "Done")),
-        },
-        {
-          title: "An expense form in GST format",
-          noticed: "Ledgers and auditor sheets all used the same columns: invoice number, date, party, GST number, amount and tax.",
-          did: "Built Record Expense around those fields, prefilled from the scan, with a receipt thumbnail and a choice between IGST and CGST plus SGST.",
-          why: "Reviewing is faster when the screen matches the paper in your hand.",
-          before: "A generic name, amount and category.",
-          after: "The columns an accountant files.",
-          media: exRow("Record Expense filled in by a scan, and the tax type sheet.", ex("record", "Prefilled from the receipt"), ex("tax-sheet", "IGST or CGST + SGST")),
-        },
-        {
           title: "Categories that fit the business",
           noticed: "Interviewees track costs like rent, materials and fuel their own way, and a fixed list never quite fits.",
           did: "Offered common categories in a sheet, plus a “+” to create one, with its own icon colour and a choice of expense or income.",
@@ -2376,15 +2142,6 @@ const expenzo: CaseStudy = {
           before: "Fixed weekly, monthly or yearly lists.",
           after: "Dates, types and categories to filter by.",
           media: exRow("The Analytic Report and its Filter page.", ex("analytics", "Analytic Report"), ex("filter", "Filter")),
-        },
-        {
-          title: "An export built for GST filing",
-          noticed: "Owners send their accountant Excel files sorted into purchases and sales.",
-          did: "Designed an Export screen with a date range, Expense, Income or Both, B2B and B2C groupings, and Excel or PDF, followed by a notification when the file is ready.",
-          why: "The file is the real deliverable, so it should arrive the way the accountant needs it.",
-          before: "Export hidden in a three-dot menu.",
-          after: "A file shaped for the GST return.",
-          media: exRow("The Export screen and the confirmation.", ex("export", "Export"), ex("exported", "File exported")),
         },
         {
           title: "A way forward when scanning fails",
@@ -2470,12 +2227,12 @@ const expenzo: CaseStudy = {
           details: [
             "Zoho Expense showed background scanning, Zenmoney repeat transactions, Bookipi tutorial videos after sign-up, and FinArt and Axio reading bank SMS. Only Zoho could scan receipts, and none of them exported a GST-ready file.",
           ],
-          media: exRow("Two of the apps I studied: Zoho Expense and Bookipi.", ex("zoho", "Zoho Expense"), ex("bookipi", "Bookipi")),
+          media: { ...exRow("Two of the apps I studied, Zoho Expense and Bookipi.", ex("zoho", "Zoho Expense"), ex("bookipi", "Bookipi")), browser: false },
         },
         {
           label: "Interviews",
           title: "Talking to five business owners",
-          body: "I started with a printing-company owner and then interviewed four more: an IT services owner, a valve manufacturer that exports 99% of its output, a 40-room hostel owner and a car travel operator.",
+          body: "I started with a printing-company owner and then interviewed four more, an IT services owner, a valve manufacturer that exports 99% of its output, a 40-room hostel owner and a car travel operator.",
           details: [
             "Everyone mixed paper and Excel, and the bigger businesses added Tally. Manual entry, lost receipts and the monthly GST rush came up again and again.",
             "Not everyone wanted automation. Hareendran, the manufacturer, prefers manual entry because “it gives us more control over the data”. That pushed me to make every scan easy to review and correct.",
@@ -2501,7 +2258,7 @@ const expenzo: CaseStudy = {
             "The icon picker had no signifier",
             "Filters needed dates and categories",
           ],
-          media: exRow("Home before and after: the scan and home icons first shared one active colour.", ex("var-home-same", "Before"), ex("home", "After")),
+          media: exRow("Home before and after. The scan and home icons first shared one active colour.", ex("var-home-same", "Before"), ex("home", "After")),
         },
         {
           label: "Final",
@@ -2561,7 +2318,6 @@ const expenzo: CaseStudy = {
       before: "Paper ledgers, Excel and a monthly rush",
       after: "Scan, review, repeat and export in one app",
       stat: { value: "5", label: "Business owners whose records shaped the design" },
-      feedback: feedback("Would you trust an app to read your receipts?"),
     },
   ],
 };

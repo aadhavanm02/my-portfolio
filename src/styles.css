@@ -348,7 +348,7 @@ button {
   height: 88px;
   border-radius: 50%;
   object-fit: cover;
-  box-shadow: 0 0 0 5px #fff, 0 10px 28px rgb(0 0 0 / 12%);
+  box-shadow: 0 10px 28px rgb(0 0 0 / 12%);
 }
 
 /* Name tag: round photo with name and role beside it, above the headline. */
@@ -1224,7 +1224,7 @@ button {
 
 .case-section-heading h2 {
   max-width: none;
-  margin: 0 0 24px;
+  margin: 0 0 20px;
   font-family: var(--font-display);
   font-size: var(--type-section-title-size);
   font-weight: var(--type-section-title-weight);
@@ -9764,8 +9764,11 @@ body.is-video-expanded .case-topic-nav {
   box-shadow: 0 14px 30px rgb(30 50 35 / 14%);
 }
 
-.project-card:hover .phone-carousel__track {
-  animation-play-state: paused;
+/* Work cards animate only while they are the one in view or under the pointer. */
+.project-card:not(.is-playing) .project-media *,
+.project-card:not(.is-playing) .project-media *::before,
+.project-card:not(.is-playing) .project-media *::after {
+  animation-play-state: paused !important;
 }
 
 @keyframes phone-carousel {
@@ -10051,4 +10054,213 @@ body.is-video-expanded .case-topic-nav {
   .pg-study__edges {
     grid-template-columns: minmax(0, 1fr);
   }
+}
+
+/* ---------- Browser window bar on full desktop screenshots (G8) ---------- */
+.shot-browser {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 30px;
+  padding: 0 12px;
+  border-bottom: 1px solid rgb(16 16 16 / 8%);
+  background: #f3f3f2;
+}
+
+.shot-browser i {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #ff5f57;
+}
+
+.shot-browser i:nth-child(2) {
+  background: #febc2e;
+}
+
+.shot-browser i:nth-child(3) {
+  background: #28c840;
+}
+
+.shot-image--browser {
+  display: flex;
+  flex-direction: column;
+}
+
+.case-hero-browser {
+  overflow: hidden;
+  cursor: default;
+}
+
+.case-hero-browser video {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ---------- Click to zoom on every image (G9) ---------- */
+.zoom-image {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+}
+
+.zoom-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ---------- Challenge, Goal, Constraint table (G7) ---------- */
+.case-mapping--3 .case-mapping__head,
+.case-mapping--3 .case-mapping__row {
+  grid-template-columns: minmax(0, 1.15fr) 28px minmax(0, 1fr) minmax(0, 0.9fr);
+  gap: 20px;
+}
+
+.case-mapping__row p.case-mapping__constraint {
+  padding-left: 20px;
+  border-left: 1px solid var(--color-border);
+  color: var(--color-body-muted);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: inherit;
+}
+
+/* The column names repeat inside each row only on phones, where the columns stack. */
+.case-mapping__label {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .case-mapping--3 .case-mapping__row {
+    grid-template-columns: 1fr;
+  }
+
+  .case-mapping--3 .case-mapping__row svg {
+    display: none;
+  }
+
+  .case-mapping--3 .case-mapping__label {
+    display: block;
+    margin-bottom: 2px;
+    color: var(--color-muted);
+    font-family: var(--font-body, inherit);
+    font-size: 12px;
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .case-mapping__row p.case-mapping__constraint {
+    padding-left: 0;
+    border-left: 0;
+  }
+}
+
+/* ---------- Decisions: the hook as an unlabelled lead line (G14) ---------- */
+.case-decision__lead {
+  margin: 0;
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.45;
+}
+
+@media (max-width: 767px) {
+  .case-decision__lead {
+    font-size: 19px;
+  }
+}
+
+/* ---------- Outcome: the headline metric sits inside the After box (G16) ---------- */
+.case-outcome__metric {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 12px;
+  padding-top: 18px;
+  border-top: 1px solid rgb(255 255 255 / 16%);
+}
+
+.case-outcome__metric strong {
+  color: var(--color-peach-300);
+  font-family: var(--font-display);
+  font-size: 56px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.case-outcome .case-outcome__metric span {
+  color: rgb(255 255 255 / 72%);
+  font-size: 16px;
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* ---------- Overview stats: value plus one line, equal heights, no wrapping (G5) ---------- */
+.case-stats div {
+  justify-content: flex-start;
+  min-width: 0;
+}
+
+@media (min-width: 768px) {
+  .case-stats strong,
+  .case-stats span {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .case-stats strong {
+    font-size: clamp(28px, 2.6vw, 40px);
+  }
+}
+
+/* ---------- Process: no badge column, so the text gets the width (M20) ---------- */
+.case-process__step,
+.case-process__step:first-child {
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 24px;
+}
+
+.case-process__bullets {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding-left: 20px;
+  color: var(--color-body-muted);
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+@media (max-width: 767px) {
+  .case-process__bullets {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 1023px) {
+  .case-process__step,
+  .case-process__step:first-child {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+}
+
+/* Names in a story read in the main text color, not gray (M10). */
+.case-section-heading .case-story p strong {
+  color: var(--color-ink);
+}
+
+/* Work cards: a one line heading (W3). */
+.project-copy h2 {
+  font-size: min(var(--type-card-title-size), 28px);
 }
