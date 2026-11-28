@@ -3224,7 +3224,10 @@ function PlaygroundPlayer({ item, onClose }: { item: PlaygroundItem; onClose: ()
               aria-label={isFull ? "Exit full view" : "Full view"}
               aria-pressed={isFull}
               className="pg-player__expand"
-              onClick={() => setIsFull((value) => !value)}
+              onClick={() => {
+                if (item.appSrc) setIsLoaded(false);
+                setIsFull((value) => !value);
+              }}
               title={isFull ? "Exit full view" : "Full view"}
               type="button"
             >
@@ -3248,8 +3251,12 @@ function PlaygroundPlayer({ item, onClose }: { item: PlaygroundItem; onClose: ()
           ) : null}
           <iframe
             allow="fullscreen; xr-spatial-tracking; microphone"
-            onLoad={() => setIsLoaded(true)}
-            src={src}
+            key={isFull && item.appSrc ? "app" : "demo"}
+            onLoad={(event) => {
+              setIsLoaded(true);
+              if (isFull) event.currentTarget.contentWindow?.focus();
+            }}
+            src={isFull ? appSrc : src}
             title={item.title}
           />
         </div>
@@ -3560,15 +3567,24 @@ function PlaygroundStudyPage({ item }: { item: PlaygroundItem }) {
               </a>
             </div>
           </div>
-          <div className={`pg-study__demo-frame${isDemoFull ? " is-full" : ""}`} ref={demoRef}>
-            {isDemoFull ? (
+          <div className="pg-study__demo-frame" style={{ height: study.demoHeight ?? 940 }}>
+            {/* Only one copy runs at a time: the walkthrough steps aside while the full view is open. */}
+            {!isDemoFull ? <iframe loading="lazy" src={demoSrc} style={{ height: "100%" }} title={`${item.title} walkthrough`} /> : null}
+          </div>
+          {isDemoFull ? (
+            <div className="pg-study__demo-frame is-full" ref={demoRef}>
               <button className="pg-study__demo-exit" onClick={() => setIsDemoFull(false)} type="button">
                 <ArrowsInSimple aria-hidden="true" size={16} weight="bold" />
                 Exit full view
               </button>
-            ) : null}
-            <iframe loading="lazy" src={demoSrc} style={isDemoFull ? undefined : { height: study.demoHeight ?? 940 }} title={`${item.title} walkthrough`} />
-          </div>
+              <iframe
+                allow="autoplay; fullscreen; xr-spatial-tracking; microphone"
+                onLoad={(event) => event.currentTarget.contentWindow?.focus()}
+                src={appSrc}
+                title={`${item.title}, full view`}
+              />
+            </div>
+          ) : null}
         </section>
 
         <section className="pg-study__section">
