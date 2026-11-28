@@ -19,6 +19,7 @@ import {
 import {
   ArrowRight,
   ArrowUp,
+  Desktop,
   ArrowSquareOut,
   ChatCircleDots,
   CheckCircle,
@@ -3621,6 +3622,71 @@ function BackToTop() {
   );
 }
 
+// On phones, a one-time note that the portfolio reads best on a bigger screen.
+// It waits a moment, stays out of the way at the bottom, and once closed stays closed for a week.
+const DESKTOP_TIP_KEY = "desktop-tip-closed-at";
+const DESKTOP_TIP_QUIET_MS = 7 * 24 * 60 * 60 * 1000;
+
+function shouldShowDesktopTip() {
+  if (typeof window === "undefined" || window.innerWidth >= 768 || !isTouchPhone()) return false;
+  try {
+    return Date.now() - Number(window.localStorage.getItem(DESKTOP_TIP_KEY) ?? 0) > DESKTOP_TIP_QUIET_MS;
+  } catch {
+    return true;
+  }
+}
+
+function DesktopTip() {
+  const [open, setOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (!shouldShowDesktopTip()) return;
+    const timer = window.setTimeout(() => setOpen(true), 1400);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  const close = () => {
+    setOpen(false);
+    try {
+      window.localStorage.setItem(DESKTOP_TIP_KEY, String(Date.now()));
+    } catch {
+      // Private browsing: the note may show again next visit.
+    }
+  };
+
+  if (!open) return null;
+
+  return (
+    <aside aria-label="Best viewed on desktop" className="desktop-tip" role="status">
+      <button aria-label="Close" className="desktop-tip__close" onClick={close} type="button">
+        <X aria-hidden="true" size={16} weight="bold" />
+      </button>
+      <span aria-hidden="true" className="desktop-tip__icon">
+        <Desktop size={22} weight="duotone" />
+      </span>
+      <div className="desktop-tip__text">
+        <strong>Best on a bigger screen</strong>
+        <p>The case studies are full of detailed screenshots and videos. Feel free to browse here, but they read best on a laptop or desktop.</p>
+      </div>
+      <div className="desktop-tip__actions">
+        <button
+          className="desktop-tip__copy"
+          onClick={async () => {
+            if (await copyText(window.location.href)) setCopied(true);
+          }}
+          type="button"
+        >
+          {copied ? "Link copied" : "Copy link for later"}
+        </button>
+        <button className="desktop-tip__stay" onClick={close} type="button">
+          Continue here
+        </button>
+      </div>
+    </aside>
+  );
+}
+
 function App() {
   const path = currentPath();
   const slug = path.replace(/^\/work\//, "");
@@ -3644,6 +3710,7 @@ function App() {
     <div className="site-shell bg-portfolio-canvas text-portfolio-ink font-sans">
       {page}
       <BackToTop />
+      <DesktopTip />
     </div>
   );
 }
