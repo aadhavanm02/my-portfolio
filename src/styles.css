@@ -10603,3 +10603,21 @@ body.is-video-expanded .case-topic-nav {
 .case-system__gallery {
   margin-top: 32px;
 }
+
+/* Keep exploring: Expenzo's phone screens straight on the card background, same padding as the others. */
+.more-case__screens {
+  display: grid;
+  height: 100%;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: start;
+  gap: 12px;
+}
+
+.more-case__media .more-case__screens img {
+  width: 100%;
+  height: auto;
+  border: 1px solid rgb(16 16 16 / 10%);
+  border-radius: 14px;
+  box-shadow: none;
+  object-fit: initial;
+}

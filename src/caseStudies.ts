@@ -190,6 +190,8 @@ export type CaseStudy = {
   hero: MediaItem;
   // The address in the browser bar on desktop screenshots, like the walkthrough video preview.
   browserUrl?: string;
+  // Phone screens shown side by side in the Keep exploring card, in place of the card image.
+  previewScreens?: string[];
   sections: CaseSection[];
 };
 
@@ -2062,6 +2064,7 @@ const expenzo: CaseStudy = {
   proof: "5 owner interviews, 3 usability tests",
   tone: "peach",
   image: "/assets/expenzo/card.png?v=2026-11-22b",
+  previewScreens: ["home", "scan-done", "record", "analytics"].map((name) => `/assets/expenzo/${name}.webp?v=2026-11-22b`),
   imageClass: "project-image--expenzo",
   headline: "Designing an expense tracker that turns a month of paper receipts into a GST-ready file",
   hook: "Before every GST deadline, small business owners sit down with a pile of bills, a notebook and an Excel sheet, and type it all in by hand.",

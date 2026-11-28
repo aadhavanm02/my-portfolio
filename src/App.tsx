@@ -2306,12 +2306,20 @@ function MoreCaseStudies({ current }: { current: CaseStudy }) {
           >
             {/* Desktop screenshots sit in the browser window, zoomed in so they stay readable; phone screens sit centered. */}
             <span className={`more-case__media${item.browserUrl ? "" : " more-case__media--phones"}`} aria-hidden="true">
+              {item.previewScreens ? (
+                <span className="more-case__screens">
+                  {item.previewScreens.map((src) => (
+                    <img alt="" key={src} loading="lazy" src={resolveSrc(src)} />
+                  ))}
+                </span>
+              ) : (
               <span className="more-case__window">
                 {item.browserUrl ? <BrowserBar url={item.browserUrl} /> : null}
                 <span className="more-case__shot">
                   <img alt="" loading="lazy" src={resolveSrc(item.image)} />
                 </span>
               </span>
+              )}
             </span>
             <span className="more-case__body">
               <span className="more-case__proof">{item.proof}</span>
