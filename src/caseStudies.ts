@@ -1819,7 +1819,7 @@ const exSizes = {
   "first-analytics": [784, 1700], "first-home": [784, 1700], "var-home-same": [784, 1700], "var-home-green": [784, 1700],
   filter: [784, 1700], "var-txn-old": [784, 1700], "sketch-00": [453, 854], "sketch-02": [453, 854], "sketch-04": [453, 854],
   "sketch-06": [453, 854], "sketch-08": [453, 854], "sketch-10": [453, 854], "ledger-excel": [1620, 480], zoho: [930, 605],
-  bookipi: [930, 605],
+  bookipi: [930, 605], "record-tax": [784, 1700], "manual-attach": [784, 1700],
 } satisfies Record<string, [number, number]>;
 
 type ExShot = keyof typeof exSizes;
@@ -1947,7 +1947,7 @@ const expenzoDecisions: DecisionItem[] = [
     ],
     media: [
       { ...exCap(exShot("A real expense notebook and the sales sheet sent to the auditor, with the columns that shaped the form.", "ledger-excel")), wide: true },
-      exRow("The Record Expense form and the tax type choice.", ex("record", "Record Expense"), ex("tax-sheet", "Choosing the tax type")),
+      exRow("The Record Expense form and the tax type choice.", ex("record", "Record Expense"), ex("record-tax", "Choosing the tax type")),
     ],
   },
   {
@@ -2137,7 +2137,7 @@ const expenzo: CaseStudy = {
             "Should a scan block the screen?",
             "What if a receipt has no invoice or GST number?",
           ],
-          media: { ...exShot("The tax type sheet, where 18% GST splits into 9% central and 9% state.", "tax-sheet"), browser: false, phone: true },
+          media: exShot("The tax type sheet over the expense form, where 18% GST splits into 9% central and 9% state.", "record-tax"),
         },
         {
           label: "Competitors",
@@ -2184,7 +2184,7 @@ const expenzo: CaseStudy = {
           label: "Final",
           title: "Covering the edges",
           body: "Beyond the main journey, the final prototype covers a failed scan, entering income or an expense by hand, and a first-time user flow with sign-in, SMS and location permissions and tutorial videos.",
-          media: exRow("Manual entry and the failed-scan path.", ex("fab-menu", "Add by hand"), ex("manual-record", "Blank expense form"), ex("failed-popup", "When a scan fails")),
+          media: exRow("Manual entry and the failed-scan path.", ex("manual-record", "Blank expense form"), ex("manual-attach", "Attaching a receipt"), ex("failed-popup", "When a scan fails")),
         },
       ],
       notes: [
