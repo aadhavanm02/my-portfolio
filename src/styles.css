@@ -10744,3 +10744,61 @@ body.is-video-expanded .case-topic-nav {
     animation: none;
   }
 }
+
+/* Challenge table on phones: keep the desktop columns and scroll sideways instead of stacking. */
+.case-mapping__hint {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .case-mapping--3 {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .case-mapping--3::-webkit-scrollbar {
+    display: none;
+  }
+
+  .case-mapping--3 .case-mapping__table {
+    min-width: 640px;
+  }
+
+  .case-mapping--3 .case-mapping__head {
+    display: grid;
+    padding: 12px 16px;
+  }
+
+  .case-mapping--3 .case-mapping__head,
+  .case-mapping--3 .case-mapping__row {
+    grid-template-columns: 200px 16px 200px 160px;
+    gap: 16px;
+    align-items: start;
+    padding-inline: 16px;
+  }
+
+  .case-mapping--3 .case-mapping__row svg {
+    display: block;
+    margin-top: 2px;
+    transform: none;
+  }
+
+  .case-mapping--3 .case-mapping__label {
+    display: none;
+  }
+
+  .case-mapping__row p.case-mapping__constraint {
+    font-size: 14px;
+  }
+
+  .case-mapping__hint {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 10px 0 0;
+    color: var(--color-muted);
+    font-size: 13px;
+  }
+}

@@ -1042,6 +1042,7 @@ function ProblemView({ section }: { section: Extract<CaseSection, { kind: "probl
       ) : null}
 
       <div className={`case-mapping${hasConstraints ? " case-mapping--3" : ""}`}>
+        <div className="case-mapping__table">
         <div className="case-mapping__head" aria-hidden="true">
           <span>Challenge</span>
           <span />
@@ -1067,7 +1068,13 @@ function ProblemView({ section }: { section: Extract<CaseSection, { kind: "probl
             ) : null}
           </div>
         ))}
+        </div>
       </div>
+      {hasConstraints ? (
+        <p className="case-mapping__hint" aria-hidden="true">
+          Swipe to see goals and constraints <ArrowRight size={14} weight="bold" />
+        </p>
+      ) : null}
     </>
   );
 }
