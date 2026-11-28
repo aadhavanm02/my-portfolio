@@ -159,6 +159,8 @@ export type CaseSection = SectionBase &
         levelsMedia?: MediaItem;
         patterns?: CardItem[];
         tokens?: Array<{ sample: "type" | "color" | "icons"; label: string; value: string }>;
+        // Groups of component screenshots, shown under the pattern cards.
+        gallery?: MediaItem[];
         note?: CardItem;
       }
     | { kind: "process"; steps: ProcessStep[]; notes?: CardItem[]; media?: MediaItem }
@@ -1763,6 +1765,25 @@ const superfansSocialFeed: CaseStudy = {
       eyebrow: "Critical Decisions",
       title: "A grid over a table, shipping over perfect, a dropdown over buttons",
       items: superfansDecisions,
+    },
+    {
+      kind: "system",
+      id: "design-system",
+      nav: "Design System",
+      eyebrow: "Design System",
+      title: "New components for the app and the dashboard",
+      intro:
+        "Social Feed needed parts the Superfans app builder didn't have yet. I built each one as a Figma component with a variant for every state, so developers could build a state once and reuse it across the feed, posting and the dashboard.",
+      patterns: [
+        { title: "Feed blocks", body: "Video posts, image carousels, polls and this or that questions, each sized to fill one slot in the feed." },
+        { title: "Comments", body: "A comment, its replies, likes and actions, plus the reported state merchants see in the dashboard." },
+        { title: "Posting and the dashboard", body: "The file selector with its loading and error states, product tagging, and the panel for new and imported posts." },
+      ],
+      gallery: [
+        { caption: "", alt: "App components, poll and this or that blocks before and after answering, and the comments sheet.", row: [{ src: "/assets/superfans/ds-polls.webp?v=2026-11-28", size: [2000, 1757], label: "Poll blocks", browser: false }, { src: "/assets/superfans/ds-comments.webp?v=2026-11-28", size: [2000, 1095], label: "Comments", browser: false }], wide: true },
+        { caption: "", alt: "Dashboard components, the post properties panel, a comment with its reported state, and the Add new menu.", row: [{ src: "/assets/superfans/ds-modal.webp?v=2026-11-28", size: [2000, 1487], label: "Post properties", browser: false }, { src: "/assets/superfans/ds-comment.webp?v=2026-11-28", size: [944, 1244], label: "Comment states", browser: false }, { src: "/assets/superfans/ds-cta.webp?v=2026-11-28", size: [1080, 572], label: "Add new menu", browser: false }], wide: true },
+        { caption: "", alt: "Posting components, the file selector states and product tagging.", row: [{ src: "/assets/superfans/ds-files.webp?v=2026-11-28", size: [2000, 738], label: "File selector states", browser: false }, { src: "/assets/superfans/ds-tag.webp?v=2026-11-28", size: [1660, 792], label: "Tag products", browser: false }], wide: true },
+      ],
     },
     {
       kind: "process",

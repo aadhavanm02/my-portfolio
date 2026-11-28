@@ -1419,6 +1419,12 @@ function SystemView({ section }: { section: Extract<CaseSection, { kind: "system
         </div>
       ) : null}
 
+      {section.gallery ? (
+        <div className="case-system__gallery">
+          <MediaGroup items={section.gallery} />
+        </div>
+      ) : null}
+
       {section.tokens?.length ? (
       <div className="case-tokens">
         {section.tokens.map((token) => (

@@ -10579,7 +10579,7 @@ body.is-video-expanded .case-topic-nav {
   position: absolute;
   top: 0;
   left: 0;
-  width: 200%;
+  width: 100%;
   max-width: none;
   height: auto;
   border-radius: 0;
@@ -10598,4 +10598,8 @@ body.is-video-expanded .case-topic-nav {
   height: 100%;
   object-fit: cover;
   object-position: center 12%;
+}
+
+.case-system__gallery {
+  margin-top: 32px;
 }
