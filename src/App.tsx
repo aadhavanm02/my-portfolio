@@ -3624,7 +3624,7 @@ function BackToTop() {
 
 // On phones, a one-time note that the portfolio reads best on a bigger screen.
 // It waits a moment, stays out of the way at the bottom, and once closed stays closed for a week.
-const DESKTOP_TIP_KEY = "desktop-tip-closed-at";
+const DESKTOP_TIP_KEY = "desktop-popup-closed-at";
 const DESKTOP_TIP_QUIET_MS = 7 * 24 * 60 * 60 * 1000;
 
 function shouldShowDesktopTip() {
