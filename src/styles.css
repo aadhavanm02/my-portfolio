@@ -10489,3 +10489,78 @@ body.is-video-expanded .case-topic-nav {
   box-shadow: none;
   object-position: center 30%;
 }
+
+/* The logo already drawn: no load animation (hover still redraws it). */
+.logo-mark--drawn .logo-mark__pen {
+  stroke-dashoffset: 0;
+  animation: none;
+}
+
+.logo:hover .logo-mark--drawn .logo-mark__pen {
+  animation: logo-write-again 1.4s cubic-bezier(0.55, 0.1, 0.35, 1) forwards;
+}
+
+/* ModernCart work card: the whole screen fits under the browser bar, down to Need Support. */
+.project-media--browser .project-shot.project-image--modern {
+  left: 0;
+  width: auto;
+  max-width: none;
+  height: calc(100% - 34px);
+  aspect-ratio: 1546 / 694;
+}
+
+.project-media--browser .project-image--modern video {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  object-fit: cover;
+  object-position: left top;
+}
+
+@media (max-width: 767px) {
+  .project-media--browser .project-shot.project-image--modern {
+    height: calc(100% - 24px);
+  }
+}
+
+/* Browser bar: the address sits centered; on narrow screenshots only the dots show. */
+.shot-browser {
+  container-type: inline-size;
+}
+
+.shot-browser__url {
+  text-align: center;
+}
+
+@container (max-width: 380px) {
+  .shot-browser__url {
+    display: none;
+  }
+}
+
+/* Screenshots: a light gray border and nothing else, no shadow or dark edge. */
+.shot-image,
+.shot-image.shot-image--browser,
+.case-hero-image .shot-image--browser {
+  border: 1px solid rgb(16 16 16 / 12%);
+  box-shadow: none;
+}
+
+.case-hero-image .zoom-image {
+  overflow: hidden;
+  border-radius: var(--radius-media);
+}
+
+/* Ticket list in Process: real bullet points. */
+.case-process__bullets {
+  list-style: disc outside;
+}
+
+.case-process__bullets li {
+  display: list-item;
+  padding-left: 4px;
+}
+
+.case-process__bullets li::marker {
+  color: var(--color-peach-500);
+}

@@ -154,9 +154,35 @@ const projects = caseStudies;
 
 // The A mark, drawn on load like a pen writing it: a stroke along the letter's centre line
 // reveals the real shape through a mask, so the finished mark matches the logo exactly.
+// The A draws itself only on the Work page, and at most once a day in this browser. Everywhere else,
+// and on later visits, it is already drawn. Decided once per page load, so moving between pages never replays it.
+const LOGO_KEY = "logo-drawn-at";
+const LOGO_REPLAY_MS = 24 * 60 * 60 * 1000;
+let logoShouldDraw: boolean | null = null;
+let logoDecidedAt = 0;
+
+function shouldDrawLogo() {
+  // A header that mounts again a few seconds later (another page) shows the logo already drawn.
+  if (logoShouldDraw !== null) return logoShouldDraw && Date.now() - logoDecidedAt < 2500;
+  logoDecidedAt = Date.now();
+  logoShouldDraw = false;
+  try {
+    const onWorkPage = currentPath() === "/";
+    const last = Number(window.localStorage.getItem(LOGO_KEY) ?? 0);
+    if (onWorkPage && Date.now() - last > LOGO_REPLAY_MS) {
+      logoShouldDraw = true;
+      window.localStorage.setItem(LOGO_KEY, String(Date.now()));
+    }
+  } catch {
+    logoShouldDraw = false;
+  }
+  return logoShouldDraw;
+}
+
 function LogoMark() {
+  const [draw] = useState(shouldDrawLogo);
   return (
-    <svg className="logo-image logo-mark" viewBox="0 0 48 48" aria-hidden="true">
+    <svg className={`logo-image logo-mark${draw ? "" : " logo-mark--drawn"}`} viewBox="0 0 48 48" aria-hidden="true">
       <defs>
         <clipPath id="logo-disc">
           <circle cx="24.0008" cy="24.0031" r="19.2" />
