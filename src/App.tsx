@@ -883,7 +883,11 @@ function ShotMedia({ item, thumb }: { item: MediaItem; thumb?: boolean }) {
       <div className="shot-stage">
         <div className="shot-stage__frames" style={{ ["--n" as string]: frames.length }}>
           {frames.map((frame, index) => (
-            <div className="shot-stage__item" key={`${frame.src}-${index}`} style={{ ["--a" as string]: frame.size[0] / frame.size[1] }}>
+            <div
+              className={`shot-stage__item${frame.size[1] > frame.size[0] * 1.6 ? " shot-stage__item--phone" : ""}`}
+              key={`${frame.src}-${index}`}
+              style={{ ["--a" as string]: frame.size[0] / frame.size[1] }}
+            >
               <ShotImage browser={hasBrowserBar(frame, item)} caption={item.alt ?? item.caption} frame={frame} onOpen={setOpen} />
               {frame.label || frame.status ? (
                 <span className="shot-stage__label">
@@ -1733,7 +1737,6 @@ function SiteFooter() {
       <a className="footer__social" href={linkedInUrl} rel="noreferrer" target="_blank">
         LinkedIn
       </a>
-      <small className="footer__rights">© Aadhavan M. All rights reserved.</small>
     </footer>
   );
 }

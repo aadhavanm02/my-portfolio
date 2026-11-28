@@ -10946,20 +10946,15 @@ body.is-video-expanded .case-topic-nav {
   }
 }
 
-/* ---------- Copyright line and image protection ---------- */
-.footer {
-  flex-wrap: wrap;
-}
-
-.footer__rights {
-  flex-basis: 100%;
-  order: 10;
-  margin-top: 8px;
-  color: var(--color-muted);
-  font-size: 13px;
-}
-
+/* ---------- Image protection ---------- */
 main img {
   -webkit-user-drag: none;
   user-select: none;
+}
+
+/* Phone screens: corners scale with the screen (about 12% of its width), like a real phone, at every size. */
+.shot-stage__item--phone .shot-image,
+.project-media .phone-carousel img,
+.more-case__media .more-case__screens img {
+  border-radius: 12% / 5.5%;
 }
