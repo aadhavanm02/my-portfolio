@@ -31,6 +31,7 @@ import {
   Camera,
   Horse,
   PencilLine,
+  ArrowsInSimple,
   ArrowsOutSimple,
   CaretLeft,
   CaretRight,
@@ -3178,10 +3179,17 @@ const playgroundIcons: Record<PlaygroundIcon, ReactNode> = {
   canvas: <NotePencil size={40} weight="duotone" />,
 };
 
+// The app on its own (no walkthrough panel) when there is one, for opening it full page.
+function playgroundAppSrc(item: PlaygroundItem) {
+  return withBasePath(item.appSrc ?? item.src ?? "");
+}
+
 function PlaygroundPlayer({ item, onClose }: { item: PlaygroundItem; onClose: () => void }) {
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isFull, setIsFull] = useState(false);
   const closeRef = useRef<HTMLButtonElement | null>(null);
   const src = withBasePath(item.src ?? "");
+  const appSrc = playgroundAppSrc(item);
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
@@ -3203,7 +3211,7 @@ function PlaygroundPlayer({ item, onClose }: { item: PlaygroundItem; onClose: ()
   }, [onClose]);
 
   return (
-    <div className="pg-player" role="presentation">
+    <div className={`pg-player${isFull ? " pg-player--full" : ""}`} role="presentation">
       <div aria-label={`${item.title}, running in the page`} aria-modal="true" className="pg-player__dialog" role="dialog">
         <header className="pg-player__bar">
           <div className="pg-player__title">
@@ -3212,9 +3220,19 @@ function PlaygroundPlayer({ item, onClose }: { item: PlaygroundItem; onClose: ()
             {item.note ? <span>{item.note}</span> : null}
           </div>
           <div className="pg-player__actions">
-            <a href={src} rel="noreferrer" target="_blank">
+            <button
+              aria-label={isFull ? "Exit full view" : "Full view"}
+              aria-pressed={isFull}
+              className="pg-player__expand"
+              onClick={() => setIsFull((value) => !value)}
+              title={isFull ? "Exit full view" : "Full view"}
+              type="button"
+            >
+              {isFull ? <ArrowsInSimple aria-hidden="true" size={18} weight="bold" /> : <ArrowsOutSimple aria-hidden="true" size={18} weight="bold" />}
+            </button>
+            <a href={appSrc} rel="noreferrer" target="_blank" title="Open the app on its own page">
               <ArrowSquareOut aria-hidden="true" size={18} weight="bold" />
-              <span>New tab</span>
+              <span>Open full page</span>
             </a>
             <button aria-label={`Close ${item.title}`} onClick={onClose} ref={closeRef} type="button">
               <X aria-hidden="true" size={20} weight="bold" />
@@ -3395,6 +3413,16 @@ function PlaygroundCard({ item, onPlay }: { item: PlaygroundItem; onPlay: (item:
                 <Play aria-hidden="true" size={16} weight="fill" />
                 {item.study ? "Play demo" : "Play in browser"}
               </button>
+              <a
+                aria-label={`Open ${item.title} full page in a new tab`}
+                className="button button--secondary pg-card__fullpage"
+                href={playgroundAppSrc(item)}
+                rel="noreferrer"
+                target="_blank"
+              >
+                <ArrowSquareOut aria-hidden="true" size={16} weight="bold" />
+                Full page
+              </a>
             </div>
             {item.note ? <small>{item.note}</small> : null}
           </div>
@@ -3462,6 +3490,23 @@ function PlaygroundPage() {
 function PlaygroundStudyPage({ item }: { item: PlaygroundItem }) {
   const study = item.study!;
   const demoSrc = withBasePath(item.src ?? "");
+  const appSrc = playgroundAppSrc(item);
+  const demoRef = useRef<HTMLDivElement | null>(null);
+  const [isDemoFull, setIsDemoFull] = useState(false);
+
+  useEffect(() => {
+    if (!isDemoFull) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    function handleEscape(event: globalThis.KeyboardEvent) {
+      if (event.key === "Escape") setIsDemoFull(false);
+    }
+    window.addEventListener("keydown", handleEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleEscape);
+    };
+  }, [isDemoFull]);
 
   return (
     <>
@@ -3504,12 +3549,26 @@ function PlaygroundStudyPage({ item }: { item: PlaygroundItem }) {
               </p>
               <p>{study.demoNote}</p>
             </div>
-            <a className="button button--secondary" href={demoSrc} rel="noreferrer" target="_blank">
-              Open full screen
-              <ArrowUpRight aria-hidden="true" size={16} weight="bold" />
-            </a>
+            <div className="pg-study__demo-actions">
+              <button className="button button--secondary" onClick={() => setIsDemoFull(true)} type="button">
+                <ArrowsOutSimple aria-hidden="true" size={16} weight="bold" />
+                Full view
+              </button>
+              <a className="button button--secondary" href={appSrc} rel="noreferrer" target="_blank">
+                Open full page
+                <ArrowUpRight aria-hidden="true" size={16} weight="bold" />
+              </a>
+            </div>
           </div>
-          <iframe loading="lazy" src={demoSrc} style={{ height: study.demoHeight ?? 940 }} title={`${item.title} walkthrough`} />
+          <div className={`pg-study__demo-frame${isDemoFull ? " is-full" : ""}`} ref={demoRef}>
+            {isDemoFull ? (
+              <button className="pg-study__demo-exit" onClick={() => setIsDemoFull(false)} type="button">
+                <ArrowsInSimple aria-hidden="true" size={16} weight="bold" />
+                Exit full view
+              </button>
+            ) : null}
+            <iframe loading="lazy" src={demoSrc} style={isDemoFull ? undefined : { height: study.demoHeight ?? 940 }} title={`${item.title} walkthrough`} />
+          </div>
         </section>
 
         <section className="pg-study__section">

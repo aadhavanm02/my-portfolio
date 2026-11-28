@@ -10790,3 +10790,150 @@ body.is-video-expanded .case-topic-nav {
   }
 
 }
+
+/* ---------- Responsive pass (Nov 29) ---------- */
+
+/* Small tablets: the 1199px tablet sizes are still desktop-sized on a 768px screen. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  :root {
+    --type-hero-size: 46px;
+    --type-hero-line: 1.1;
+    --type-case-title-size: 44px;
+    --type-case-title-line: 1.12;
+    --type-section-title-size: 36px;
+    --type-section-title-line: 1.18;
+    --type-card-title-size: 24px;
+    --type-card-title-line: 1.25;
+    --radius-media: 22px;
+    --radius-card: 20px;
+  }
+
+  .contact-panel--split h2 {
+    font-size: 38px;
+  }
+}
+
+/* Phones: corners scale down with the screenshots, so small images don't look like pills. */
+@media (max-width: 767px) {
+  :root {
+    --radius-media: 14px;
+    --radius-card: 18px;
+  }
+
+  .shot-image {
+    border-radius: 6px;
+  }
+
+  .shot-stage {
+    border-radius: 12px;
+  }
+
+  .case-hero-media,
+  .case-journey__video {
+    border-radius: 14px;
+  }
+
+  a.more-case {
+    border-radius: 16px;
+  }
+
+  .project-media--browser,
+  .project-media--browser .shot-browser {
+    border-top-left-radius: 12px;
+  }
+
+  /* One heading scale on phones: page title > section > sub-heading > card title. */
+  .case-study .contact-panel h2,
+  .contact-panel--split h2,
+  .case-study .contact-panel--split h2 {
+    font-size: 26px;
+  }
+
+  .case-feature h3,
+  .case-decision__head h3,
+  .case-process__step h3,
+  .case-story__block h3 {
+    font-size: 20px;
+    line-height: 1.3;
+  }
+
+  .case-pains h3,
+  .case-future h3,
+  .case-learnings h3,
+  .case-patterns h4 {
+    font-size: 16px;
+    line-height: 1.35;
+  }
+}
+
+/* ---------- Playground: full view and open full page ---------- */
+.pg-player--full {
+  padding: 0;
+}
+
+.pg-player--full .pg-player__dialog {
+  border-radius: 0;
+}
+
+.pg-study__demo-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.pg-study__demo-frame {
+  position: relative;
+}
+
+.pg-study__demo-frame.is-full {
+  position: fixed;
+  inset: 0;
+  z-index: 10001;
+  display: flex;
+  flex-direction: column;
+  background: #f4f3ef;
+}
+
+.pg-study__demo-frame.is-full iframe {
+  flex: 1;
+  height: auto;
+  border: 0;
+  border-radius: 0;
+}
+
+.pg-study__demo-exit {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 1;
+  display: inline-flex;
+  height: 40px;
+  align-items: center;
+  gap: 6px;
+  padding: 0 14px;
+  border: 1px solid rgb(16 16 16 / 12%);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: var(--font-weight-semibold);
+}
+
+/* On phones the player already fills the screen. */
+@media (max-width: 767px) {
+  .pg-player__expand {
+    display: none !important;
+  }
+}
+
+.pg-study__demo-actions .button,
+.pg-card__buttons .button {
+  gap: 8px;
+}
+
+@media (max-width: 767px) {
+  .pg-card__fullpage {
+    display: none;
+  }
+}

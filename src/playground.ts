@@ -18,6 +18,8 @@ export type PlaygroundItem = {
   icon: PlaygroundIcon;
   tags: string[];
   src?: string;
+  // The app on its own, without the walkthrough panel, for "Open full page".
+  appSrc?: string;
   // Screenshot shown as the animated preview (public/assets/playground/...).
   preview?: string;
   // Animated mock used for template items that have no playable build yet.
@@ -58,6 +60,7 @@ const allPlaygroundItems: PlaygroundItem[] = [
     icon: "books",
     tags: ["3D", "Web and phone", "Reading"],
     src: "/playground/projects/library/index.html",
+    appSrc: "/playground/projects/library/app/index.html",
     preview: "/assets/playground/library.jpg",
     note: "Real-time 3D takes a few seconds to open, and works best on a recent phone or laptop.",
     study: {
@@ -140,6 +143,7 @@ const allPlaygroundItems: PlaygroundItem[] = [
     icon: "briefcase",
     tags: ["AI", "Web and Android", "Two-sided"],
     src: "/playground/projects/shortlist/index.html",
+    appSrc: "/playground/projects/shortlist/app/index.html",
     preview: "/assets/playground/shortlist.jpg?v=2",
     note: "The working app on web and iPhone, with live AI resume reading, tailoring and refining.",
     study: {
@@ -209,6 +213,7 @@ const allPlaygroundItems: PlaygroundItem[] = [
     icon: "pill",
     tags: ["Health", "Mobile", "Accessibility"],
     src: "/playground/projects/strip/index.html",
+    appSrc: "/playground/projects/strip/app/index.html",
     preview: "/assets/playground/strip.jpg?v=2",
     note: "The working app: scan a prescription or a strip, pop a pocket to log a dose. Photos are read by Gemini.",
     study: {
@@ -279,6 +284,7 @@ const allPlaygroundItems: PlaygroundItem[] = [
     icon: "canvas",
     tags: ["AI", "Mobile", "Working app"],
     src: "/playground/projects/quanvas/index.html",
+    appSrc: "/playground/projects/quanvas/app/index.html",
     preview: "/assets/playground/quanvas.jpg",
     note: "The working app, with live AI look-ups, recipes and photo answers from Gemini.",
     study: {
@@ -349,6 +355,7 @@ const allPlaygroundItems: PlaygroundItem[] = [
     icon: "cube",
     tags: ["3D", "Ecommerce", "Mobile"],
     src: "/playground/projects/product-3d/index.html",
+    appSrc: "/playground/projects/product-3d/app/index.html",
     // Hidden for now: Photos to 3D is shown instead.
     hidden: true,
     preview: "/assets/playground/product-3d.jpg",
