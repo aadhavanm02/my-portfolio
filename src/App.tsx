@@ -3232,6 +3232,7 @@ function PlaygroundPlayer({ item, onClose }: { item: PlaygroundItem; onClose: ()
               type="button"
             >
               {isFull ? <ArrowsInSimple aria-hidden="true" size={18} weight="bold" /> : <ArrowsOutSimple aria-hidden="true" size={18} weight="bold" />}
+              <span>{isFull ? "Exit full view" : "Full view"}</span>
             </button>
             <a href={appSrc} rel="noreferrer" target="_blank" title="Open the app on its own page">
               <ArrowSquareOut aria-hidden="true" size={18} weight="bold" />
@@ -3420,16 +3421,6 @@ function PlaygroundCard({ item, onPlay }: { item: PlaygroundItem; onPlay: (item:
                 <Play aria-hidden="true" size={16} weight="fill" />
                 {item.study ? "Play demo" : "Play in browser"}
               </button>
-              <a
-                aria-label={`Open ${item.title} full page in a new tab`}
-                className="button button--secondary pg-card__fullpage"
-                href={playgroundAppSrc(item)}
-                rel="noreferrer"
-                target="_blank"
-              >
-                <ArrowSquareOut aria-hidden="true" size={16} weight="bold" />
-                Full page
-              </a>
             </div>
             {item.note ? <small>{item.note}</small> : null}
           </div>

@@ -10934,8 +10934,7 @@ body.is-video-expanded .case-topic-nav {
   gap: 8px;
 }
 
-@media (max-width: 767px) {
-  .pg-card__fullpage {
-    display: none;
-  }
+.pg-player__actions button.pg-player__expand {
+  width: auto;
+  padding: 0 12px;
 }
