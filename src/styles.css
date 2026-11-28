@@ -10478,17 +10478,7 @@ body.is-video-expanded .case-topic-nav {
   border-left: 0;
 }
 
-/* Keep exploring: Expenzo's phone screens, centered and edge to edge, with no inner rounded frame. */
-.more-case__media--phones {
-  padding: 0;
-  background: none;
-}
 
-.more-case__media--phones img {
-  border-radius: 0;
-  box-shadow: none;
-  object-position: center 30%;
-}
 
 /* The logo already drawn: no load animation (hover still redraws it). */
 .logo-mark--drawn .logo-mark__pen {
@@ -10563,4 +10553,49 @@ body.is-video-expanded .case-topic-nav {
 
 .case-process__bullets li::marker {
   color: var(--color-peach-500);
+}
+
+/* ---------- Keep exploring: screenshots in a browser window, zoomed in so they read clearly ---------- */
+.more-case__window {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid rgb(16 16 16 / 12%);
+  border-bottom: 0;
+  border-radius: 12px 12px 0 0;
+  background: #fff;
+}
+
+.more-case__shot {
+  position: relative;
+  display: block;
+  min-height: 0;
+  flex: 1;
+  overflow: hidden;
+}
+
+.more-case__media .more-case__shot img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+  max-width: none;
+  height: auto;
+  border-radius: 0;
+  box-shadow: none;
+  object-fit: initial;
+}
+
+/* Expenzo: the same padding as the others, phones centered and fully in view. */
+.more-case__media--phones .more-case__window {
+  border: 0;
+  background: none;
+}
+
+.more-case__media--phones .more-case__shot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 12%;
 }

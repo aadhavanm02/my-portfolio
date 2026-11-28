@@ -2298,9 +2298,14 @@ function MoreCaseStudies({ current }: { current: CaseStudy }) {
             // Each card uses its own case study's brand, not the page it sits on.
             style={{ ["--brand" as string]: item.brand ?? siteBrand }}
           >
-            {/* Phone screens fill the card edge to edge, centered, instead of sitting in an inner frame. */}
-            <span className={`more-case__media${item.slug === "expenzo" ? " more-case__media--phones" : ""}`} aria-hidden="true">
-              <img alt="" loading="lazy" src={resolveSrc(item.image)} />
+            {/* Desktop screenshots sit in the browser window, zoomed in so they stay readable; phone screens sit centered. */}
+            <span className={`more-case__media${item.browserUrl ? "" : " more-case__media--phones"}`} aria-hidden="true">
+              <span className="more-case__window">
+                {item.browserUrl ? <BrowserBar url={item.browserUrl} /> : null}
+                <span className="more-case__shot">
+                  <img alt="" loading="lazy" src={resolveSrc(item.image)} />
+                </span>
+              </span>
             </span>
             <span className="more-case__body">
               <span className="more-case__proof">{item.proof}</span>
